@@ -51,6 +51,7 @@ test("every business Skill uses the single-runtime CLI contract", () => {
       rainbondUrl: "",
       allowInsecureHttp: false,
       privateLocation: undefined,
+      operationId: undefined,
     });
     for (const command of ["context_resolve", "read", "call", "call_confirm"]) {
       const argv = current.input_commands[command].argv.slice(2)
@@ -84,10 +85,41 @@ test("runtime gates contain no multi-environment or runtime-operation protocol",
   }
 });
 
+test("connecting runtime is resumed by the agent while browser authorization remains the user's choice", () => {
+  for (const skillId of skillIds) {
+    const current = gate(skillId);
+    assert.match(current, /`connecting`[\s\S]*当前任务[\s\S]*自动执行[\s\S]*`runtime connect`/, skillId);
+    assert.match(current, /附加交互终端（TTY）[\s\S]*保持进程附着/, skillId);
+    assert.match(current, /不得要求用户在 (?:Shell|shell|终端) 中执行/, skillId);
+    assert.match(current, /授权决定[\s\S]*用户[\s\S]*自主/, skillId);
+    assert.match(current, /不得代替用户点击/, skillId);
+    assert.match(current, /不得要求用户必须允许/, skillId);
+    assert.match(current, /不得把打开页面视为同意/, skillId);
+    assert.match(current, /拒绝[\s\S]*关闭[\s\S]*超时[\s\S]*停止连接/, skillId);
+    assert.match(current, /`connected`[\s\S]*`usable=true`[\s\S]*业务/, skillId);
+  }
+});
+
 test("root Skill manages one replaceable runtime and never configures client MCP", () => {
   const source = fs.readFileSync(path.join(root, "SKILL.md"), "utf8");
   assert.match(source, /只保存一个全局运行环境/);
   assert.match(source, /runtime reconnect <target>/);
   assert.match(source, /不得配置客户端 MCP/);
   assert.doesNotMatch(source, /environment set-default|environment rename|environment remove/);
+});
+
+test("root and marketplace Skills keep browser authorization voluntary and agent-driven", () => {
+  for (const relativePath of [
+    "SKILL.md",
+    "marketplace/rainskills/skills/rainskills/SKILL.md",
+  ]) {
+    const source = fs.readFileSync(path.join(root, relativePath), "utf8");
+    assert.match(source, /Agent 自动打开 Rainbond 授权页面/, relativePath);
+    assert.match(source, /不得要求用户在 (?:Shell|shell|终端) 中执行/, relativePath);
+    assert.match(source, /授权决定[\s\S]*用户[\s\S]*自主/, relativePath);
+    assert.match(source, /不得代替用户点击/, relativePath);
+    assert.match(source, /不得要求用户必须允许/, relativePath);
+    assert.match(source, /不得把打开页面视为同意/, relativePath);
+    assert.match(source, /拒绝[\s\S]*关闭[\s\S]*超时[\s\S]*停止连接/, relativePath);
+  }
 });

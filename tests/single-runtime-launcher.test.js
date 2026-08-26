@@ -19,6 +19,7 @@ test("runtime connect no longer carries a business intent or environment operati
     rainbondUrl: "",
     allowInsecureHttp: false,
     privateLocation: undefined,
+    operationId: undefined,
   });
 
   assert.throws(() => parseRuntimeConnectArgs([

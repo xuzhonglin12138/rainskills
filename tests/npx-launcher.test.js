@@ -37,6 +37,7 @@ test("runtime connect accepts one environment route without a business intent", 
     rainbondUrl: "",
     allowInsecureHttp: false,
     privateLocation: undefined,
+    operationId: undefined,
   });
   assert.deepEqual(parseRuntimeConnectArgs([
     "runtime", "connect", "claude", "--rainbond-url", "https://console.example.com",
@@ -46,10 +47,19 @@ test("runtime connect accepts one environment route without a business intent", 
     rainbondUrl: "https://console.example.com",
     allowInsecureHttp: false,
     privateLocation: undefined,
+    operationId: undefined,
   });
   assert.throws(() => parseRuntimeConnectArgs([
     "runtime", "connect", "codex", "--saas", "--rainbond-url", "https://other.example.com",
   ]), /互斥/);
+
+  const operationId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  assert.equal(parseRuntimeConnectArgs([
+    "runtime", "connect", "codex", "--saas", "--operation-id", operationId,
+  ]).operationId, operationId);
+  assert.throws(() => parseRuntimeConnectArgs([
+    "runtime", "connect", "codex", "--saas", "--operation-id", "not-a-uuid",
+  ]), /operation/i);
 });
 
 test("runtime connector child never inherits a cached credential", () => {
@@ -113,13 +123,159 @@ test("runtime status remains an in-process command", async () => {
   const output = [];
   assert.equal(await runBuiltin(["runtime", "status", "--json"], {
     runtimeStateManager: {
-      status: async () => ({
-        schema: "rainskills.runtime-status.v1",
-        state: "connected",
-        usable: true,
-      }),
+      read: () => ({ state: "not_started" }),
     },
+    singleRuntimeStore: { read: () => null },
     write: (value) => output.push(value),
   }), true);
-  assert.equal(JSON.parse(output.join("")).usable, true);
+  assert.deepEqual(JSON.parse(output.join("")), {
+    schema: "rainskills.runtime-status.v1",
+    state: "not_started",
+    usable: false,
+  });
+});
+
+test("runtime connect rejects a detached terminal before creating connecting state", async () => {
+  let starts = 0;
+  await assert.rejects(() => runBuiltin([
+    "runtime", "connect", "codex", "--rainbond-url", "https://console.example.com",
+  ], {
+    interactive: false,
+    originInspector: async () => ({
+      origin: "https://console.example.com",
+      pendingRedirectOrigin: null,
+      httpConfirmationRequired: false,
+    }),
+    runtimeStateManager: {
+      read: () => ({ state: "not_started" }),
+      startConnecting() { starts += 1; },
+    },
+    connectionRunner: async () => {
+      throw new Error("connector must not start");
+    },
+    write() {},
+  }), /TTY|交互终端/i);
+  assert.equal(starts, 0);
+});
+
+test("failed runtime connect retries the same protected operation", async () => {
+  const operationId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  let current = { state: "not_started" };
+  let released = 0;
+  const manager = {
+    acquireConnectionLease(id) {
+      assert.equal(id, operationId);
+      return { release() { released += 1; } };
+    },
+    read: () => current,
+    startConnecting(input) {
+      if (current.state === "connecting" && current.operation_id !== input.operation_id) {
+        throw new Error("competing operation");
+      }
+      current = { state: "connecting", ...input };
+      return current;
+    },
+  };
+  const output = [];
+
+  await assert.rejects(() => runBuiltin([
+    "runtime", "connect", "codex", "--rainbond-url", "https://console.example.com",
+    "--operation-id", operationId,
+  ], {
+    interactive: true,
+    originInspector: async () => ({
+      origin: "https://console.example.com",
+      pendingRedirectOrigin: null,
+      httpConfirmationRequired: false,
+    }),
+    runtimeStateManager: manager,
+    connectionRunner: async () => ({ code: 1, signal: null, completesRuntimeState: true }),
+    write: (value) => output.push(value),
+  }), /未完成/);
+
+  const retry = JSON.parse(output.join(""));
+  assert.deepEqual(retry.argv, [
+    "runtime", "connect", "codex", "--rainbond-url", "https://console.example.com",
+    "--operation-id", operationId,
+  ]);
+  assert.equal(released, 1);
+
+  output.length = 0;
+  await assert.rejects(() => runBuiltin(retry.argv, {
+    interactive: true,
+    originInspector: async () => ({
+      origin: "https://console.example.com",
+      pendingRedirectOrigin: null,
+      httpConfirmationRequired: false,
+    }),
+    runtimeStateManager: manager,
+    connectionRunner: async () => ({ code: 1, signal: null, completesRuntimeState: true }),
+    write: (value) => output.push(value),
+  }), /未完成/);
+  assert.equal(current.operation_id, operationId);
+  assert.equal(released, 2);
+});
+
+test("a matching orphaned connecting state resumes through its original operation", async () => {
+  const operationId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const current = {
+    state: "connecting",
+    operation_id: operationId,
+    target_client: "codex",
+    environment_kind: "private",
+    console_origin: "https://console.example.com",
+  };
+  const output = [];
+  await assert.rejects(() => runBuiltin([
+    "runtime", "connect", "codex", "--rainbond-url", "https://console.example.com",
+  ], {
+    interactive: true,
+    originInspector: async () => ({
+      origin: "https://console.example.com",
+      pendingRedirectOrigin: null,
+      httpConfirmationRequired: false,
+    }),
+    runtimeStateManager: {
+      acquireConnectionLease(id) {
+        assert.equal(id, operationId);
+        return { release() {} };
+      },
+      read: () => current,
+      startConnecting: (input) => {
+        assert.equal(input.operation_id, operationId);
+        return current;
+      },
+    },
+    connectionRunner: async (_invocation, context) => {
+      assert.equal(context.operationId, operationId);
+      return { code: 1, signal: null, completesRuntimeState: true };
+    },
+    write: (value) => output.push(value),
+  }), /未完成/);
+  assert.equal(JSON.parse(output.join("")).argv.at(-1), operationId);
+});
+
+test("runtime status reports protected connecting state before checking stored credentials", async () => {
+  const output = [];
+  assert.equal(await runBuiltin(["runtime", "status", "--json"], {
+    runtimeStateManagerFactory: () => ({
+      read: () => ({
+        state: "connecting",
+        operation_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        target_client: "codex",
+        environment_kind: "private",
+        console_origin: "https://console.example.com",
+      }),
+    }),
+    singleRuntimeStore: { read: () => null },
+    write: (value) => output.push(value),
+  }), true);
+  assert.deepEqual(JSON.parse(output.join("")), {
+    schema: "rainskills.runtime-status.v1",
+    state: "connecting",
+    usable: false,
+    operation_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    console_origin: "https://console.example.com",
+    environment_kind: "private",
+  });
 });

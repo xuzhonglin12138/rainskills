@@ -42,7 +42,7 @@ Rainskills 安装完成，下一条消息即可直接使用。
 
 受限沙箱（包括 Codex）执行本地状态命令时，必须申请用户级受保护目录访问权限；在 Codex 中使用 `require_escalated`。不得修改 `~/.rainbond` 权限、复制受保护状态到工作区，或因沙箱权限错误建议重装。
 
-涉及浏览器或设备授权的 `runtime connect`，以及恢复/安装场景中的 `rainskills <target> --self-hosted`，必须在附加交互终端（TTY）中运行；在 Codex 中设置 `tty: true` 并保持进程附着直到授权完成。禁止通过非交互命令要求用户粘贴 JWT；非交互模式只可复用已存在的受保护凭据。
+涉及浏览器或设备授权的 `runtime connect`，以及恢复/安装场景中的 `rainskills <target> --self-hosted`，必须由 Agent 在附加交互终端（TTY）中运行；在 Codex 中设置 `tty: true` 并保持进程附着直到授权结束，不得要求用户在 Shell 中执行连接命令。`runtime status` 返回 `connecting` 时，Agent 使用当前 host target 和受保护状态中的环境信息自动续接同一连接。Agent 自动打开 Rainbond 授权页面，但授权决定完全由用户自主完成；Agent 不得代替用户点击、不得要求用户必须允许、不得把打开页面视为同意。用户拒绝、关闭页面或授权超时时，停止连接并报告未授权，不得绕过或反复施压。只有用户主动授权产生的凭据通过 live probe 后才可标记为 `connected`。禁止通过非交互命令要求用户粘贴 JWT；非交互模式只可复用已存在的受保护凭据。
 
 Rainskills 只保存一个全局运行环境，不维护环境列表、名称、默认值或环境 ID。使用固定 launcher `node <home>/.rainbond/lib/rainskills/bin/rainskills.js`（运行包版本 `rainskills@0.1.18`）：
 

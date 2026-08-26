@@ -119,6 +119,22 @@ test("active connecting operation is idempotent only for identical fields and re
   }
 });
 
+test("connection lease blocks a live duplicate and is reusable after release", () => {
+  const { createRuntimeStateManager } = require(runtimeStatePath);
+  const home = temporaryHome();
+  const firstManager = createRuntimeStateManager({ home, platform: "linux", liveProbe: async () => true });
+  const secondManager = createRuntimeStateManager({ home, platform: "linux", liveProbe: async () => true });
+  const operationId = connectedInput().operation_id;
+
+  const firstLease = firstManager.acquireConnectionLease(operationId);
+  assert.throws(
+    () => secondManager.acquireConnectionLease(operationId),
+    (error) => error.code === "RAINSKILLS_OPERATION_LOCK_BUSY"
+  );
+  firstLease.release();
+  secondManager.acquireConnectionLease(operationId).release();
+});
+
 test("an active connect rejects a competitor during live probe and completes consistently", async () => {
   const { createRuntimeStateManager } = require(runtimeStatePath);
   const home = temporaryHome();

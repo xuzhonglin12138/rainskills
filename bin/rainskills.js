@@ -98,6 +98,7 @@ function parseRuntimeConnectArgs(args) {
   let environmentChoice = "";
   let rainbondUrl = "";
   let allowInsecureHttp = false;
+  let operationId = "";
   let privateLocation = "";
   for (let index = 3; index < args.length; index += 1) {
     const argument = args[index];
@@ -116,6 +117,10 @@ function parseRuntimeConnectArgs(args) {
       if (!["local", "server"].includes(privateLocation)) {
         throw new Error("runtime connect 私有部署位置只支持 local 或 server");
       }
+      index += 1;
+    } else if (argument === "--operation-id") {
+      operationId = requireFixedValue(args, index, argument);
+      if (!UUID_PATTERN.test(operationId)) throw new Error("runtime connect operation ID 无效");
       index += 1;
     } else if (["--intent-json", "--onboarding-id"].includes(argument)) {
       throw new Error(`runtime connect 不再支持 ${argument}`);
@@ -136,6 +141,7 @@ function parseRuntimeConnectArgs(args) {
     rainbondUrl,
     allowInsecureHttp,
     privateLocation: privateLocation || undefined,
+    operationId: operationId || undefined,
   };
 }
 
@@ -152,11 +158,12 @@ function runtimeConnectionInvocation(options, origin) {
   };
 }
 
-function runtimeConnectRetryAction(options, origin) {
+function runtimeConnectRetryAction(options, origin, operationId) {
   const argv = ["runtime", "connect", options.targetClient];
   if (options.environmentChoice === "saas") argv.push("--saas");
   else argv.push("--rainbond-url", origin);
   if (options.allowInsecureHttp) argv.push("--allow-insecure-http");
+  argv.push("--operation-id", operationId);
   return {
     schema: "rainskills.next-action.v1",
     action: "retry-runtime-connect",
@@ -218,6 +225,7 @@ function defaultPrivateInstallerScheduler({ control, operationId, target, privat
 
 async function runBuiltin(args, {
   runtimeStateManager,
+  runtimeStateManagerFactory,
   singleRuntimeStore,
   write = (value) => process.stdout.write(value),
   control = detectControlEnvironment(),
@@ -227,12 +235,14 @@ async function runBuiltin(args, {
   credentialEnvironment = process.env,
   credentialPersister,
   connectedCredentialReader,
+  interactive = Boolean(process.stdin.isTTY),
 } = {}) {
   const getSingleRuntimeStore = () => singleRuntimeStore || require(
     "../rainbond-platform-installer/scripts/single-runtime.js"
   ).createSingleRuntimeStore();
   const getRuntimeStateManager = () => {
     if (runtimeStateManager) return runtimeStateManager;
+    if (runtimeStateManagerFactory) return runtimeStateManagerFactory();
     return require(
       "../rainbond-platform-installer/scripts/runtime-state.js"
     ).createRuntimeStateManager();
@@ -251,12 +261,30 @@ async function runBuiltin(args, {
     if (args.length !== 3 || args[2] !== "--json") {
       throw new Error("runtime status 只支持固定参数 --json");
     }
-    if (runtimeStateManager) {
-      write(`${JSON.stringify(await runtimeStateManager.status())}\n`);
+    const connection = getRuntimeStateManager().read();
+    if (connection.state === "connecting") {
+      write(`${JSON.stringify({
+        schema: "rainskills.runtime-status.v1",
+        state: "connecting",
+        usable: false,
+        operation_id: connection.operation_id,
+        console_origin: connection.console_origin,
+        environment_kind: connection.environment_kind,
+      })}\n`);
       return true;
     }
     const runtime = getSingleRuntimeStore().read();
     if (!runtime) {
+      if (connection.state === "connected") {
+        write(`${JSON.stringify({
+          schema: "rainskills.runtime-status.v1",
+          state: "needs_reconnect",
+          usable: false,
+          console_origin: connection.console_origin,
+          environment_kind: connection.environment_kind,
+        })}\n`);
+        return true;
+      }
       write(`${JSON.stringify({
         schema: "rainskills.runtime-status.v1",
         state: "not_started",
@@ -318,6 +346,7 @@ async function runBuiltin(args, {
       credentialEnvironment,
       credentialPersister,
       connectedCredentialReader,
+      interactive,
     });
   }
   if (args[0] === "runtime" && args[1] === "assert-connect") {
@@ -380,8 +409,8 @@ async function runBuiltin(args, {
   }
   if (args[0] === "runtime" && args[1] === "connect") {
     const options = parseRuntimeConnectArgs(args);
-    const operationId = crypto.randomUUID();
     if (options.environmentChoice === "install-private") {
+      const operationId = options.operationId || crypto.randomUUID();
       const nextAction = privateInstallerScheduler({
         control,
         operationId,
@@ -390,6 +419,10 @@ async function runBuiltin(args, {
       });
       write(`${JSON.stringify(nextAction)}\n`);
       return true;
+    }
+
+    if (!interactive) {
+      throw new Error("runtime connect 浏览器授权必须在附加交互终端（TTY）中运行");
     }
 
     const inspect = originInspector || require(
@@ -405,85 +438,98 @@ async function runBuiltin(args, {
     if (inspection.httpConfirmationRequired && !options.allowInsecureHttp) {
       throw new Error("明文 HTTP 需要单独显式确认；确认可信内网后使用 --allow-insecure-http");
     }
-    const manager = getRuntimeStateManager(operationId);
+    const manager = getRuntimeStateManager();
+    const environmentKind = options.environmentChoice === "saas" ? "saas" : "private";
+    const current = manager.read();
+    const matchingConnectingOperation = current.state === "connecting"
+      && current.target_client === options.targetClient
+      && current.environment_kind === environmentKind
+      && current.console_origin === inspection.origin;
+    const operationId = options.operationId
+      || (matchingConnectingOperation ? current.operation_id : crypto.randomUUID());
     const connection = {
       target_client: options.targetClient,
-      environment_kind: options.environmentChoice === "saas" ? "saas" : "private",
+      environment_kind: environmentKind,
       console_origin: inspection.origin,
       intent: null,
       operation_id: operationId,
     };
-    manager.startConnecting(connection);
+    const connectionLease = manager.acquireConnectionLease(operationId);
     try {
-      const invocation = runtimeConnectionInvocation(options, inspection.origin);
-      let completedWithCredential = false;
-      const completeWithCredential = async (credential) => {
-        const priorToken = process.env.RAINBOND_JWT;
-        try {
-          process.env.RAINBOND_JWT = credential;
+      manager.startConnecting(connection);
+      try {
+        const invocation = runtimeConnectionInvocation(options, inspection.origin);
+        let completedWithCredential = false;
+        const completeWithCredential = async (credential) => {
+          const priorToken = process.env.RAINBOND_JWT;
+          try {
+            process.env.RAINBOND_JWT = credential;
+            await manager.markConnected(connection);
+            getSingleRuntimeStore().write({
+              consoleOrigin: inspection.origin,
+              kind: connection.environment_kind,
+              token: credential,
+              allowInsecureHttp: inspection.origin.startsWith("http://"),
+            });
+            completedWithCredential = true;
+          } finally {
+            if (priorToken === undefined) delete process.env.RAINBOND_JWT;
+            else process.env.RAINBOND_JWT = priorToken;
+          }
+        };
+        const result = await connectionRunner(invocation, {
+          completeWithCredential,
+          control,
+          options,
+          origin: inspection.origin,
+          operationId,
+        });
+        if (result.signal || result.code !== 0) {
+          throw new Error("RainSkills 运行环境连接或授权未完成");
+        }
+        if (result.completesRuntimeState) {
+          const state = manager.read();
+          if (state.state !== "connected" || state.operation_id !== operationId) {
+            throw new Error("运行环境连接器未完成 live probe");
+          }
+        } else {
+          if (completedWithCredential) throw new Error("运行环境连接器返回了矛盾状态");
           await manager.markConnected(connection);
-          getSingleRuntimeStore().write({
-            consoleOrigin: inspection.origin,
-            kind: connection.environment_kind,
-            token: credential,
-            allowInsecureHttp: inspection.origin.startsWith("http://"),
-          });
-          completedWithCredential = true;
-        } finally {
-          if (priorToken === undefined) delete process.env.RAINBOND_JWT;
-          else process.env.RAINBOND_JWT = priorToken;
         }
-      };
-      const result = await connectionRunner(invocation, {
-        completeWithCredential,
-        control,
-        options,
-        origin: inspection.origin,
-        operationId,
-      });
-      if (result.signal || result.code !== 0) {
-        throw new Error("RainSkills 运行环境连接或授权未完成");
+      } catch (error) {
+        write(`${JSON.stringify(runtimeConnectRetryAction(options, inspection.origin, operationId))}\n`);
+        throw error;
       }
-      if (result.completesRuntimeState) {
-        const state = manager.read();
-        if (state.state !== "connected" || state.operation_id !== operationId) {
-          throw new Error("运行环境连接器未完成 live probe");
+      let storedRuntime = getSingleRuntimeStore().read();
+      if (!storedRuntime || storedRuntime.console_origin !== inspection.origin) {
+        if (!connectedCredentialReader) {
+          throw new Error("runtime connect 未写入唯一运行环境凭据");
         }
-      } else {
-        if (completedWithCredential) throw new Error("运行环境连接器返回了矛盾状态");
-        await manager.markConnected(connection);
+        const credential = await connectedCredentialReader(inspection.origin);
+        if (!credential || credential.origin !== inspection.origin) {
+          throw new Error("运行环境凭据与已验证 Console origin 不匹配");
+        }
+        getSingleRuntimeStore().write({
+          consoleOrigin: inspection.origin,
+          kind: connection.environment_kind,
+          token: credential.token,
+          allowInsecureHttp: inspection.origin.startsWith("http://"),
+        });
+        storedRuntime = getSingleRuntimeStore().read();
       }
-    } catch (error) {
-      write(`${JSON.stringify(runtimeConnectRetryAction(options, inspection.origin))}\n`);
-      throw error;
-    }
-    let storedRuntime = getSingleRuntimeStore().read();
-    if (!storedRuntime || storedRuntime.console_origin !== inspection.origin) {
-      if (!connectedCredentialReader) {
-        throw new Error("runtime connect 未写入唯一运行环境凭据");
+      if (!storedRuntime || storedRuntime.console_origin !== inspection.origin) {
+        throw new Error("唯一运行环境凭据与已连接 Console origin 不匹配");
       }
-      const credential = await connectedCredentialReader(inspection.origin);
-      if (!credential || credential.origin !== inspection.origin) {
-        throw new Error("运行环境凭据与已验证 Console origin 不匹配");
-      }
-      getSingleRuntimeStore().write({
-        consoleOrigin: inspection.origin,
-        kind: connection.environment_kind,
-        token: credential.token,
-        allowInsecureHttp: inspection.origin.startsWith("http://"),
-      });
-      storedRuntime = getSingleRuntimeStore().read();
+      write(`${JSON.stringify({
+        schema: "rainskills.runtime-connect-result.v1",
+        state: "connected",
+        console_origin: inspection.origin,
+        environment_kind: connection.environment_kind,
+      })}\n`);
+      return true;
+    } finally {
+      connectionLease.release();
     }
-    if (!storedRuntime || storedRuntime.console_origin !== inspection.origin) {
-      throw new Error("唯一运行环境凭据与已连接 Console origin 不匹配");
-    }
-    write(`${JSON.stringify({
-      schema: "rainskills.runtime-connect-result.v1",
-      state: "connected",
-      console_origin: inspection.origin,
-      environment_kind: connection.environment_kind,
-    })}\n`);
-    return true;
   }
   if (args[0] === "runtime" && args[1] === "complete-connect") {
     if (args.length !== 4 || args[2] !== "--onboarding-id" || !UUID_PATTERN.test(args[3] || "")) {

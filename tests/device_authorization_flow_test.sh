@@ -107,6 +107,16 @@ assert_contains \
   "fixed authorization message end" \
   "$TEST_ROOT/output.log" \
   "[RAINSKILLS_USER_MESSAGE_END:runtime.device-authorization]"
+assert_contains \
+  "voluntary authorization choice" \
+  "$TEST_ROOT/output.log" \
+  "是否授权完全由你自主决定；你可以选择允许、拒绝或关闭页面取消。"
+if grep -F '请在浏览器中完成登录并点击「授权」按钮' "$REPO_ROOT/install.sh" >/dev/null; then
+  fail "browser authorization text must not require the user to click allow"
+fi
+if grep -F '登录后点击页面上的「授权」按钮' "$REPO_ROOT/install.sh" >/dev/null; then
+  fail "manual browser authorization text must preserve the user's choice"
+fi
 
 scoped_token="$(python3 - <<'PY'
 import base64

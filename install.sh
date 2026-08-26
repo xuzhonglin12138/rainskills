@@ -1548,10 +1548,10 @@ if raw.startswith("http://") or raw.startswith("https://"):
         print("回调 URL 中未找到 token 参数。", file=sys.stderr)
         sys.exit(1)
     if not state:
-        print("回调 URL 中未找到 state 参数，请重新点击「授权」并复制完整地址。", file=sys.stderr)
+        print("回调 URL 中未找到 state 参数。如你选择继续授权，请重新操作并复制完整地址。", file=sys.stderr)
         sys.exit(1)
     if state != expected_state:
-        print("回调 URL 中的 state 与当前授权会话不一致；可能是过期或错混的链接，请重新点击「授权」。", file=sys.stderr)
+        print("回调 URL 中的 state 与当前授权会话不一致；可能是过期或错混的链接。如你选择继续授权，请重新操作。", file=sys.stderr)
         sys.exit(1)
     print(token)
     sys.exit(0)
@@ -1863,11 +1863,12 @@ device_flow_login_to_rainbond() {
   printf '授权码：%s\n' "$DEVICE_FLOW_USER_CODE" >&2
   printf '授权地址：%s\n' "$DEVICE_FLOW_VERIFICATION_URI_COMPLETE" >&2
   printf '终端正在等待授权结果，完成后会自动继续，Ctrl+C 可取消。\n' >&2
+  printf '是否授权完全由你自主决定；你可以选择允许、拒绝或关闭页面取消。\n' >&2
   if can_open_browser; then
     printf '正在浏览器中打开授权页面…\n' >&2
     open_browser "$DEVICE_FLOW_VERIFICATION_URI_COMPLETE"
   else
-    printf '请在任意能够访问该 Rainbond 平台的电脑上打开上面的地址并完成登录授权。\n' >&2
+    printf '可以在任意能够访问该 Rainbond 平台的电脑上打开上面的地址，并自主决定是否授权。\n' >&2
   fi
   printf '[RAINSKILLS_USER_MESSAGE_END:runtime.device-authorization]\n' >&2
 
@@ -1916,7 +1917,7 @@ browser_login_to_rainbond() {
 
   printf '终端会自动等待授权结果（最长 %s 秒），无需在终端按回车；授权完成后会自动继续，Ctrl+C 可取消。\n' "$LOGIN_TIMEOUT" >&2
   if can_open_browser; then
-    printf '正在浏览器中打开 Rainbond CLI 授权页面，请在浏览器中完成登录并点击「授权」按钮。\n' >&2
+    printf '正在浏览器中打开 Rainbond CLI 授权页面。是否授权完全由你自主决定；你可以选择允许、拒绝或关闭页面取消。\n' >&2
     printf '授权地址：%s\n' "$auth_url" >&2
     open_browser "$auth_url"
   else
@@ -1924,12 +1925,12 @@ browser_login_to_rainbond() {
     printf '未检测到本机浏览器（典型场景：远程 SSH 到 Linux 服务器），进入手动授权模式：\n' >&2
     printf '  1. 在你能打开浏览器的电脑上，访问下面这条授权链接：\n' >&2
     printf '       %s\n' "$auth_url" >&2
-    printf '  2. 登录后点击页面上的「授权」按钮。\n' >&2
+    printf '  2. 登录后自主选择允许或拒绝；也可以关闭页面取消。\n' >&2
     printf '  3. 浏览器会跳到 http://127.0.0.1:%s/cli-callback?token=...&state=... 的地址。\n' "$port" >&2
     printf '     远程 SSH 场景下页面会显示「无法访问」，属正常现象，只看地址栏即可。\n' >&2
     printf '  4. 从浏览器地址栏复制整条 URL（或仅 token= 后那串 JWT），按下方提示粘贴回车。\n' >&2
     printf '\n' >&2
-    printf '若浏览器与此终端在同一台机器，直接点击「授权」即可，无需手动粘贴。\n' >&2
+    printf '若浏览器与此终端在同一台机器并且你自主选择允许，回调会自动完成，无需手动粘贴。\n' >&2
 
     if [[ -r /dev/tty ]]; then
       manual_paste_reader "$port" "$state" "$server_pid" &

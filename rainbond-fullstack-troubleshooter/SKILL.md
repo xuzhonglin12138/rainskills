@@ -42,7 +42,7 @@ description: "Use only when the user explicitly asks for a bounded build, runtim
 
 本机只允许连接一个 Rainbond 运行环境。当前 Skill 在本会话第一次调用 Rainbond 前，执行固定 launcher 的 `runtime status --json`。返回 `connected` 且 `usable=true` 后，所有查询和变更直接通过本地 `~/.rainbond/bin/rainskills-tools.js` 执行。不得配置或直接调用客户端 MCP，不得执行环境枚举或业务 operation 生命周期命令，也不得生成或传递运行环境 ID、业务 operation ID 或 intent JSON。
 
-没有运行环境时，让用户选择 Rainbond Cloud 或一个已有/新建的私有 Rainbond，并执行对应的 `runtime connect`。连接和重新授权必须进入浏览器 Device Flow，不复用 Shell 中缓存的 JWT；新凭据通过 live probe 后才覆盖唯一运行环境。CLI 返回 401 时，只读调用可在 `runtime reconnect` 成功后重试一次；写调用不得自动重放，必须先查询平台真实状态。403 直接停止，不重新授权。
+没有运行环境时，让用户选择 Rainbond Cloud 或一个已有/新建的私有 Rainbond，并执行对应的 `runtime connect`。若 `runtime status` 返回 `connecting`，当前任务必须使用当前 host target 和状态中的环境类型、Console origin 自动执行对应的 `runtime connect`，在附加交互终端（TTY）中保持进程附着；不得要求用户在 Shell 中执行连接命令。连接和重新授权必须进入浏览器 Device Flow，不复用 Shell 中缓存的 JWT。连接进程负责自动打开 Rainbond 授权页面；授权决定完全由用户自主完成，Agent 不得代替用户点击、不得要求用户必须允许、不得把打开页面视为同意。用户拒绝、关闭页面或授权超时时，停止连接并报告未授权，不得绕过或反复施压。只有收到用户主动授权产生的凭据、通过 live probe，并且状态为 `connected` 且 `usable=true` 后才能继续业务；新凭据在此之前不得覆盖唯一运行环境。CLI 返回 401 时，只读调用可在 `runtime reconnect` 成功后重试一次；写调用不得自动重放，必须先查询平台真实状态。403 直接停止，不重新授权。
 
 `context resolve` 是无状态调用：单一工作空间直接返回上下文，多个候选返回组合选项；用户选择后由当前任务直接携带 team/region 参数，不执行 `context select`，不写本地 operation。所有可变 `call` 仍需先取得 confirmation ID，再以完全相同的输入追加 `--confirm` 执行一次。
 

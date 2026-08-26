@@ -291,6 +291,10 @@ function createRuntimeStateManager({
     });
   }
 
+  function acquireConnectionLease(operationId) {
+    return stateStore.acquireOperationLock({ operationId });
+  }
+
   async function markConnected(input) {
     const prior = read();
     const fields = connectionFields(input);
@@ -395,6 +399,7 @@ function createRuntimeStateManager({
   }
 
   return {
+    acquireConnectionLease,
     markConnected,
     path: statePath,
     read,
