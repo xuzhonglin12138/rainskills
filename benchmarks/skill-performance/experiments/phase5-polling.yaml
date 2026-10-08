@@ -1,0 +1,30 @@
+experiment_id: phase5-polling
+track: performance
+classification: maintenance_only
+base_sha: 8d107e862e6a861dd1d3d62a429da41bc36dd10a
+candidate_sha: null
+treatment: Add one protected read-only poll command that keeps bounded polling inside the CLI and returns only state transitions, final state, blocker, and retryability.
+primary_scenario: install-plugin-and-resume-ai
+primary_metric: model_visible_poll_calls
+minimum_effect: five model-visible poll calls become one CLI poll call with no more than five backend requests and zero repeated unchanged states
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Polling accepts only read-classified tools and fixed status paths, terminal values, attempt budgets, and timeout bounds.
+  - Polling never executes or confirms a mutation and does not retry a failed read automatically.
+  - Unchanged states are omitted; transitions, terminal state, blocker, retryable, attempts, and elapsed time remain visible.
+  - Cancellation and timeout return bounded non-success results and write no artifacts.
+prompt_hash: 7389a8ee44d92dfdcac0e73b8c9b6e1b63460b029dc45a55f9c688f01442e024
+fixture_hash: 20e4c987637995273a6ee8950fe739537762e73dd0732cd1ef3b58de07ec8d190
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  model_visible_poll_calls: 5
+  backend_requests: 5
+  repeated_unchanged_states: 4
+result: pending
+human_checkpoint: preapproved_through_phase5

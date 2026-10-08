@@ -2,7 +2,7 @@ experiment_id: phase5-read-snapshot
 track: performance
 classification: maintenance_only
 base_sha: d52a844d749ea9e86fa082c02a67d6679a97fee4
-candidate_sha: null
+candidate_sha: 8d107e862e6a861dd1d3d62a429da41bc36dd10a
 treatment: Add one protected read-only snapshot command that aggregates a bounded list of known read requests into a fixed redacted summary without changing backend evidence scope.
 primary_scenario: verify-same-host-api-failure
 primary_metric: model_visible_snapshot_tool_calls
@@ -25,5 +25,18 @@ paired_judge:
 baseline:
   model_visible_tool_calls: 2
   backend_requests: 2
-result: pending
+measurement:
+  before_model_visible_tool_calls: 2
+  after_model_visible_tool_calls: 1
+  before_backend_requests: 2
+  after_backend_requests: 2
+  relative_model_visible_change: -0.5000
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  read_snapshot: 5/5 passed
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5
