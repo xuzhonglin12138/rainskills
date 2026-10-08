@@ -2,7 +2,7 @@ experiment_id: phase1-ai-assistant-description
 track: performance
 classification: maintenance_only
 base_sha: b5ddd2cbee88909f0551c986d61eaa32c83c32fa
-candidate_sha: null
+candidate_sha: f7e8e1a7fb8644a278ecdf74f1352ec2fe9f6521
 treatment: Shorten only rainbond-ai-assistant frontmatter.description without changing its body or workflow.
 primary_scenario: rainbond-ai-assistant.01
 primary_metric: description_utf8_bytes
@@ -21,5 +21,15 @@ run_order_seed: null
 paired_judge:
   status: unavailable
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
-result: pending
+measurement:
+  before_description_utf8_bytes: 301
+  after_description_utf8_bytes: 228
+  relative_change: -0.2425
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
 human_checkpoint: auto_approved_by_user
