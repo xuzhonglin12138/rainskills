@@ -1,0 +1,71 @@
+schema: rainskills.correctness-track.v1
+base_sha: 96a4cace5fc9c2e4b011c67e970932665c6f412c
+treatments:
+  - id: CT-1
+    skill: rainbond-platform-query
+    base_sha: 96a4cac
+    candidate_sha: 379f2c4
+    treatment: Enforce the unique read-only query argv, command binding, and positive integer app_id stop.
+    tests:
+      - tests/api-bridge.test.js
+      - tests/runtime-onboarding-routing.test.js
+    guardrails:
+      - Mutation commands are rejected before state or network access.
+      - Missing or invalid app_id causes no platform request.
+  - id: CT-2
+    skill: rainbond-project-init
+    base_sha: 379f2c4
+    candidate_sha: f18216a
+    treatment: Select one local binding path, ProjectInitResult schema, next_action vocabulary, and template handoff.
+    tests:
+      - tests/project-init-contract.test.js
+      - tests/markdown-link-integrity.test.js
+      - tests/local_project_init_gate_test.py
+    guardrails:
+      - Template components never enter bootstrap.
+      - app_id is a positive integer or null.
+  - id: CT-3
+    skill: rainbond-fullstack-bootstrap
+    base_sha: f18216a
+    candidate_sha: 37b69b1
+    treatment: Unify proxy policy, persistence ordering, dependency direction, and provider contract evidence.
+    tests:
+      - tests/bootstrap-contract.test.js
+      - rainbond-fullstack-bootstrap/scripts/run_bootstrap_evals.py
+    guardrails:
+      - Storage precedes deployment for stateful image components.
+      - Dependency direction remains consumer to provider.
+  - id: CT-4
+    skill: rainbond-fullstack-troubleshooter
+    base_sha: 37b69b1
+    candidate_sha: 8c5ad35
+    treatment: Make the YAML schema authoritative and lock ConfigMap recovery to save, restart, and fresh verification.
+    tests:
+      - tests/troubleshooter-contract.test.js
+      - rainbond-fullstack-troubleshooter/scripts/run_troubleshooter_evals.py
+    guardrails:
+      - Generated contract digest must match the schema.
+      - Unknown write outcomes are not replayed.
+  - id: CT-5
+    skill: rainbond-env-sync
+    base_sha: 8c5ad35
+    candidate_sha: 783b0b4
+    treatment: Make conflict stop outrank drift reconciliation and classify DB_NAME by source ownership.
+    tests:
+      - tests/env-sync-contract.test.js
+    guardrails:
+      - Any conflict forbids all file and sync metadata writes.
+      - Runtime coordinates and secrets remain excluded.
+  - id: CT-6
+    skill: rainbond-delivery-verifier
+    base_sha: 783b0b4
+    candidate_sha: 8cb9de3
+    treatment: Add one bounded URL probe policy and require structured probe evidence for delivered plus verified.
+    tests:
+      - tests/delivery-probe.test.js
+      - rainbond-delivery-verifier/scripts/run_delivery_verifier_evals.py
+      - tests/local-cli-installer.test.js
+    guardrails:
+      - Unsafe URL, address, redirect, timeout, and body-limit cases never become verified.
+      - The installed CLI includes the protected probe companion.
+final_status: passed
