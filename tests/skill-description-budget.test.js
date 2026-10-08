@@ -84,3 +84,13 @@ test("template installer discovery metadata is compact and preserves routing bou
   assert.match(value, /public images/i);
   assert.match(value, /rainbond-opensource-app-deploy/);
 });
+
+test("app version discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-app-version-assistant/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /existing Rainbond app/i);
+  assert.match(value, /snapshot/i);
+  assert.match(value, /local library or cloud market/i);
+  assert.match(value, /rollback/i);
+  assert.match(value, /回滚到快照/);
+});

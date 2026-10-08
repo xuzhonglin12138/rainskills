@@ -1,6 +1,6 @@
 ---
 name: rainbond-app-version-assistant
-description: "Use when a user explicitly asks for an existing Rainbond app version operation: create or inspect a snapshot, publish to a local library or cloud market, or preview/apply a rollback. Trigger phrases include: 为这个已有应用创建快照 / 发布到本地组件库 / 回滚到快照 / create snapshot."
+description: "Perform explicit version operations for an existing Rainbond app: create or inspect snapshots, publish to a local library or cloud market, or preview/apply rollback. Use for ‘创建快照’, ‘发布到本地组件库’, ‘回滚到快照’, or ‘create snapshot’."
 ---
 
 # Rainbond App Version Assistant
