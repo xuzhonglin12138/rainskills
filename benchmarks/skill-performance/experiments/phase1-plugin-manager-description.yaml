@@ -1,0 +1,25 @@
+experiment_id: phase1-plugin-manager-description
+track: performance
+classification: maintenance_only
+base_sha: f0ccd69d8ae848381323a6483557d021fc905dd0
+candidate_sha: null
+treatment: Shorten only rainbond-platform-plugin-manager frontmatter.description without changing its body or workflow.
+primary_scenario: install-plugin-and-resume-ai
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 320 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Rainbond Console plugin lifecycle requests stay owned by this Skill.
+  - Rainbond installation and ordinary app deployment stay outside this Skill.
+  - AI model management resumes only after the required plugin is ready.
+prompt_hash: 9ffbe2210b1f5b998cec9f571295fbbb24648bddd38dde5583184e719d928adb
+fixture_hash: fa6823dd8ce6d191c6e671c5e5ee5e67c55f3074e08b93e83befec7dace3f558
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: auto_approved_by_user
