@@ -86,7 +86,34 @@ function runtimeContract(gate, skillId) {
   if (contract.package_version !== `rainskills@${packageVersion}`) {
     throw new Error(`${skillId} runtime contract 版本不同步`);
   }
-  for (const name of ["context_resolve", "read", "call", "call_confirm"]) {
+  const commandNames = skillId === "rainbond-platform-query"
+    ? ["query"]
+    : ["context_resolve", "read", "call", "call_confirm"];
+  if (
+    skillId === "rainbond-platform-query"
+    && JSON.stringify(Object.keys(contract.input_commands || {})) !== JSON.stringify(commandNames)
+  ) {
+    throw new Error(`${skillId} input command set 无效`);
+  }
+  if (skillId === "rainbond-platform-query") {
+    const expectedQuery = {
+      argv: [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "query",
+        "<tool>",
+        "--input",
+        "-",
+        "--skill-id",
+        skillId,
+      ],
+      stdin_schema_source: "platform-query-allowlist",
+    };
+    if (JSON.stringify(contract.input_commands.query) !== JSON.stringify(expectedQuery)) {
+      throw new Error(`${skillId} query CLI contract 无效`);
+    }
+  }
+  for (const name of commandNames) {
     const argv = contract.input_commands?.[name]?.argv;
     if (!Array.isArray(argv) || !argv.includes("--skill-id") || !argv.includes(skillId)) {
       throw new Error(`${skillId} ${name} CLI contract 无效`);
@@ -112,19 +139,21 @@ function runtimeContract(gate, skillId) {
       throw new Error(`${skillId} package upload CLI contract 无效`);
     }
   }
-  const contextInput = contract.input_commands.context_resolve.stdin;
-  if (JSON.stringify(contextInput) !== JSON.stringify({
-    default: { required: ["enterprise", "workspace"] },
-    with_hints: {
-      required: ["enterprise", "workspace"],
-      hints: { team_name: "<team-name>" },
-    },
-    with_selection: {
-      required: ["enterprise", "workspace"],
-      selection: { option_id: "<option-id>" },
-    },
-  })) {
-    throw new Error(`${skillId} context resolve stdin contract 无效`);
+  if (skillId !== "rainbond-platform-query") {
+    const contextInput = contract.input_commands.context_resolve.stdin;
+    if (JSON.stringify(contextInput) !== JSON.stringify({
+      default: { required: ["enterprise", "workspace"] },
+      with_hints: {
+        required: ["enterprise", "workspace"],
+        hints: { team_name: "<team-name>" },
+      },
+      with_selection: {
+        required: ["enterprise", "workspace"],
+        selection: { option_id: "<option-id>" },
+      },
+    })) {
+      throw new Error(`${skillId} context resolve stdin contract 无效`);
+    }
   }
   return contract;
 }

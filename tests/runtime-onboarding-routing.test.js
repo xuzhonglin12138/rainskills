@@ -62,7 +62,27 @@ test("every business Skill uses the single-runtime CLI contract", () => {
       allowInsecureHttp: false,
       privateLocation: undefined,
     });
-    for (const command of ["context_resolve", "read", "call", "call_confirm"]) {
+    const commandNames = skillId === "rainbond-platform-query"
+      ? ["query"]
+      : ["context_resolve", "read", "call", "call_confirm"];
+    if (skillId === "rainbond-platform-query") {
+      assert.deepEqual(current.input_commands, {
+        query: {
+          argv: [
+            "node",
+            "<home>/.rainbond/bin/rainskills-tools.js",
+            "query",
+            "<tool>",
+            "--input",
+            "-",
+            "--skill-id",
+            "rainbond-platform-query",
+          ],
+          stdin_schema_source: "platform-query-allowlist",
+        },
+      });
+    }
+    for (const command of commandNames) {
       const argv = current.input_commands[command].argv.slice(2)
         .map((item) => item === "<tool>" ? "rainbond_query_apps" : item)
         .map((item) => item === "<confirmation-id>"
@@ -72,17 +92,19 @@ test("every business Skill uses the single-runtime CLI contract", () => {
       assert.equal(parsed.skillId, skillId);
       assert.equal(Object.hasOwn(parsed, "operationId"), false);
     }
-    assert.deepEqual(current.input_commands.context_resolve.stdin, {
-      default: { required: ["enterprise", "workspace"] },
-      with_hints: {
-        required: ["enterprise", "workspace"],
-        hints: { team_name: "<team-name>" },
-      },
-      with_selection: {
-        required: ["enterprise", "workspace"],
-        selection: { option_id: "<option-id>" },
-      },
-    });
+    if (skillId !== "rainbond-platform-query") {
+      assert.deepEqual(current.input_commands.context_resolve.stdin, {
+        default: { required: ["enterprise", "workspace"] },
+        with_hints: {
+          required: ["enterprise", "workspace"],
+          hints: { team_name: "<team-name>" },
+        },
+        with_selection: {
+          required: ["enterprise", "workspace"],
+          selection: { option_id: "<option-id>" },
+        },
+      });
+    }
   }
 });
 
@@ -100,7 +122,9 @@ test("runtime gates contain no multi-environment or runtime-operation protocol",
     const current = gate(skillId);
     for (const pattern of forbidden) assert.doesNotMatch(current, pattern);
     assert.match(current, /本机只允许连接一个 Rainbond 运行环境/);
-    assert.match(current, /写调用不得自动重放/);
+    if (skillId !== "rainbond-platform-query") {
+      assert.match(current, /写调用不得自动重放/);
+    }
     assert.match(current, /403 直接停止/);
     assert.match(current, /同一个命令会话/);
     assert.match(current, /禁止[^。\n]*后续业务步骤/);

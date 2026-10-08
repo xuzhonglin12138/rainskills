@@ -8,9 +8,9 @@ description: Use for a user-requested, read-only Rainbond platform query about t
 <!-- rainskills-runtime-gate:start -->
 ## 单运行环境 CLI 门禁（最高优先级）
 
-本机只允许连接一个 Rainbond 运行环境。当前 Skill 在本会话第一次调用 Rainbond 前，执行固定 launcher 的 `runtime status --json`。返回 `connected` 且 `usable=true` 后，所有查询和变更直接通过本地 `~/.rainbond/bin/rainskills-tools.js` 执行。不得配置或直接调用客户端 MCP，不得执行环境枚举或业务 operation 生命周期命令，也不得生成或传递运行环境 ID、业务 operation ID 或 intent JSON。
+本机只允许连接一个 Rainbond 运行环境。当前 Skill 在本会话第一次调用 Rainbond 前，执行固定 launcher 的 `runtime status --json`。返回 `connected` 且 `usable=true` 后，所有查询直接通过本地 `~/.rainbond/bin/rainskills-tools.js` 执行。不得配置或直接调用客户端 MCP，不得执行环境枚举或业务 operation 生命周期命令，也不得生成或传递运行环境 ID、业务 operation ID 或 intent JSON。
 
-没有运行环境时，让用户选择 Rainbond Cloud 或一个已有/新建的私有 Rainbond，并执行对应的 `runtime connect`。连接和重新授权必须进入浏览器 Device Flow，不复用 Shell 中缓存的 JWT；新凭据通过 live probe 后才覆盖唯一运行环境。CLI 返回 401 时，只读调用可在 `runtime reconnect` 成功后重试一次；写调用不得自动重放，必须先查询平台真实状态。403 直接停止，不重新授权。
+没有运行环境时，让用户选择 Rainbond Cloud 或一个已有/新建的私有 Rainbond，并执行对应的 `runtime connect`。连接和重新授权必须进入浏览器 Device Flow，不复用 Shell 中缓存的 JWT；新凭据通过 live probe 后才覆盖唯一运行环境。CLI 返回 401 时，只读查询可在 `runtime reconnect` 成功后重试一次。403 直接停止，不重新授权。
 
 授权命令是同步门禁。执行工具返回“进程仍在运行”或会话 ID 时，必须只等待或轮询同一个命令会话；在该会话结束前，禁止读取专项 Skill、解析 context、调用业务 CLI 或执行任何后续业务步骤。浏览器页面显示成功不代表连接完成；只有原命令退出码为 0，并输出 `rainskills.runtime-connect-result.v1` 且 `state=connected`，才可继续。不得另起 `runtime status` 猜测完成，也不得重复提示用户授权。
 
@@ -21,10 +21,6 @@ Hermes Agent 中必须使用 `terminal` 以 `background=true` 启动授权命令
 Hermes Agent 执行带 `--input -` 的一次性业务命令时，使用 `terminal` 前台执行，并用单引号 heredoc 将完整 JSON 只写入 stdin；不得用 `echo`、把 JSON 放入 argv、合并 stderr 或把该短命令后台化。
 
 固定 contract 中的 `<target>` 必须替换为当前宿主：Codex=`codex`、Claude Code=`claude`、Pi Agent=`pi`、DeepSeek Harness=`dsh`、WorkBuddy=`workbuddy`、Hermes Agent=`hermes`。DeepSeek Harness 和 WorkBuddy 若返回持久终端或后台任务句柄，只轮询该原始句柄直到进程退出，不另起状态命令推测完成。
-
-`context resolve` 是无状态调用：单一工作空间直接返回上下文，多个候选返回组合选项；用户选择后由当前任务直接携带 team/region 参数，不执行 `context select`，不写本地 operation。所有可变 `call` 仍需先取得 confirmation ID，再以完全相同的输入追加 `--confirm` 执行一次。
-
-`required` 只声明要解析的维度，企业 ID 始终来自当前登录身份。用户明确给出的 team/region 必须放进 `hints` 做精确匹配；不得把企业名、team 名或选择对象作为顶层 `enterprise` / `workspace` 字段传入。多候选时只展示 CLI 返回的 label；用户选择后再次执行同一个无状态 `context resolve`，通过 `selection.option_id` 让 CLI 重新查询并验证当前候选，不写本地 context 状态。
 
 ```json
 {
@@ -74,63 +70,18 @@ Hermes Agent 执行带 `--input -` 的一次性业务命令时，使用 `termina
     ]
   },
   "input_commands": {
-    "context_resolve": {
+    "query": {
       "argv": [
         "node",
         "<home>/.rainbond/bin/rainskills-tools.js",
-        "context",
-        "resolve",
-        "--input",
-        "-",
-        "--skill-id",
-        "rainbond-platform-query"
-      ],
-      "stdin": {
-        "default": {"required": ["enterprise", "workspace"]},
-        "with_hints": {"required": ["enterprise", "workspace"], "hints": {"team_name": "<team-name>"}},
-        "with_selection": {"required": ["enterprise", "workspace"], "selection": {"option_id": "<option-id>"}}
-      }
-    },
-    "read": {
-      "argv": [
-        "node",
-        "<home>/.rainbond/bin/rainskills-tools.js",
-        "read",
+        "query",
         "<tool>",
         "--input",
         "-",
         "--skill-id",
         "rainbond-platform-query"
       ],
-      "stdin_schema_source": "tool-catalog"
-    },
-    "call": {
-      "argv": [
-        "node",
-        "<home>/.rainbond/bin/rainskills-tools.js",
-        "call",
-        "<tool>",
-        "--input",
-        "-",
-        "--skill-id",
-        "rainbond-platform-query"
-      ],
-      "stdin_schema_source": "tool-catalog"
-    },
-    "call_confirm": {
-      "argv": [
-        "node",
-        "<home>/.rainbond/bin/rainskills-tools.js",
-        "call",
-        "<tool>",
-        "--input",
-        "-",
-        "--skill-id",
-        "rainbond-platform-query",
-        "--confirm",
-        "<confirmation-id>"
-      ],
-      "stdin_schema_source": "same-confirmed-input"
+      "stdin_schema_source": "platform-query-allowlist"
     }
   }
 }
@@ -169,7 +120,7 @@ Do not expand a narrow question into related resource queries. Never change reso
    - all accessible apps: `rainbond_query_apps({})`
    - apps in one team/region: `rainbond_get_team_apps({team_name, region_name})`
    - components: `rainbond_query_components({app_id})`
-5. `enterprise_id` is internal context resolved by the CLI and must not be requested from the user. `team_name` and `region_name` come from an earlier query result or explicit user context. `app_id` must be a positive integer; normalize a decimal string before the Tool call and reject values such as `app-123`.
+5. `enterprise_id` is internal context resolved by the CLI and must not be requested from the user. `team_name` and `region_name` come from an earlier query result or explicit user context. `app_id` must be a positive integer; normalize a decimal string before the Tool call and reject values such as `app-123`. If a component query lacks a valid `app_id`, stop without querying teams, applications, clusters, or any substitute scope.
 6. Use the one-shot contract `query <tool> --input -` when using the CLI. Keep stdout JSON separate from stderr; do not use `2>&1`, `grep`, or `head` to process its output.
 7. Report only fields needed for the question. Avoid email addresses, internal IDs, connection addresses, and configuration unless explicitly requested.
 

@@ -194,6 +194,12 @@ function parseCommand(args) {
   ];
   const command = remaining[0];
   const context = { skillId };
+  if (skillId === "rainbond-platform-query" && command !== "query") {
+    throw new BridgeError("platform query skill only allows the query command", EXIT.USAGE);
+  }
+  if (command === "query" && skillId !== "rainbond-platform-query") {
+    throw new BridgeError("query command requires rainbond-platform-query", EXIT.USAGE);
+  }
   if (
     command === "context"
     && remaining[1] === "resolve"
@@ -276,15 +282,18 @@ function platformQueryIntent(toolName, argumentsValue) {
   for (const field of ["enterprise_id", "team_id"]) {
     if (argumentsValue[field] !== undefined) intent[field] = argumentsValue[field];
   }
+  if (toolName === "rainbond_query_components" && argumentsValue.app_id === undefined) {
+    throw new BridgeError("platform query app_id must be a positive integer", EXIT.USAGE);
+  }
   if (argumentsValue.app_id !== undefined) {
     const value = argumentsValue.app_id;
-    if (!(
-      (Number.isInteger(value) && value > 0)
-      || (typeof value === "string" && /^[1-9][0-9]*$/.test(value))
-    )) {
+    const normalized = typeof value === "string" && /^[1-9][0-9]*$/.test(value)
+      ? Number(value)
+      : value;
+    if (!Number.isSafeInteger(normalized) || normalized <= 0) {
       throw new BridgeError("platform query app_id must be a positive integer", EXIT.USAGE);
     }
-    intent.app_id = String(value);
+    intent.app_id = normalized;
   }
   return intent;
 }
@@ -1416,13 +1425,19 @@ async function main(args = process.argv.slice(2)) {
       argumentRedactions = collectArgumentRedactions(argumentsValue);
     }
     if (command.command === "query") {
+      const intent = platformQueryIntent(command.toolName, command.argumentsValue);
+      if (intent.app_id !== undefined) {
+        command.argumentsValue = {
+          ...command.argumentsValue,
+          app_id: Number(intent.app_id),
+        };
+      }
       config = loadConfig({ includeRuntime: true });
       command.argumentsValue = await resolvePlatformQueryArguments(
         command.toolName,
         command.argumentsValue,
         config
       );
-      platformQueryIntent(command.toolName, command.argumentsValue);
       command = {
         command: "read",
         toolName: command.toolName,
