@@ -160,13 +160,13 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
     def test_equivalent_discovery_description_rewrites_pass(self) -> None:
         self.mutate(
             f"{APP_NAME}/SKILL.md",
-            "Use whenever a user asks",
-            "Use when  a user asks",
+            "ordinary Git",
+            "ordinary  git",
         )
         self.mutate(
             f"{APP_NAME}/SKILL.md",
-            "bare Git repository URL",
-            "bare git repository URL",
+            "Route supplied Compose/Helm/image-set descriptors",
+            "route supplied compose / HELM / image set descriptors",
         )
         self.mutate(
             f"{OPEN_NAME}/SKILL.md",
@@ -373,8 +373,8 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
         original_app = app_path.read_text(encoding="utf-8")
         with self.subTest(boundary="descriptor-to-open-source"):
             app = original_app.replace(
-                "Not for supplied third-party Compose, Helm, image-set descriptors, or an explicit named third-party open-source suite; use rainbond-opensource-app-deploy.",
-                "Supplied Compose, Helm, and image-set descriptors use rainbond-template-installer. An explicit named third-party open-source suite uses rainbond-opensource-app-deploy.",
+                "Route supplied Compose/Helm/image-set descriptors and named third-party suites to rainbond-opensource-app-deploy; market templates to rainbond-template-installer.",
+                "Route supplied Compose/Helm/image-set descriptors to rainbond-template-installer; named third-party suites to rainbond-opensource-app-deploy; market templates to rainbond-template-installer.",
                 1,
             )
             app_path.write_text(app, encoding="utf-8")
@@ -401,7 +401,7 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
         app = app_path.read_text(encoding="utf-8")
         app = re.sub(
             r'^description:.*$',
-            'description: "Use when deploying, running, delivering, publishing, inspecting, repairing, or troubleshooting source code, the current project, a source directory/package, or an ordinary bare Git repository. Supplied third-party Compose, Helm, image-set descriptors, and explicit named third-party open-source suites route to rainbond-opensource-app-deploy. Confirmed market templates route to rainbond-template-installer."',
+            'description: "Deploy, run, inspect, or repair a current/local project, ordinary Git, source package, private-image project, or single-image component with Rainbond. Route supplied Compose/Helm/image-set descriptors and named third-party suites to rainbond-opensource-app-deploy; market templates to rainbond-template-installer."',
             app,
             count=1,
             flags=re.MULTILINE,
@@ -451,8 +451,8 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
     def test_locally_negated_app_category_is_not_positive_ownership(self) -> None:
         path = self.root / APP_NAME / "SKILL.md"
         source = path.read_text(encoding="utf-8")
-        self.assertIn("the current project", source)
-        source = source.replace("the current project", "not the current project", 1)
+        self.assertIn("current/local project", source)
+        source = source.replace("current/local project", "not current/local project", 1)
         path.write_text(source, encoding="utf-8")
 
         result = self.run_cross()
@@ -463,10 +463,10 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
     def test_clause_scoped_negation_rejects_current_project_ownership(self) -> None:
         path = self.root / APP_NAME / "SKILL.md"
         source = path.read_text(encoding="utf-8")
-        self.assertIn("the current project", source)
+        self.assertIn("current/local project", source)
         source = source.replace(
-            "the current project",
-            "but does not include the user's current project",
+            "current/local project",
+            "but does not include current/local project",
             1,
         )
         path.write_text(source, encoding="utf-8")

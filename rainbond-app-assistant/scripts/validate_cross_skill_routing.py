@@ -71,6 +71,14 @@ def description_statements(value: str) -> list[str]:
     ]
 
 
+def description_clauses(value: str) -> list[str]:
+    return [
+        normalize(part)
+        for part in re.split(r"[!?。！？;；\n]+|\.(?=\s|$)", value)
+        if normalize(part)
+    ]
+
+
 def parse_description(source: str) -> str:
     match = re.match(r"\A---\s*\n(.*?)\n---\s*\n", source, re.DOTALL)
     if not match:
@@ -230,7 +238,7 @@ def validate_description_boundaries(
     open_description: str,
     failures: list[str],
 ) -> None:
-    app_statements = description_statements(app_description)
+    app_statements = description_clauses(app_description)
     open_statements = description_statements(open_description)
     app_normalized = normalize(app_description)
 
@@ -238,32 +246,26 @@ def validate_description_boundaries(
     open_targets = ("rainbond opensource app deploy", "open source")
     template_targets = ("rainbond template installer", "template installer")
 
-    def app_category_owned(
-        statement: str,
-        category_phrases: tuple[str, ...],
-    ) -> bool:
-        implicit_owner = statement.startswith("use when") and any(
+    def app_category_owned(statement: str, category_phrases: tuple[str, ...]) -> bool:
+        return any(
             contains(statement, category)
             and not category_is_locally_negated(statement, category)
             for category in category_phrases
-        )
-        return implicit_owner or directed_relation(statement, category_phrases, app_targets)
+        ) and any(action in statement for action in ("deploy", "run", "inspect", "repair"))
 
     app_owner = all(
-        any(predicate(statement) and app_category_owned(statement, categories) for statement in app_statements)
-        for predicate, categories in (
-            (lambda statement: "source code" in statement, ("source code",)),
-            (lambda statement: "current project" in statement, ("current project",)),
-            (
-                lambda statement: "source directory" in statement and "package" in statement,
-                ("source directory", "source package"),
-            ),
-            (lambda statement: "bare git" in statement, ("bare git",)),
+        any(app_category_owned(statement, categories) for statement in app_statements)
+        for categories in (
+            ("current local project", "current project", "local project"),
+            ("ordinary git", "bare git"),
+            ("package", "source package"),
+            ("private image app", "private image project"),
+            ("single image component",),
         )
     )
     app_actions = all(
         action in app_normalized
-        for action in ("deploy", "run", "deliver", "inspect", "repair", "troubleshoot")
+        for action in ("deploy", "run", "inspect", "repair")
     )
     require(
         app_owner and app_actions,
@@ -273,12 +275,11 @@ def validate_description_boundaries(
     require(
         any(
             "supplied" in statement
-            and all(kind in statement for kind in ("compose", "helm", "image set", "descriptor"))
+            and all(kind in statement for kind in ("compose", "helm", "image set", "descriptors"))
             and directed_relation(
                 statement,
-                ("descriptor", "compose", "helm", "image set"),
+                ("descriptors", "compose", "helm", "image set"),
                 open_targets,
-                allow_negated_category=True,
             )
             for statement in app_statements
         ),
@@ -287,12 +288,11 @@ def validate_description_boundaries(
     )
     require(
         any(
-            "named third party open source suite" in statement
+            "named third party suites" in statement
             and directed_relation(
                 statement,
-                ("named third party open source suite", "open source suite"),
+                ("named third party suites",),
                 open_targets,
-                allow_negated_category=True,
             )
             for statement in app_statements
         ),
@@ -301,13 +301,8 @@ def validate_description_boundaries(
     )
     require(
         any(
-            "market template" in statement
-            and directed_relation(
-                statement,
-                ("market template",),
-                template_targets,
-                allow_negated_category=True,
-            )
+            "market templates" in statement
+            and directed_relation(statement, ("market templates",), template_targets)
             for statement in app_statements
         ),
         "App description must exclude confirmed market templates",

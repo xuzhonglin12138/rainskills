@@ -332,7 +332,10 @@ test("DeepSeek Harness and WorkBuddy are supported as first-class hosts", () => 
 
   assert.match(skill, /DeepSeek Harness=`dsh`/);
   assert.match(skill, /WorkBuddy=`workbuddy`/);
-  assert.match(read("rainbond-app-assistant/SKILL.md"), /priority over the built-in Sites skill/);
+  assert.match(
+    read("rainbond-app-assistant/SKILL.md"),
+    /WorkBuddy 中只要用户明确指定 Rainbond\/Rainskills[\s\S]{0,300}优先于内置 `发布应用 \/ Sites`/,
+  );
 });
 
 test("Hermes Agent uses the shared CLI profile and native skills home", () => {

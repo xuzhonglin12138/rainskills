@@ -1,6 +1,6 @@
 ---
 name: rainbond-app-assistant
-description: "Use whenever a user asks to deploy, run, deliver, publish, inspect, repair, or troubleshoot source code with Rainbond or Rainskills; when the current project contains rainbond.app.json or .rainbond/local.json; for a source directory/package, ordinary bare Git repository URL, private-image project, named application not identified as a third-party open-source suite, or a new app/component built from one container image. On WorkBuddy this takes priority over the built-in Sites skill whenever Rainbond/Rainskills is explicit or a Rainbond project marker exists. Trigger phrases: 帮我部署当前项目 / 使用 Rainbond 部署 / 用 Rainskills 部署 / 帮我把这个项目跑起来 / 帮我看看当前项目卡在哪 / 如果还没初始化就先初始化，然后自动继续到应该停止的位置 / 帮我处理一下这个应用 / 在团队下新建应用并使用镜像创建组件. Not for supplied third-party Compose, Helm, image-set descriptors, or an explicit named third-party open-source suite; use rainbond-opensource-app-deploy. Confirmed market templates use rainbond-template-installer."
+description: "Deploy, run, inspect, or repair a current/local project, ordinary Git, package, private-image app, or single-image component with Rainbond; use for “项目跑起来”, “先初始化，然后自动继续”, “这个应用”, rainbond.app.json, or .rainbond/local.json. Route supplied Compose/Helm/image-set descriptors and named third-party suites to rainbond-opensource-app-deploy; market templates to rainbond-template-installer."
 ---
 
 # Rainbond App Assistant
