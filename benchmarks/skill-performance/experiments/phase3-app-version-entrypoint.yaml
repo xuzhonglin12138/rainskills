@@ -2,7 +2,7 @@ experiment_id: phase3-app-version-entrypoint
 track: performance
 classification: maintenance_only
 base_sha: 5fdf9bff0d865a9373cb6589ffc865c71c9b33fd
-candidate_sha: null
+candidate_sha: adcbbbb078eef16f3d8d1bf5d5ca780690758eff
 treatment: Convert rainbond-app-version-assistant/SKILL.md into a minimal conditional router and move version operations, workflow, and output detail into bounded references.
 primary_scenario: rainbond-app-version-assistant.01
 primary_metric: entrypoint_utf8_bytes
@@ -23,5 +23,16 @@ paired_judge:
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
 baseline:
   entrypoint_utf8_bytes: 16306
-result: pending
+measurement:
+  before_entrypoint_utf8_bytes: 16306
+  after_entrypoint_utf8_bytes: 4950
+  relative_change: -0.6964
+  largest_reference_utf8_bytes: 5922
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5

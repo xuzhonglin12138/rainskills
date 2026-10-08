@@ -1,0 +1,27 @@
+experiment_id: phase3-platform-query-entrypoint
+track: performance
+classification: maintenance_only
+base_sha: adcbbbb078eef16f3d8d1bf5d5ca780690758eff
+candidate_sha: null
+treatment: Normalize rainbond-platform-query/SKILL.md into the shared minimal-router structure while preserving its exclusive read-only query contract.
+primary_scenario: rainbond-platform-query.01
+primary_metric: entrypoint_utf8_bytes
+minimum_effect: entrypoint is at most 4096 UTF-8 bytes and retains the eight router sections
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - The Skill exposes only the fixed query command and never call/call_confirm.
+  - Narrow query scope, positive integer app_id, redaction, and no-mutation rules remain unchanged.
+  - Every linked reference resolves and the entrypoint remains self-contained for ordinary queries.
+prompt_hash: 06686df4ab34fe5a0bdc91a6d7ede7411c500ebc74488f86848686e48e550ed0
+fixture_hash: 9013a458210380f51c38f5e9799cf3ffe9fc5edec12aabe64cbd519165ba4092
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  entrypoint_utf8_bytes: 4095
+result: pending
+human_checkpoint: preapproved_through_phase5
