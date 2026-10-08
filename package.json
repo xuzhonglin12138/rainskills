@@ -77,6 +77,7 @@
     "test:runtime-version": "node --test tests/runtime-version-sync.test.js",
     "test:runtime-contracts": "node scripts/sync-runtime-contracts.mjs --check",
     "test:skill-benchmark": "node --test tests/skill-token-baseline.test.js",
+    "test:effect-evals": "node --test tests/effect-evals.test.js",
     "test:project-init-contract": "node --test tests/project-init-contract.test.js",
     "test:bootstrap-contract": "node --test tests/bootstrap-contract.test.js",
     "test:troubleshooter-contract": "node --test tests/troubleshooter-contract.test.js",

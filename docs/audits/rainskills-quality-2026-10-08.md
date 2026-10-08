@@ -108,6 +108,6 @@ The generic baseline was stronger in two cases:
 
 ## Audit artifacts
 
-- One `test-prompts.json` per logical Skill, 28 prompts total.
-- Root `results.tsv` with the 14 baseline scores.
+- At audit time, one `test-prompts.json` existed per logical Skill, 28 prompts total. These cases were later migrated to `tests/effect-evals/cases/` as the reproducible source.
+- The 14 baseline scores are historical audit material in `docs/audits/rainskills-skill-quality-baseline-2026-10-08.tsv`, not a reproducible performance baseline.
 - This report.

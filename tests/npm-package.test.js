@@ -145,6 +145,9 @@ test("packed artifact contains the installer and all skills but no development f
   assert(filePaths.has("scripts/build-skill-manifest.mjs"));
   assert(filePaths.has("scripts/install-local-cli.mjs"));
   assert(filePaths.has("install.sh"));
+  assert.equal([...filePaths].some((filePath) => filePath.endsWith("test-prompts.json")), false);
+  assert.equal([...filePaths].some((filePath) => filePath.startsWith("tests/effect-evals/")), false);
+  assert.equal(filePaths.has("results.tsv"), false);
   assert(![...filePaths].some((filePath) => filePath.startsWith("pi/")));
   assert(filePaths.has("rainbond-platform-installer/scripts/platform-installer.js"));
   assert(filePaths.has("rainbond-platform-installer/scripts/auto-update.js"));
