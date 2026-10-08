@@ -113,6 +113,26 @@ function runtimeContract(gate, skillId) {
       throw new Error(`${skillId} query CLI contract 无效`);
     }
   }
+  if (skillId === "rainbond-delivery-verifier") {
+    const expectedProbe = {
+      argv: [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "delivery",
+        "probe",
+        "--input",
+        "-",
+        "--skill-id",
+        skillId,
+      ],
+      policy_schema_source: "schemas/delivery-probe-policy.schema.yaml",
+      stdin_schema_source: "schemas/delivery-probe-input.schema.yaml",
+      result_schema_source: "schemas/delivery-probe-result.schema.yaml",
+    };
+    if (JSON.stringify(contract.input_commands.delivery_probe) !== JSON.stringify(expectedProbe)) {
+      throw new Error(`${skillId} delivery probe CLI contract 无效`);
+    }
+  }
   for (const name of commandNames) {
     const argv = contract.input_commands?.[name]?.argv;
     if (!Array.isArray(argv) || !argv.includes("--skill-id") || !argv.includes(skillId)) {

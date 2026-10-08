@@ -105,6 +105,23 @@ test("every business Skill uses the single-runtime CLI contract", () => {
         },
       });
     }
+    if (skillId === "rainbond-delivery-verifier") {
+      assert.deepEqual(current.input_commands.delivery_probe, {
+        argv: [
+          "node",
+          "<home>/.rainbond/bin/rainskills-tools.js",
+          "delivery",
+          "probe",
+          "--input",
+          "-",
+          "--skill-id",
+          "rainbond-delivery-verifier",
+        ],
+        policy_schema_source: "schemas/delivery-probe-policy.schema.yaml",
+        stdin_schema_source: "schemas/delivery-probe-input.schema.yaml",
+        result_schema_source: "schemas/delivery-probe-result.schema.yaml",
+      });
+    }
   }
 });
 

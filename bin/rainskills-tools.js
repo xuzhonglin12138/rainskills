@@ -200,9 +200,26 @@ function parseCommand(args) {
   if (command === "query" && skillId !== "rainbond-platform-query") {
     throw new BridgeError("query command requires rainbond-platform-query", EXIT.USAGE);
   }
+  if (command === "delivery" && skillId !== "rainbond-delivery-verifier") {
+    throw new BridgeError("delivery probe requires rainbond-delivery-verifier", EXIT.USAGE);
+  }
   if (
     command === "context"
     && remaining[1] === "resolve"
+    && remaining.length === 4
+    && remaining[2] === "--input"
+    && remaining[3] === "-"
+  ) {
+    return {
+      command,
+      action: remaining[1],
+      input: remaining[3],
+      ...context,
+    };
+  }
+  if (
+    command === "delivery"
+    && remaining[1] === "probe"
     && remaining.length === 4
     && remaining[2] === "--input"
     && remaining[3] === "-"
@@ -1419,7 +1436,7 @@ async function main(args = process.argv.slice(2)) {
   let argumentRedactions = [];
   try {
     command = parseCommand(args);
-    if (["read", "call", "package-upload", "query", "context"].includes(command.command)) {
+    if (["read", "call", "package-upload", "query", "context", "delivery"].includes(command.command)) {
       const argumentsValue = readArguments(command.input);
       command.argumentsValue = argumentsValue;
       argumentRedactions = collectArgumentRedactions(argumentsValue);
@@ -1447,6 +1464,12 @@ async function main(args = process.argv.slice(2)) {
         process.stderr.write('{"warning":"using insecure HTTP transport"}\n');
       }
       const output = await executeWithUsageTelemetry(command, config);
+      process.stdout.write(`${JSON.stringify(fitOutput(output))}\n`);
+      return;
+    }
+    if (command.command === "delivery" && command.action === "probe") {
+      const { createDeliveryProbe } = require("./delivery-probe.js");
+      const output = await createDeliveryProbe()(command.argumentsValue);
       process.stdout.write(`${JSON.stringify(fitOutput(output))}\n`);
       return;
     }

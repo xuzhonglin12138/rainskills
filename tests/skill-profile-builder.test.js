@@ -149,6 +149,14 @@ test("embedded profile is explicit, transport-safe, and contains only Agent-comp
     assert.match(localGate, /npm root -g/, skill);
     assert.match(localGate, /~\/\.rainbond/, skill);
   }
+
+  const deliveryVerifier = fs.readFileSync(
+    path.join(output, "rainbond-delivery-verifier", "SKILL.md"),
+    "utf8",
+  );
+  assert.match(deliveryVerifier, /rainbond_probe_delivery_url/);
+  assert.match(deliveryVerifier, /delivered-but-needs-manual-validation/);
+  assert.match(deliveryVerifier, /rainskills\.delivery-probe-policy\.v1/);
   for (const markdownFile of markdownFiles(output)) {
     assert.doesNotMatch(
       fs.readFileSync(markdownFile, "utf8"),

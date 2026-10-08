@@ -141,6 +141,7 @@ test("packed artifact contains the installer and all skills but no development f
   assert(filePaths.has("agents/openai.yaml"));
   assert(filePaths.has("bin/rainskills.js"));
   assert(filePaths.has("bin/rainskills-tools.js"));
+  assert(filePaths.has("bin/delivery-probe.js"));
   assert(filePaths.has("scripts/build-skill-manifest.mjs"));
   assert(filePaths.has("scripts/install-local-cli.mjs"));
   assert(filePaths.has("install.sh"));
@@ -314,6 +315,7 @@ test("the packed default installer installs only Skills and prints the approved 
   assert.equal(fs.existsSync(installedRootSkill), true);
   assert.match(fs.readFileSync(installedRootSkill, "utf8"), /只保存一个全局运行环境/);
   assert.equal(fs.existsSync(path.join(home, ".rainbond", "bin", "rainskills-tools.js")), true);
+  assert.equal(fs.existsSync(path.join(home, ".rainbond", "bin", "delivery-probe.js")), true);
   assert.equal(fs.existsSync(path.join(home, ".rainbond", "bin", "rainskills-skill-manifest.json")), true);
   assert.equal(fs.existsSync(path.join(home, ".rainbond", "lib", "rainbond-platform-installer", "scripts", "single-runtime.js")), true);
   const installedRuntimeRoot = path.join(home, ".rainbond", "lib", "rainskills");

@@ -162,6 +162,21 @@ Hermes Agent 执行带 `--input -` 的一次性业务命令时，使用 `termina
       ],
       "stdin_schema_source": "tool-catalog"
     },
+    "delivery_probe": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "delivery",
+        "probe",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-delivery-verifier"
+      ],
+      "policy_schema_source": "schemas/delivery-probe-policy.schema.yaml",
+      "stdin_schema_source": "schemas/delivery-probe-input.schema.yaml",
+      "result_schema_source": "schemas/delivery-probe-result.schema.yaml"
+    },
     "call": {
       "argv": [
         "node",
@@ -340,6 +355,20 @@ no caching), recommend in two layers:
 Never present a source-code refactor as the only path when a deployment-layer mitigation
 exists.
 
+## Bounded URL probe contract
+
+Any `delivered + verified` result must come from the shared bounded [policy](schemas/delivery-probe-policy.schema.yaml), [input](schemas/delivery-probe-input.schema.yaml), and [result](schemas/delivery-probe-result.schema.yaml) schemas using `policy_version = rainskills.delivery-probe-policy.v1`. In the CLI profile execute only `delivery probe --input - --skill-id rainbond-delivery-verifier`. In the embedded profile call the fixed server-owned `rainbond_probe_delivery_url` adapter with the same schemas and policy. The model, curl, direct HTTP, and a free-form browser are never fallback probe implementations; if the adapter is unavailable, keep the candidate URL and downgrade to `delivered-but-needs-manual-validation`.
+
+Safety policy:
+- allow only HTTP/HTTPS and HEAD/GET; reject URL userinfo
+- resolve DNS before every request and every followed redirect; reject any loopback, private, link-local, unspecified, multicast, reserved, documentation, or other non-public IPv4/IPv6 address before sending a request
+- pin the validated address into the request lookup so DNS rebinding cannot switch the connection after validation
+- follow at most three same-host redirects; allow same-host HTTP-to-HTTPS upgrades, reject HTTPS downgrade
+- for a cross-host redirect, record the target and stop with manual validation; never follow it automatically
+- send no Cookie, Authorization, Rainbond credential, or other ambient credential
+- enforce a 5-second connection timeout, 15-second total timeout, and 256 KiB response-body limit
+- if policy rejects the URL, do not send a request; retain the candidate URL and downgrade to `delivered-but-needs-manual-validation`
+
 ## Workflow
 
 Follow this order.
@@ -390,10 +419,11 @@ When reverse-proxy full-stack behavior is expected:
 - do not switch to the backend component's direct URL as the preferred user-facing URL unless the app is actually backend-only
 
 6. Verify user-facing path as far as safely possible
-- if an access URL is available and safe to inspect, check whether the route appears reachable
-- if reverse-proxy full-stack behavior is expected, check both the root path and the API path on the same host
+- if an access URL is available, run the bounded adapter; never inspect it with a free-form HTTP or browser fallback
+- if reverse-proxy full-stack behavior is expected, run separate bounded probes for both the root path and the same-host API path
 - if the root path returns HTML but the API path fails, returns a provider intercept page, or routes to the wrong upstream, treat delivery as not complete
-- if current environment cannot directly verify the external URL, do not fake success
+- for static frontends, use bounded GET probes for the entry document, one representative static asset, and one deep-link path; evaluate returned MIME and bounded metadata without retaining the response body
+- if the adapter is unavailable, rejects the URL, times out, reaches the body limit, or requires cross-host validation, do not fake success
 - report the final delivery outcome as `delivered-but-needs-manual-validation`
 - when the app serves a built frontend, run the static frontend checklist from
   Verification Principle 6 as far as the current environment allows, and record
@@ -452,6 +482,7 @@ DeliveryVerificationResult:
   preferred_access_url: string | null
   verification_mode: verified | inferred | manual_validation_needed
   blocker: string | null
+  probe_evidence: object | null
   next_action: stop | manual_url_validation | run_troubleshooter | fix_cluster_capacity_first | code_build_handoff
 ```
 
@@ -464,6 +495,7 @@ Example object:
   "preferred_access_url": "https://example-team-cn.rainbond.me/my-app",
   "verification_mode": "inferred",
   "blocker": null,
+  "probe_evidence": null,
   "next_action": "manual_url_validation"
 }
 ```
@@ -497,6 +529,7 @@ DeliveryVerificationResult:
   preferred_access_url: https://example-team-cn.rainbond.me/my-app
   verification_mode: inferred
   blocker: null
+  probe_evidence: null
   next_action: manual_url_validation
 ```
 ````
@@ -539,6 +572,7 @@ Only in explicit structured contract mode, respond using exactly these sections:
 - keep enum values and field names aligned with the schema above
 - prefer `manual_validation_needed` over ad hoc wording in the structured object
 - for `blocked`, include a non-null `blocker`
+- `delivered + verified` requires non-null bounded `probe_evidence`; adapter-unavailable and policy-rejected cases use manual validation instead
 
 ## Common Mistakes
 
