@@ -239,7 +239,7 @@ def validate_description_boundaries(
     failures: list[str],
 ) -> None:
     app_statements = description_clauses(app_description)
-    open_statements = description_statements(open_description)
+    open_statements = description_clauses(open_description)
     app_normalized = normalize(app_description)
 
     app_targets = ("rainbond app assistant", "app assistant")
@@ -310,22 +310,19 @@ def validate_description_boundaries(
     )
 
     open_descriptor_owner = any(
-        (
-            statement.startswith("use when")
-            or directed_relation(
-                statement,
-                ("descriptor", "compose", "helm", "image set"),
-                open_targets,
-            )
+        "supplied" in statement
+        and all(kind in statement for kind in ("compose", "helm", "image set", "descriptors"))
+        and ("deploy" in statement or statement.startswith("use when"))
+        and not any(
+            category_is_locally_negated(statement, category)
+            for category in ("compose", "helm", "image set", "descriptors")
         )
-        and "supplies" in statement
-        and all(kind in statement for kind in ("compose", "helm", "image set", "descriptor"))
         for statement in open_statements
     )
     open_named_suite_owner = any(
-        statement.startswith("use when")
-        and "named third party open source suite" in statement
-        and not category_is_locally_negated(statement, "named third party open source suite")
+        "named third party open source suites" in statement
+        and ("deploy" in statement or statement.startswith("use when"))
+        and not category_is_locally_negated(statement, "named third party open source suites")
         for statement in open_statements
     )
     require(
@@ -334,30 +331,30 @@ def validate_description_boundaries(
         failures,
     )
     open_exclusion = any(
-        "bare git" in statement
-        and "directory" in statement
-        and "package" in statement
-        and "private image project" in statement
+        "current local projects" in statement
+        and "source packages" in statement
+        and "ordinary git" in statement
+        and "private images" in statement
         and all(
             directed_relation(
                 statement,
                 categories,
                 app_targets,
-                allow_negated_category=True,
             )
             for categories in (
-                ("bare git",),
-                ("source directory", "source package", "project source"),
+                ("current local projects",),
+                ("source packages",),
+                ("ordinary git",),
+                ("private images",),
             )
         )
         for statement in open_statements
     ) and any(
-        "market template" in statement
+        "market templates" in statement
         and directed_relation(
             statement,
-            ("market template",),
+            ("market templates",),
             template_targets,
-            allow_negated_category=True,
         )
         for statement in open_statements
     )

@@ -25,3 +25,14 @@ test("app assistant discovery metadata is compact and preserves routing boundari
   assert.match(value, /rainbond-opensource-app-deploy/);
   assert.match(value, /rainbond-template-installer/);
 });
+
+test("open-source deploy discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-opensource-app-deploy/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /Compose/i);
+  assert.match(value, /Helm/i);
+  assert.match(value, /image-set/i);
+  assert.match(value, /named (?:third-party )?open-source suites/i);
+  assert.match(value, /rainbond-app-assistant/);
+  assert.match(value, /rainbond-template-installer/);
+});

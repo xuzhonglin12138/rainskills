@@ -170,13 +170,13 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
         )
         self.mutate(
             f"{OPEN_NAME}/SKILL.md",
-            "Use when the user supplies a third-party Docker Compose",
-            "use when the user supplies a third party docker   compose",
+            "Deploy supplied third-party Compose",
+            "deploy supplied third party   compose",
         )
         self.mutate(
             f"{OPEN_NAME}/SKILL.md",
-            "Helm chart/values, or container image-set descriptor, or explicitly asks",
-            "HELM chart / values, or container image set descriptor, or explicitly asks",
+            "Helm, or image-set descriptors",
+            "HELM, or image set descriptors",
         )
 
         result = self.run_cross()
@@ -387,8 +387,8 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
         original_open = open_path.read_text(encoding="utf-8")
         with self.subTest(boundary="source-to-app-assistant"):
             open_source = original_open.replace(
-                "use rainbond-app-assistant for project/source requests and rainbond-template-installer for market templates.",
-                "use rainbond-template-installer for project/source requests and market templates while rainbond-app-assistant remains available.",
+                "Route current/local projects, source packages, ordinary Git repos, and private images to rainbond-app-assistant; market templates to rainbond-template-installer.",
+                "Route current/local projects, source packages, ordinary Git repos, and private images to rainbond-template-installer; market templates to rainbond-template-installer.",
                 1,
             )
             open_path.write_text(open_source, encoding="utf-8")
@@ -412,7 +412,7 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
         open_source = open_path.read_text(encoding="utf-8")
         open_source = re.sub(
             r'^description:.*$',
-            'description: "Use when the user supplies Docker Compose content, a Helm chart/values, a container image-set descriptor, or explicitly requests a named third-party open-source suite. Current/local projects, source directory/package requests, ordinary bare Git URLs, and private-image projects route to rainbond-app-assistant. Confirmed market templates route to rainbond-template-installer."',
+            'description: "Deploy supplied third-party Compose, Helm, or image-set descriptors and named third-party open-source suites. Route current/local projects, source packages, ordinary Git repos, and private images to rainbond-app-assistant; market templates to rainbond-template-installer."',
             open_source,
             count=1,
             flags=re.MULTILINE,

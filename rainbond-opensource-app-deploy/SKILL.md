@@ -1,6 +1,6 @@
 ---
 name: rainbond-opensource-app-deploy
-description: "Use when the user supplies a third-party Docker Compose file/content, Helm chart/values, or container image-set descriptor, or explicitly asks to deploy a named third-party open-source suite such as Harbor, Dify, or n8n. Not for the current/local project, source directory/package, an ordinary bare Git repository, private-image project, or confirmed market template; use rainbond-app-assistant for project/source requests and rainbond-template-installer for market templates."
+description: "Deploy supplied third-party Compose, Helm, or image-set descriptors and named third-party open-source suites such as Harbor, Dify, or n8n. Route current/local projects, source packages, ordinary Git repos, and private images to rainbond-app-assistant; market templates to rainbond-template-installer."
 ---
 
 # Rainbond Open-source App Deploy
