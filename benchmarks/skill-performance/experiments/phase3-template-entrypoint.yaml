@@ -1,0 +1,27 @@
+experiment_id: phase3-template-entrypoint
+track: performance
+classification: maintenance_only
+base_sha: f092ad350728489f4bb98480496b9238548bfdb7
+candidate_sha: null
+treatment: Convert rainbond-template-installer/SKILL.md into a minimal conditional router and move resolution, workflow, and output detail into bounded references.
+primary_scenario: rainbond-template-installer.01
+primary_metric: entrypoint_utf8_bytes
+minimum_effect: entrypoint is at most 12288 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Local/cloud source, template/version resolution, target-app collision, confirmation, deployment, and readiness rules remain unchanged.
+  - Every linked reference resolves and no conditional reference exceeds 16384 bytes.
+  - A normal branch loads at most two conditional references and no more than 32768 reference bytes.
+prompt_hash: 680b4b194ed31f5faf711438e4ba62bd7438cd29a63eef1949e2547728a07662
+fixture_hash: 2092d43a8cda00ac6bf1a90c9d880897d9a81d145d0b9ffd4430c62131a346e9
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  entrypoint_utf8_bytes: 14558
+result: pending
+human_checkpoint: preapproved_through_phase5

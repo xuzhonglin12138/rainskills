@@ -2,7 +2,7 @@ experiment_id: phase3-env-sync-entrypoint
 track: performance
 classification: maintenance_only
 base_sha: e4735d32c7600aa7bf57e75b7b4ee7dac376efda
-candidate_sha: null
+candidate_sha: f092ad350728489f4bb98480496b9238548bfdb7
 treatment: Convert rainbond-env-sync/SKILL.md into a minimal conditional router and move policy, workflow, and output detail into bounded references.
 primary_scenario: rainbond-env-sync.01
 primary_metric: entrypoint_utf8_bytes
@@ -23,5 +23,17 @@ paired_judge:
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
 baseline:
   entrypoint_utf8_bytes: 17222
-result: pending
+measurement:
+  before_entrypoint_utf8_bytes: 17222
+  after_entrypoint_utf8_bytes: 4978
+  relative_change: -0.7109
+  largest_reference_utf8_bytes: 5578
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+  env_sync_contract: 4/4 passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5
