@@ -1,6 +1,6 @@
 ---
 name: rainbond-fullstack-troubleshooter
-description: "Use only when the user explicitly asks for a bounded build, runtime, or access troubleshooting phase for an existing Rainbond app. Trigger phrases include: 只帮我看看 backend 为什么构建失败，先查事件和构建日志 / why build failed / troubleshoot runtime only. Do not use for a generic current-project deployment request; route that to rainbond-app-assistant."
+description: "Troubleshoot a bounded build, runtime, or access problem for an existing Rainbond app. Use for “backend 为什么构建失败”, “why build failed”, or “troubleshoot runtime”. Do not use for generic current-project deployment; route it to rainbond-app-assistant."
 ---
 
 # Rainbond Fullstack Troubleshooter
