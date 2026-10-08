@@ -124,3 +124,13 @@ test("plugin manager discovery metadata is compact and preserves routing boundar
   assert.match(value, /uninstall/i);
   assert.match(value, /AI model operations/i);
 });
+
+test("platform query discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-platform-query/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /explicit read-only Rainbond questions/i);
+  assert.match(value, /current user, enterprise, team, region, app, or component/i);
+  assert.match(value, /deployment/i);
+  assert.match(value, /mutation/i);
+  assert.match(value, /troubleshooting/i);
+});

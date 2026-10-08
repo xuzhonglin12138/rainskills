@@ -1,6 +1,6 @@
 ---
 name: rainbond-platform-query
-description: Use for a user-requested, read-only Rainbond platform query about the current user, enterprise, team, region, app, or component. Do not use for deployment, changes, publishing, troubleshooting, or installation.
+description: Answer explicit read-only Rainbond questions about the current user, enterprise, team, region, app, or component. Exclude deployment, mutation, publishing, troubleshooting, and installation.
 ---
 
 # Rainbond Platform Query
