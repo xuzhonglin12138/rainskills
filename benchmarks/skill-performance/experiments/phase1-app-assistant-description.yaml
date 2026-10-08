@@ -1,0 +1,26 @@
+experiment_id: phase1-app-assistant-description
+track: performance
+classification: maintenance_only
+base_sha: 072a6897300a7fb3ba750930e0140fbd4447d342
+candidate_sha: null
+treatment: Shorten only rainbond-app-assistant frontmatter.description without changing its body or workflow.
+primary_scenario: deploy-current-project
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 450 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Ordinary bare Git stays owned by rainbond-app-assistant.
+  - Named third-party suites stay owned by rainbond-opensource-app-deploy.
+  - Confirmed market templates stay owned by rainbond-template-installer.
+  - Explicit Rainbond markers continue to select rainbond-app-assistant.
+prompt_hash: 36a7952f3b3e4da425b2b5882070e53c8a1d24c763bb85a28c2c117455fa58b8
+fixture_hash: 5119c7d7f804f01508a4634bd2a472042c9b4bf2d7743ebcda02c23eff660645
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: pending

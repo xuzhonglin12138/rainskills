@@ -1,8 +1,8 @@
 # CHECKPOINT A — Phase 0 baseline
 
-Status: **awaiting human approval; do not enter Phase 1**
+Status: **approved for maintenance-only Phase 1 on 2026-10-08**
 
-Human owner: user approval pending
+Human owner: user
 
 Frozen base SHA: `e7fca2f9cafe2fcad64422e3411bc03c5925c57b`
 
@@ -78,10 +78,11 @@ These are diagnostics, not performance results. Correctness-driven deletions are
 
 ## Decision gate
 
-The current evidence does **not** prove discovery metadata is a material user-perceived bottleneck because valid host Token/timing telemetry is unavailable. Under the approved plan, Phase 1 therefore does not start automatically. Phase 2–6 also remain unapproved.
+The current evidence does **not** prove discovery metadata is a material user-perceived bottleneck because valid host Token/timing telemetry is unavailable. The user explicitly approved continuing with maintenance-only Phase 1. Each treatment remains ineligible for a performance claim and is classified `neutral_refactor` unless later controlled evidence reaches a preregistered user-perceived minimum effect. Phase 2–6 remain unapproved.
 
-To continue, the human checkpoint must explicitly choose one of:
+Approval conditions:
 
-1. restore working `codex exec` authentication and provide a disposable Rainbond environment with reset/cleanup, then repeat Phase 0B; or
-2. explicitly accept the unavailable host metrics and approve a maintenance-only Phase 1 experiment, which must be labeled `uncontrolled`/`neutral_refactor` unless real performance evidence later meets its preregistered minimum effect; or
-3. stop the Performance Track with this checkpoint report while retaining the completed Correctness Track.
+1. host Token/timing remains `unavailable` until Codex CLI authentication is repaired;
+2. the newly connected Rainbond environment is not used for write benchmarks until reset and cleanup are defined;
+3. no description treatment may claim performance improvement from byte reduction alone;
+4. deterministic routing and safety guardrails plus the required human checkpoint replace unavailable independent judges; this is a user-directed exception to the Darwin workflow, not equivalent evidence.
