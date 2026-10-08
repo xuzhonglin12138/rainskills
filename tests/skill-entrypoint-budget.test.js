@@ -82,3 +82,8 @@ test("template installer entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-template-installer", 12 * 1024);
   assertReferenceBudgets("rainbond-template-installer");
 });
+
+test("app version entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-app-version-assistant", 12 * 1024);
+  assertReferenceBudgets("rainbond-app-version-assistant");
+});
