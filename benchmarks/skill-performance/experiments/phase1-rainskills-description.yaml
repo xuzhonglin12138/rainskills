@@ -1,0 +1,25 @@
+experiment_id: phase1-rainskills-description
+track: performance
+classification: maintenance_only
+base_sha: 1c2e7e1be5ea0da177a1f2d5a250da5aef3e2e7e
+candidate_sha: null
+treatment: Shorten only the root rainskills frontmatter.description without changing its body or workflow.
+primary_scenario: rainskills.01
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 320 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Rainskills installation, setup, repair, and single-runtime operations stay owned by this Skill.
+  - Application deployment stays outside this Skill.
+  - Connect, reconnect, inspect, and replace operations remain discoverable.
+prompt_hash: c117f60279f882f28a627ec71a0ec0005b91caca9f381ec9b04468d1e55dabc6
+fixture_hash: b9d7f977be00b55c12bb83898da0919493f92a7f1deff64ee79937c8367cdd26
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: auto_approved_by_user

@@ -2,7 +2,7 @@ experiment_id: phase1-platform-installer-description
 track: performance
 classification: maintenance_only
 base_sha: d564479e7f515977bf894d567dbffcbeaf1ac56f
-candidate_sha: null
+candidate_sha: 1c2e7e1be5ea0da177a1f2d5a250da5aef3e2e7e
 treatment: Shorten only rainbond-platform-installer frontmatter.description without changing its body or workflow.
 primary_scenario: rainbond-platform-installer.01
 primary_metric: description_utf8_bytes
@@ -21,5 +21,15 @@ run_order_seed: null
 paired_judge:
   status: unavailable
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
-result: pending
+measurement:
+  before_description_utf8_bytes: 181
+  after_description_utf8_bytes: 163
+  relative_change: -0.0994
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
 human_checkpoint: auto_approved_by_user
