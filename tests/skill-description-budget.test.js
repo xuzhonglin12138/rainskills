@@ -46,3 +46,12 @@ test("troubleshooter discovery metadata is compact and preserves routing boundar
   assert.match(value, /existing Rainbond app/i);
   assert.match(value, /rainbond-app-assistant/);
 });
+
+test("delivery verifier discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-delivery-verifier/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /delivery/i);
+  assert.match(value, /access/i);
+  assert.match(value, /existing Rainbond app/i);
+  assert.match(value, /rainbond-app-assistant/);
+});

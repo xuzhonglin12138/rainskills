@@ -149,7 +149,7 @@ required_markers:
     - "route that to `rainbond-app-assistant`"
     - "只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`"
   rainbond-delivery-verifier:
-    - "Do not use for a generic current-project deployment request"
+    - "the user gives a generic current-project deployment"
     - "route that to `rainbond-app-assistant`"
     - "只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`"
   rainbond-platform-query:

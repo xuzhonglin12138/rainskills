@@ -1,6 +1,6 @@
 ---
 name: rainbond-delivery-verifier
-description: "Use only when the user explicitly asks for final delivery or access verification of an existing Rainbond app. Trigger phrases include: 只帮我确认当前应用是否已经交付成功，并给我访问地址 / verify delivery / confirm the access URL. Do not use for a generic current-project deployment request; route that to rainbond-app-assistant."
+description: "Verify final delivery and user access for an existing Rainbond app. Use for “确认当前应用是否已经交付成功，并给我访问地址”, “verify delivery”, or “confirm access URL”. Do not use for generic current-project deployment; route it to rainbond-app-assistant."
 ---
 
 # Rainbond Delivery Verifier
