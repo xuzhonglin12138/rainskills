@@ -33,11 +33,10 @@ function runtimeGateSource(skillId) {
 }
 
 function runtimeRoutingSource(skillId) {
-  const referencePath = path.join(root, skillId, "references", "runtime-routing.md");
-  const sourcePath = fs.existsSync(referencePath)
-    ? referencePath
-    : path.join(root, skillId, "SKILL.md");
-  return fs.readFileSync(sourcePath, "utf8");
+  return fs.readFileSync(
+    path.join(root, skillId, "references", "generated", "runtime-routing.md"),
+    "utf8",
+  );
 }
 
 function gate(skillId) {

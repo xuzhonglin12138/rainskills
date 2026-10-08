@@ -52,7 +52,7 @@ description: "Deploy supplied third-party Compose, Helm, or image-set descriptor
 
 ## Runtime 与安全边界
 
-官方部署清单验证后，任何 Rainbond 查询、环境连接、平台安装或变更前必须读取 [generated Runtime Gate](references/generated/runtime-gate.md)；没有可用运行环境时按 Gate 的 mode 读取 [runtime routing](references/runtime-routing.md)。Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace/app 绑定或授权状态变化时 Gate 失效。transport、鉴权、context、确认与运行时安全契约全部由该 Gate 提供。
+官方部署清单验证后，任何 Rainbond 查询、环境连接、平台安装或变更前必须读取 [generated Runtime Gate](references/generated/runtime-gate.md)；没有可用运行环境时按 Gate 的 mode 读取 [generated Runtime Routing](references/generated/runtime-routing.md)。Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace/app 绑定或授权状态变化时 Gate 失效。transport、鉴权、context、确认与运行时安全契约全部由该 Gate 提供。
 
 - 不得绕过 Gate 或读取相邻 Skill 的 Gate。
 - 可变调用先取得 confirmation ID，再用完全相同输入确认执行；写调用不得自动重放。

@@ -7,7 +7,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED = {
     "generated/runtime-gate.md",
-    "runtime-routing.md",
+    "generated/runtime-routing.md",
     "plugin-discovery.md",
     "plugin-lifecycle.md",
     "recovery.md",

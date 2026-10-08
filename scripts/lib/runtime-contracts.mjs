@@ -154,6 +154,85 @@ export function renderRuntimeGate({ sourceRoot, packageVersion, overlay, profile
   return `<!-- generated-by: scripts/sync-runtime-contracts.mjs -->\n<!-- source-sha256: ${sourceDigest} -->\n<!-- profile: ${profile} -->\n${body.trimEnd()}\n`;
 }
 
+function readRoutingModes(sourceRoot) {
+  const source = fs.readFileSync(path.join(sourceRoot, "contracts", "runtime", "routing-modes.yaml"), "utf8");
+  const parsed = YAML.parse(source);
+  if (parsed?.schema !== "rainskills.runtime-routing-modes.v1" || !parsed.modes || typeof parsed.modes !== "object") {
+    throw new Error("runtime routing modes schema is invalid");
+  }
+  const actualModes = Object.keys(parsed.modes).sort();
+  const expectedModes = [...MISSING_RUNTIME_MODES].sort();
+  if (JSON.stringify(actualModes) !== JSON.stringify(expectedModes)) throw new Error("runtime routing mode set is incomplete");
+  for (const [mode, config] of Object.entries(parsed.modes)) {
+    if (
+      !config
+      || typeof config.message_id !== "string"
+      || !config.message_id
+      || !Array.isArray(config.choices)
+      || config.choices.length < 2
+      || config.choices.some((choice) => typeof choice !== "string" || !choice)
+      || typeof config.allow_install_private !== "boolean"
+    ) {
+      throw new Error(`runtime routing mode is invalid: ${mode}`);
+    }
+  }
+  return { parsed, source };
+}
+
+export function renderRuntimeRouting({ sourceRoot, overlay, profile }) {
+  validateRuntimeOverlay(overlay, overlay.skill_id);
+  assertEnum(profile, PROFILES, "profile");
+  if (!overlay.profiles.includes(profile)) throw new Error(`${overlay.skill_id} does not support ${profile} profile`);
+  const { parsed, source } = readRoutingModes(sourceRoot);
+  const mode = parsed.modes[overlay.missing_runtime_mode];
+  const canonicalOverlay = `${JSON.stringify(overlay, null, 2)}\n`;
+  const sourceDigest = sha256(`${source}\0${canonicalOverlay}\0${profile}`);
+  const header = [
+    "<!-- generated-by: scripts/sync-runtime-contracts.mjs -->",
+    `<!-- source-sha256: ${sourceDigest} -->`,
+    `<!-- profile: ${profile} -->`,
+    "<!-- rainskills-runtime-routing:start -->",
+    "# 缺少运行环境时（生成文件）",
+    "",
+    `- \`skill_id\`: \`${overlay.skill_id}\``,
+    `- \`missing_runtime_mode\`: \`${overlay.missing_runtime_mode}\``,
+    `- \`resume_target\`: \`${overlay.resume_target}\``,
+    "",
+  ];
+  if (profile === "embedded") {
+    return [...header,
+      "当前会话缺少所需 `rainbond_*` Tool 时立即停止，说明需要由 Agent 管理员恢复服务端 Rainbond 连接。不得展示客户端环境菜单、运行本机命令、索取凭据或切换传输。",
+      "",
+      "<!-- rainskills-runtime-routing:end -->",
+      "",
+    ].join("\n");
+  }
+  const body = [];
+  if (overlay.missing_runtime_mode === "new_application") {
+    body.push(
+      "意图不明确时，只问用户是在部署新应用还是管理已有应用；确认前不连接运行环境，也不展示选项。",
+      "",
+      `新应用请求执行固定 launcher 的 \`runtime message --id ${mode.message_id}\`，只原样转发消息 marker 之间的正文。然后只显示：`,
+      "",
+      ...mode.choices.map((choice, index) => `${index + 1}) ${choice}`),
+      "",
+      "选择云端环境时连接 Rainbond Cloud；选择本机环境时使用 `--install-private --location local`；选择独立服务器时使用 `--install-private --location server`；选择已有 Rainbond 时先执行 `runtime message --id private-console-origin`，再连接用户给出的 Console origin。不得增加私有环境子菜单。",
+    );
+  } else {
+    body.push(
+      `只让用户选择 \`${mode.choices[0]}\` 或 \`${mode.choices[1]}\`。已有私有 Rainbond 使用固定 launcher 的 \`runtime message --id ${mode.message_id}\` 获取 Console origin；不得安装新平台，也不得用新平台代替目标资源。`,
+    );
+  }
+  body.push(
+    "",
+    `连接和 live probe 成功后恢复到 \`${overlay.resume_target}\`；不得提前询问无关业务字段，也不得保存环境 ID、operation ID 或 intent JSON。`,
+    "",
+    "<!-- rainskills-runtime-routing:end -->",
+    "",
+  );
+  return [...header, ...body].join("\n");
+}
+
 function writeAtomically(filePath, content) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true, mode: 0o755 });
   const temporary = `${filePath}.tmp-${process.pid}`;
@@ -174,11 +253,21 @@ export function syncRuntimeContracts({ sourceRoot, check = false, profile = "cli
       stale.push(path.relative(sourceRoot, generatedPath));
       if (!check) writeAtomically(generatedPath, expected);
     }
+    const expectedRouting = renderRuntimeRouting({ sourceRoot, overlay, profile });
+    const generatedRoutingPath = path.join(sourceRoot, skillId, "references", "generated", "runtime-routing.md");
+    const currentRouting = fs.existsSync(generatedRoutingPath) ? fs.readFileSync(generatedRoutingPath, "utf8") : null;
+    if (currentRouting !== expectedRouting) {
+      stale.push(path.relative(sourceRoot, generatedRoutingPath));
+      if (!check) writeAtomically(generatedRoutingPath, expectedRouting);
+    }
     if (profile === "cli") {
       const entrypoint = fs.readFileSync(path.join(sourceRoot, skillId, "SKILL.md"), "utf8");
       if (entrypoint.includes("<!-- rainskills-runtime-gate:start -->")) throw new Error(`${skillId} source SKILL.md still embeds the complete Runtime Gate`);
       if (!entrypoint.includes("references/generated/runtime-gate.md")) throw new Error(`${skillId} source SKILL.md does not load its generated Runtime Gate`);
+      if (entrypoint.includes("<!-- rainskills-runtime-routing:start -->")) throw new Error(`${skillId} source SKILL.md still embeds Runtime Routing`);
+      if (!entrypoint.includes("references/generated/runtime-routing.md")) throw new Error(`${skillId} source SKILL.md does not load generated Runtime Routing`);
       if (fs.existsSync(path.join(sourceRoot, skillId, "references", "runtime-gate.md"))) throw new Error(`${skillId} retains a legacy editable Runtime Gate`);
+      if (fs.existsSync(path.join(sourceRoot, skillId, "references", "runtime-routing.md"))) throw new Error(`${skillId} retains legacy editable Runtime Routing`);
     }
   }
   if (check && stale.length > 0) throw new Error(`generated Runtime Gate is stale: ${stale.join(", ")}`);

@@ -1,0 +1,30 @@
+schema: rainskills.runtime-routing-modes.v1
+modes:
+  new_application:
+    message_id: new-application-environment
+    choices:
+      - 云端环境（免费体验）
+      - 本机环境
+      - 独立服务器
+      - 已有 Rainbond
+    allow_install_private: true
+  existing_application:
+    message_id: private-console-origin
+    choices: [Rainbond Cloud, 已有私有 Rainbond]
+    allow_install_private: false
+  linked_project:
+    message_id: private-console-origin
+    choices: [Rainbond Cloud, 已有私有 Rainbond]
+    allow_install_private: false
+  ai_workload:
+    message_id: private-console-origin
+    choices: [Rainbond Cloud, 已有私有 Rainbond]
+    allow_install_private: false
+  plugin_management:
+    message_id: private-console-origin
+    choices: [Rainbond Cloud, 已有私有 Rainbond]
+    allow_install_private: false
+  read_only_query:
+    message_id: private-console-origin
+    choices: [Rainbond Cloud, 已有私有 Rainbond]
+    allow_install_private: false

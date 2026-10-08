@@ -147,20 +147,20 @@ required_markers:
   rainbond-fullstack-troubleshooter:
     - "the user gives a generic current-project deployment"
     - "route that to `rainbond-app-assistant`"
-    - "只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`"
+    - "只让用户选择 `Rainbond Cloud` 或 `已有私有 Rainbond`"
   rainbond-delivery-verifier:
     - "the user gives a generic current-project deployment"
     - "route that to `rainbond-app-assistant`"
-    - "只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`"
+    - "只让用户选择 `Rainbond Cloud` 或 `已有私有 Rainbond`"
   rainbond-platform-query:
     - "explicit, read-only platform questions"
     - "Do not expand a narrow question"
   rainbond-app-version-assistant:
     - "<!-- rainskills-runtime-gate:start -->"
-    - "只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`"
+    - "只让用户选择 `Rainbond Cloud` 或 `已有私有 Rainbond`"
   rainbond-env-sync:
     - "<!-- rainskills-runtime-gate:start -->"
-    - "只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`"
+    - "只让用户选择 `Rainbond Cloud` 或 `已有私有 Rainbond`"
   rainbond-project-init:
     - "<!-- rainskills-runtime-gate:start -->"
     - "1) 云端环境（免费体验）"

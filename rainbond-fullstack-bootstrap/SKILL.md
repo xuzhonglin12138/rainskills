@@ -46,6 +46,8 @@ requests use verified platform context and do not create local project files.
 
 首次需要 Rainbond 时读取 [generated Runtime Gate](references/generated/runtime-gate.md)，本会话只读取一次。仅当 Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace/app 绑定或授权状态变化时失效并重新读取。
 
+没有可用运行环境时，按 Gate 声明的 mode 读取 [generated Runtime Routing](references/generated/runtime-routing.md)；不得从其他 Skill 复制或改写环境选项。
+
 不可弱化的不变量：
 
 - 只使用 Gate 声明的 transport、command set、scope 与缺环境策略；不得切换到替代通道。
@@ -56,30 +58,6 @@ requests use verified platform context and do not create local project files.
 
 工具名已知但字段不确定时，只调用一次 `describe <tool-name>`；工具名确实未知时，才调用一次带窄前缀的 `list --prefix <tool-prefix>`。禁止通过缺少字段的可变 `call` 逐项探测 schema，也禁止直接读取内部 `capabilities.json`。`list` / `describe` 只用于发现契约，不替代正式的读写调用。
 
-<!-- rainskills-runtime-routing:start -->
-## 缺少运行环境时
-
-先说：“可以，我会帮你创建应用和组件拓扑。不过目前还没有可用的应用运行环境。你刚安装的 Rainskills 是 AI 部署助手，它负责分析项目并执行部署；应用实际会运行在 Rainbond 上。Rainbond 是一套应用运行和管理平台，负责源码构建、容器运行、域名访问、日志和存储等工作，你不需要了解 Kubernetes。”
-
-先根据 intent 确认 scope，确认前不展示环境选项：`app_id` 和 `service_id` 都不存在是 new scope，任一存在是 existing scope。
-
-### 新建目标
-
-#### 选择运行环境
-
-intent 不含 `app_id` 和 `service_id` 时，请提示“请选择应用要运行的环境：”，并只显示：
-
-1) 云端环境（免费体验）
-2) 本机环境
-3) 独立服务器
-4) 已有 Rainbond
-
-选择 1 时执行 `saas` route；选择 2 时执行 `install-private` route，并使用 `["--location", "local"]`；选择 3 时执行 `install-private` route，并使用 `["--location", "server"]`；选择 4 时执行本地 launcher + `["runtime", "message", "--id", "private-console-origin"]`，收到地址后执行 `private-existing`。不得显示“私有环境”或部署位置中间层，不得重复询问部署位置，也不得在环境准备完成前询问应用来源。
-
-### 已有目标
-
-intent 含 `app_id` 或 `service_id` 时，已有应用只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`。选择已有私有 Rainbond 时执行本地 launcher + `["runtime", "message", "--id", "private-console-origin"]` 并原样输出。
-<!-- rainskills-runtime-routing:end -->
 
 ## Overview
 

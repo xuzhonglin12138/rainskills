@@ -5,7 +5,11 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { readRuntimeOverlay, renderRuntimeGate } from "./lib/runtime-contracts.mjs";
+import {
+  readRuntimeOverlay,
+  renderRuntimeGate,
+  renderRuntimeRouting,
+} from "./lib/runtime-contracts.mjs";
 
 const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const EMBEDDED_SKILLS = [
@@ -321,6 +325,12 @@ function buildEmbeddedProfile({ source_root: sourceRoot, output, revision }) {
         overlay,
         profile: "embedded",
       }),
+      { encoding: "utf8", mode: 0o600 },
+    );
+    const generatedRouting = path.join(destination, "references", "generated", "runtime-routing.md");
+    fs.writeFileSync(
+      generatedRouting,
+      renderRuntimeRouting({ sourceRoot: resolvedSource, overlay, profile: "embedded" }),
       { encoding: "utf8", mode: 0o600 },
     );
   }

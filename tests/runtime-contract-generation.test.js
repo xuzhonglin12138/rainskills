@@ -40,6 +40,10 @@ function generatedPath(root, skillId) {
   return path.join(root, skillId, "references", "generated", "runtime-gate.md");
 }
 
+function generatedRoutingPath(root, skillId) {
+  return path.join(root, skillId, "references", "generated", "runtime-routing.md");
+}
+
 function extractContract(content) {
   const match = content.match(/```json\n([\s\S]*?)\n```/);
   assert(match, "generated CLI Runtime Gate must contain its fixed JSON contract");
@@ -164,5 +168,63 @@ test("embedded profile receives generated embedded gates with no CLI-only transp
       /rainskills-tools\.js|rainskills\.js|Device Flow|write_stdin|require_escalated|npm root -g/,
       skillId,
     );
+  }
+});
+
+test("source entrypoints use generated Runtime Routing with no editable routing blocks", () => {
+  assert(fs.existsSync(path.join(repoRoot, "contracts", "runtime", "routing-modes.yaml")));
+  for (const skillId of skillIds) {
+    const entrypoint = fs.readFileSync(path.join(repoRoot, skillId, "SKILL.md"), "utf8");
+    assert.doesNotMatch(entrypoint, /<!-- rainskills-runtime-routing:start -->/, skillId);
+    assert.match(entrypoint, /references\/generated\/runtime-routing\.md/, skillId);
+    assert.equal(
+      fs.existsSync(path.join(repoRoot, skillId, "references", "runtime-routing.md")),
+      false,
+      `${skillId} must not retain editable Runtime Routing`,
+    );
+    const generated = fs.readFileSync(generatedRoutingPath(repoRoot, skillId), "utf8");
+    assert.match(generated, /generated-by: scripts\/sync-runtime-contracts\.mjs/);
+    assert.match(generated, /source-sha256: [a-f0-9]{64}/);
+    assert.match(generated, /profile: cli/);
+  }
+});
+
+test("generated Runtime Routing preserves flattened new-app and bounded existing-app choices", () => {
+  const newApp = fs.readFileSync(generatedRoutingPath(repoRoot, "rainbond-app-assistant"), "utf8");
+  assert.match(newApp, /new-application-environment/);
+  assert.match(newApp, /1\) 云端环境（免费体验）\s+2\) 本机环境\s+3\) 独立服务器\s+4\) 已有 Rainbond/);
+  assert.doesNotMatch(newApp, /私有环境（去对接）/);
+
+  for (const skillId of [
+    "rainbond-ai-assistant",
+    "rainbond-app-version-assistant",
+    "rainbond-delivery-verifier",
+    "rainbond-env-sync",
+    "rainbond-fullstack-troubleshooter",
+    "rainbond-platform-plugin-manager",
+    "rainbond-platform-query",
+  ]) {
+    const existing = fs.readFileSync(generatedRoutingPath(repoRoot, skillId), "utf8");
+    assert.match(existing, /Rainbond Cloud/);
+    assert.match(existing, /已有私有 Rainbond/);
+    assert.doesNotMatch(existing, /本机环境|独立服务器|install_private/, skillId);
+  }
+});
+
+test("embedded profile receives server-owned Runtime Routing without client menus", () => {
+  const output = fs.mkdtempSync(path.join(os.tmpdir(), "rainskills-routing-generated-"));
+  const result = spawnSync(process.execPath, [
+    path.join(repoRoot, "scripts", "build-skill-profile.mjs"),
+    "--profile", "embedded",
+    "--source-root", repoRoot,
+    "--output", output,
+    "--revision", "runtime-routing-test",
+  ], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  for (const skillId of skillIds.filter((id) => fs.existsSync(path.join(output, id)))) {
+    const content = fs.readFileSync(generatedRoutingPath(output, skillId), "utf8");
+    assert.match(content, /profile: embedded/);
+    assert.match(content, /Agent 管理员|服务端 Rainbond 连接/);
+    assert.doesNotMatch(content, /runtime connect|Device Flow|本机环境|独立服务器|new-application-environment/);
   }
 });

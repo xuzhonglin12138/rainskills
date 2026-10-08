@@ -60,6 +60,8 @@ description: "Troubleshoot a bounded build, runtime, or access problem for an ex
 
 首次需要 Rainbond 时读取 [generated Runtime Gate](references/generated/runtime-gate.md)，本会话只读取一次。仅当 Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace/app 绑定或授权状态变化时失效并重新读取。
 
+没有可用运行环境时，按 Gate 声明的 mode 读取 [generated Runtime Routing](references/generated/runtime-routing.md)；不得从其他 Skill 复制或改写环境选项。
+
 不可弱化的不变量：
 
 - 只使用 Gate 声明的 transport、command set、scope 与缺环境策略；不得切换到替代通道。
@@ -68,13 +70,6 @@ description: "Troubleshoot a bounded build, runtime, or access problem for an ex
 - JWT、凭据与密钥不得回显、写入报告或用于绕过保护。
 
 
-<!-- rainskills-runtime-routing:start -->
-## 缺少运行环境时
-
-先说：“可以，我会帮你排查已有应用的构建或运行问题。不过目前还没有可用的应用运行环境。你刚安装的 Rainskills 是 AI 部署助手；应用实际运行在 Rainbond 上。Rainbond 是一套应用运行和管理平台，你不需要了解 Kubernetes。”
-
-只让用户选择 `Rainbond Cloud` 或承载目标应用的`已有私有 Rainbond`。选择已有私有 Rainbond 时执行本地 launcher + `["runtime", "message", "--id", "private-console-origin"]` 并原样输出。不得为排障安装私有 Rainbond，也不得用新平台代替原应用。
-<!-- rainskills-runtime-routing:end -->
 
 ## Overview
 

@@ -31,7 +31,7 @@ def validate_progressive_loading(skill_dir: Path) -> list[str]:
     failures: list[str] = []
     root_path = skill_dir / "SKILL.md"
     runtime_gate = skill_dir / "references" / "generated" / "runtime-gate.md"
-    runtime_routing = skill_dir / "references" / "runtime-routing.md"
+    runtime_routing = skill_dir / "references" / "generated" / "runtime-routing.md"
     workflow_path = skill_dir / "references" / "workflow-rules.md"
     root = root_path.read_text(encoding="utf-8")
     root_bytes = len(root.encode("utf-8"))
@@ -59,7 +59,7 @@ def validate_progressive_loading(skill_dir: Path) -> list[str]:
 
     references = {
         "references/generated/runtime-gate.md": "runtime gate",
-        "references/runtime-routing.md": "runtime routing",
+        "references/generated/runtime-routing.md": "runtime routing",
         "references/routing.md": "routing",
         "references/workflow-rules.md": "workflow rules",
         "references/operational-reference.md": "operational reference",
@@ -127,7 +127,7 @@ def validate_progressive_loading(skill_dir: Path) -> list[str]:
         ):
             require(required in gate, f"runtime gate is missing: {required}", failures)
 
-    require(runtime_routing.is_file(), "missing references/runtime-routing.md", failures)
+    require(runtime_routing.is_file(), "missing references/generated/runtime-routing.md", failures)
     if runtime_routing.is_file():
         routing = runtime_routing.read_text(encoding="utf-8")
         for required in (
