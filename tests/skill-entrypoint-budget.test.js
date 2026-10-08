@@ -72,3 +72,8 @@ test("delivery verifier entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-delivery-verifier", 12 * 1024);
   assertReferenceBudgets("rainbond-delivery-verifier");
 });
+
+test("env sync entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-env-sync", 12 * 1024);
+  assertReferenceBudgets("rainbond-env-sync");
+});

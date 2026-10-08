@@ -12,8 +12,16 @@ function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
 }
 
+function envSyncContract() {
+  return [
+    read("rainbond-env-sync/SKILL.md"),
+    read("rainbond-env-sync/references/sync-policy.md"),
+    read("rainbond-env-sync/references/sync-workflow.md"),
+  ].join("\n");
+}
+
 test("conflict gate outranks drift reconciliation and forbids all writes", () => {
-  const skill = read("rainbond-env-sync/SKILL.md");
+  const skill = envSyncContract();
   assert.match(skill, /conflict gate[^\n]*higher priority than drift reconciliation/i);
   assert.match(skill, /any conflict[^\n]*(?:must not write|禁止写)[^\n]*any file/i);
   assert.match(skill, /drift reconciliation[^\n]*only[^\n]*no conflicts/i);
@@ -21,7 +29,7 @@ test("conflict gate outranks drift reconciliation and forbids all writes", () =>
 
 test("env sync metadata uses one stable producer identifier", () => {
   const content = [
-    read("rainbond-env-sync/SKILL.md"),
+    envSyncContract(),
     read("rainbond-app-assistant/references/product-object-model.md"),
   ].join("\n");
   assert.doesNotMatch(content, /synced_by[^\n]*(?:Claude Code|env-sync v1|local-sync)/i);
@@ -29,7 +37,7 @@ test("env sync metadata uses one stable producer identifier", () => {
 });
 
 test("DB_NAME classification depends on source and ownership", () => {
-  const skill = read("rainbond-env-sync/SKILL.md");
+  const skill = envSyncContract();
   assert.match(skill, /DB_NAME[^\n]*(?:connection_envs|dependency injection)[^\n]*runtime_metadata/i);
   assert.match(skill, /DB_NAME[^\n]*durable[^\n]*non-sensitive[^\n]*baseline[^\n]*(?:keep|persist)/i);
   assert.match(skill, /DB_NAME[^\n]*(?:unknown|unknown source)[^\n]*ambiguous[^\n]*(?:must not write|禁止写)/i);
