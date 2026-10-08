@@ -24,8 +24,8 @@ paired_judge:
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
 measurement:
   before_description_utf8_bytes: 476
-  after_description_utf8_bytes: 288
-  relative_change: -0.3950
+  after_description_utf8_bytes: 300
+  relative_change: -0.3697
   host_token_change: unavailable
   host_timing_change: unavailable
 validation:
