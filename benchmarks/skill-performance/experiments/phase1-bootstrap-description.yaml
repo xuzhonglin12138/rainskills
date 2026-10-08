@@ -1,0 +1,25 @@
+experiment_id: phase1-bootstrap-description
+track: performance
+classification: maintenance_only
+base_sha: c31245acf96a1c02be3c82f4878790267239415a
+candidate_sha: null
+treatment: Shorten only rainbond-fullstack-bootstrap frontmatter.description without changing its body or workflow.
+primary_scenario: create-three-component-topology
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 320 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Explicit bounded topology creation stays owned by this Skill.
+  - Generic current-project deployment stays owned by rainbond-app-assistant.
+  - Persistence, dependency, provider-contract, and confirmation guardrails remain unchanged.
+prompt_hash: 3a126a340fd6725a0d821c5379457cacc85b7eab869ba7c14ad01cbc5af574e2
+fixture_hash: 8c64c922672d508e0129b650bd0db87aab0005e47fafec8bc267c0a40920a245
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: auto_approved_by_user
