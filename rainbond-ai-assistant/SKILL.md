@@ -1,6 +1,6 @@
 ---
 name: rainbond-ai-assistant
-description: Use for Rainbond AI Engine model discovery, ModelScope download, CPU or GPU instance deployment, diagnostics, capacity analysis, monitoring, tuning, start/stop, or deletion. Do not use for ordinary source/image application deployment, installing Rainbond itself, or non-AI application troubleshooting.
+description: Manage Rainbond AI Engine models and instances; discover or download ModelScope models, deploy on CPU/GPU, diagnose, monitor, tune, start/stop, or delete. Exclude ordinary apps, Rainbond installation, and non-AI troubleshooting.
 ---
 
 # Rainbond AI Assistant

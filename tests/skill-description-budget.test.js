@@ -94,3 +94,13 @@ test("app version discovery metadata is compact and preserves routing boundaries
   assert.match(value, /rollback/i);
   assert.match(value, /回滚到快照/);
 });
+
+test("AI assistant discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-ai-assistant/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /Rainbond AI Engine/i);
+  assert.match(value, /ModelScope/i);
+  assert.match(value, /CPU\/GPU/i);
+  assert.match(value, /monitor/i);
+  assert.match(value, /ordinary apps/i);
+});
