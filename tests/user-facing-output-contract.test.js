@@ -76,11 +76,15 @@ function read(relativePath) {
 }
 
 test("every top-level customer workflow uses the shared terminal community card policy", () => {
+  let canonicalSection = null;
   for (const relativePath of communityContractFiles) {
-    const content = read(relativePath);
+    const source = read(relativePath);
+    const skillId = relativePath.split("/")[0];
+    const content = read(`${skillId}/references/generated/community-card.md`);
     const section = content.match(
       /<!-- rainskills-community-card:start -->([\s\S]*?)<!-- rainskills-community-card:end -->/,
     )?.[1] || "";
+    assert.match(source, /generated\/community-card\.md/, relativePath);
     assert.match(content, /<!-- rainskills-community-card:start -->/, relativePath);
     assert.match(content, /<!-- rainskills-community-card:end -->/, relativePath);
     assert.match(content, /顶层任务的最终回复/, relativePath);
@@ -91,6 +95,8 @@ test("every top-level customer workflow uses the shared terminal community card 
     assert.equal(content.split(communityCard).length - 1, 1, relativePath);
     assert.doesNotMatch(section, /小助手|反馈|获取帮助/, relativePath);
     assert.equal(section.match(/https?:\/\//g)?.length, 1, relativePath);
+    if (canonicalSection === null) canonicalSection = section;
+    else assert.equal(section, canonicalSection, relativePath);
   }
 });
 

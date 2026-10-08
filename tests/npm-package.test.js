@@ -97,11 +97,11 @@ test("package metadata defines a public npx command with pinned runtime dependen
   );
   assert.equal(
     manifest.scripts.version,
-    "npm run sync:runtime-version && npm run sync:runtime-contracts && npm run build:marketplace"
+    "npm run sync:runtime-version && npm run sync:runtime-contracts && npm run sync:shared-contracts && npm run build:marketplace"
   );
   assert.equal(
     manifest.scripts.prepack,
-    "node scripts/sync-runtime-version.mjs --check && node scripts/sync-runtime-contracts.mjs --check && node scripts/build-marketplace-package.mjs --check --quiet"
+    "node scripts/sync-runtime-version.mjs --check && node scripts/sync-runtime-contracts.mjs --check && node scripts/sync-shared-contracts.mjs --check && node scripts/build-marketplace-package.mjs --check --quiet"
   );
   assert.equal(
     manifest.scripts["test:package-upload"],
