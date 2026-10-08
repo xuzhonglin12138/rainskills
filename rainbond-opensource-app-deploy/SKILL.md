@@ -35,7 +35,7 @@ description: "Deploy supplied third-party Compose, Helm, or image-set descriptor
 
 归属确认后、任何 Rainbond 动作前，读取 [source acquisition](references/source-acquisition.md)，完成 active upstream fetch 和部署清单。普通裸 Git URL 不因仓库里可能存在 Compose 而自动改判；明确的开源套件意图才允许主动获取其官方资料。
 
-资料尚未形成可验证清单时不得读取 references/runtime-gate.md，不得查询/连接 Rainbond、安装平台或执行 Rainbond 写操作；允许读取公开的官方仓库、文档和 Release。不得读取本机凭据、用户主目录或无关私有仓库。
+资料尚未形成可验证清单时不得读取 references/generated/runtime-gate.md，不得查询/连接 Rainbond、安装平台或执行 Rainbond 写操作；允许读取公开的官方仓库、文档和 Release。不得读取本机凭据、用户主目录或无关私有仓库。
 
 ## 渐进加载
 
@@ -44,7 +44,7 @@ description: "Deploy supplied third-party Compose, Helm, or image-set descriptor
 | 阶段 | 读取 |
 |---|---|
 | Phase 0：归属已确认、部署清单尚未验证 | 只读取 [source acquisition](references/source-acquisition.md) |
-| 官方部署清单已验证，首次需要连接或调用 Rainbond | 只读取自己的 [runtime gate](references/runtime-gate.md) |
+| 官方部署清单已验证，首次需要连接或调用 Rainbond | 只读取自己的 [generated Runtime Gate](references/generated/runtime-gate.md)，本会话只读一次 |
 | workspace context 已解析，需要建模、部署、排障或交付 app/component | 读取 [deployment workflow](references/deployment-workflow.md) |
 | 新鲜证据命中已知部署故障模式 | 再读取 [failure-mode playbook](references/failure-mode-playbook.md) |
 
@@ -52,7 +52,7 @@ description: "Deploy supplied third-party Compose, Helm, or image-set descriptor
 
 ## Runtime 与安全边界
 
-官方部署清单验证后，任何 Rainbond 查询、环境连接、平台安装或变更前必须读取 references/runtime-gate.md；transport、鉴权、context、确认与运行时安全契约全部由该 Gate 提供。
+官方部署清单验证后，任何 Rainbond 查询、环境连接、平台安装或变更前必须读取 [generated Runtime Gate](references/generated/runtime-gate.md)；没有可用运行环境时按 Gate 的 mode 读取 [runtime routing](references/runtime-routing.md)。Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace/app 绑定或授权状态变化时 Gate 失效。transport、鉴权、context、确认与运行时安全契约全部由该 Gate 提供。
 
 - 不得绕过 Gate 或读取相邻 Skill 的 Gate。
 - 可变调用先取得 confirmation ID，再用完全相同输入确认执行；写调用不得自动重放。

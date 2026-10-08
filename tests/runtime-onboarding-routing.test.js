@@ -26,7 +26,14 @@ const skillIds = [
 ];
 
 function runtimeGateSource(skillId) {
-  const referencePath = path.join(root, skillId, "references", "runtime-gate.md");
+  return fs.readFileSync(
+    path.join(root, skillId, "references", "generated", "runtime-gate.md"),
+    "utf8",
+  );
+}
+
+function runtimeRoutingSource(skillId) {
+  const referencePath = path.join(root, skillId, "references", "runtime-routing.md");
   const sourcePath = fs.existsSync(referencePath)
     ? referencePath
     : path.join(root, skillId, "SKILL.md");
@@ -167,7 +174,7 @@ test("business Skills do not restore removed runtime registries outside the gene
     /不重复枚举环境/,
   ];
   for (const skillId of skillIds) {
-    const source = runtimeGateSource(skillId);
+    const source = fs.readFileSync(path.join(root, skillId, "SKILL.md"), "utf8");
     for (const pattern of forbidden) assert.doesNotMatch(source, pattern);
   }
 });
@@ -224,7 +231,7 @@ test("new-application Skills expose the four runtime choices without a private-e
     "rainbond-template-installer",
   ];
   for (const skillId of newApplicationSkillIds) {
-    const source = runtimeGateSource(skillId);
+    const source = runtimeRoutingSource(skillId);
     assert.match(
       source,
       /1\) 云端环境（免费体验）\s+2\) 本机环境\s+3\) 独立服务器\s+4\) 已有 Rainbond/,

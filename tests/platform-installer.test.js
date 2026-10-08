@@ -3077,7 +3077,7 @@ test("mutable official installer content is validated and hashed at download tim
 
 test("published guidance describes local and remote target selection", () => {
   const runtimeGate = fs.readFileSync(
-    path.join(repoRoot, "rainbond-app-assistant", "references", "runtime-gate.md"),
+    path.join(repoRoot, "rainbond-app-assistant", "references", "runtime-routing.md"),
     "utf8"
   );
   const policy = fs.readFileSync(

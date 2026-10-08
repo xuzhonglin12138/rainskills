@@ -10,7 +10,7 @@ description: Manage Rainbond AI Engine models and instances; discover or downloa
 ## 最高优先级规则
 
 1. 所有 reference 按阶段加载，不得一次性读取全部，也不得提前读取无关 reference。
-2. 首次需要 Rainbond 时先读 [runtime gate](references/runtime-gate.md)，再读 [context and permissions](references/context-and-permissions.md)。业务 reference 保持 transport-neutral。
+2. 首次需要 Rainbond 时先读 [generated Runtime Gate](references/generated/runtime-gate.md)，本会话只读一次，再读 [context and permissions](references/context-and-permissions.md)。没有可用运行环境时按 Gate 的 mode 读取 [runtime routing](references/runtime-routing.md)。Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace 或授权状态变化时 Gate 失效。业务 reference 保持 transport-neutral。
 3. Rainbond 读写只调用 Console 提供的当前宿主 Tool；不得直接请求 Console HTTP、AI Engine backend 或 Kubernetes，不提交内部命名空间、backend service、请求头、镜像或凭据。内置目录未命中时，允许按 [model discovery](references/model-discovery.md) 仅读官方 ModelScope OpenAPI；这不扩大 Rainbond 写入权限。
 4. AI Engine 返回的 resource、allocation、stage、event、log、probe、registration、monitoring 是权威事实。`unavailable/null/unknown` 不能变成 0、空闲或成功。
 5. 已知 Tool 直接调用；CLI 字段不确定时只 describe 单个 Tool，名称未知时只窄前缀 list；embedded 使用实时 Tool definition。禁止完整 Catalog discovery。

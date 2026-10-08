@@ -71,8 +71,8 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
     def test_open_source_cannot_allow_gate_loading_before_inventory_validation(self) -> None:
         self.mutate(
             f"{OPEN_NAME}/SKILL.md",
-            "资料尚未形成可验证清单时不得读取 references/runtime-gate.md",
-            "资料尚未形成可验证清单时允许读取 references/runtime-gate.md",
+            "资料尚未形成可验证清单时不得读取 references/generated/runtime-gate.md",
+            "资料尚未形成可验证清单时允许读取 references/generated/runtime-gate.md",
         )
 
         result = self.run_cross()
@@ -86,7 +86,7 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
             original_app = app_path.read_text(encoding="utf-8")
             self.mutate(
                 f"{APP_NAME}/SKILL.md",
-                "| 初始部署或首次 Rainbond 操作 | 本根入口、[own runtime gate](references/runtime-gate.md)、[routing](references/routing.md) | 其余全部 |",
+                "| 初始部署或首次 Rainbond 操作 | 本根入口、[generated Runtime Gate](references/generated/runtime-gate.md)、[routing](references/routing.md) | 其余全部 |",
                 "| 初始部署或首次 Rainbond 操作 | [workflow rules](references/workflow-rules.md) | runtime gate 稍后读取 |",
             )
             result = self.run_progressive()
@@ -102,7 +102,7 @@ class ProgressiveLoadingValidatorTests(unittest.TestCase):
             )
             self.mutate(
                 f"{OPEN_NAME}/SKILL.md",
-                "| 官方部署清单已验证，首次需要连接或调用 Rainbond | 只读取自己的 [runtime gate](references/runtime-gate.md) |",
+                "| 官方部署清单已验证，首次需要连接或调用 Rainbond | 只读取自己的 [generated Runtime Gate](references/generated/runtime-gate.md)，本会话只读一次 |",
                 "| 官方部署清单已验证，首次需要连接或调用 Rainbond | 不加载 reference |",
             )
             result = self.run_cross()

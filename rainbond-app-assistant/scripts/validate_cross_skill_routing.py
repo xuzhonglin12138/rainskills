@@ -18,7 +18,7 @@ OPEN_STAGE_ROWS = (
     "| Phase 0：归属已确认、部署清单尚未验证 | 只读取 "
     "[source acquisition](references/source-acquisition.md) |",
     "| 官方部署清单已验证，首次需要连接或调用 Rainbond | 只读取自己的 "
-    "[runtime gate](references/runtime-gate.md) |",
+    "[generated Runtime Gate](references/generated/runtime-gate.md)，本会话只读一次 |",
     "| workspace context 已解析，需要建模、部署、排障或交付 app/component | 读取 "
     "[deployment workflow](references/deployment-workflow.md) |",
     "| 新鲜证据命中已知部署故障模式 | 再读取 "
@@ -593,13 +593,13 @@ def validate_cross_skill_routing(repo_root: Path) -> list[str]:
         )
 
     for label, skill_dir in (("App", app_dir), ("Open-source", open_dir)):
-        gate_path = skill_dir / "references" / "runtime-gate.md"
+        gate_path = skill_dir / "references" / "generated" / "runtime-gate.md"
         require(gate_path.is_file(), f"{label} runtime gate is missing", failures)
         if gate_path.is_file():
             gate = gate_path.read_text(encoding="utf-8")
             require(
-                "rainskills.skill-runtime-contract.v1" in gate,
-                f"{label} runtime gate lacks the progressive-loading contract marker",
+                "generated-by: scripts/sync-runtime-contracts.mjs" in gate,
+                f"{label} runtime gate lacks its generated-source marker",
                 failures,
             )
             require(

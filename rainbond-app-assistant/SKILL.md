@@ -23,7 +23,7 @@ description: "Deploy, run, inspect, or repair a current/local project, ordinary 
 
 | 阶段 | 必须读取 | 禁止提前读取 |
 |---|---|---|
-| 初始部署或首次 Rainbond 操作 | 本根入口、[own runtime gate](references/runtime-gate.md)、[routing](references/routing.md) | 其余全部 |
+| 初始部署或首次 Rainbond 操作 | 本根入口、[generated Runtime Gate](references/generated/runtime-gate.md)、[routing](references/routing.md) | 其余全部 |
 | workspace context 已解析，需要编排或执行 app/component | [workflow rules](references/workflow-rules.md)；仅在核对路线或复盘时读取 [operational reference](references/operational-reference.md) | 输出与对象细节 |
 | 需要对象边界或跨阶段状态语义 | [product object model](references/product-object-model.md) | 不相关工作流 |
 | 需要生成最终结果或自动化契约 | [output contract](references/output-contract.md) | 不需要结果协议时不得读取 |
@@ -32,7 +32,7 @@ workspace context 包含 `enterprise_id`、`team_id`、`team_name` 和 `region_n
 
 ## Runtime Gate
 
-任何 Rainbond 查询、环境连接、平台安装或变更前，必须先读取 references/runtime-gate.md。当前 Skill 在本会话首次调用 Rainbond 前强制加载且只加载自己的 Runtime Gate；当前 profile 的 transport、鉴权、context、确认与运行时安全契约全部由该 Gate 提供。
+任何 Rainbond 查询、环境连接、平台安装或变更前，必须先读取 [generated Runtime Gate](references/generated/runtime-gate.md)。当前 Skill 在本会话首次调用 Rainbond 前强制加载且只加载一次；没有可用运行环境时按 Gate 的 mode 读取 [runtime routing](references/runtime-routing.md)。Node.js/Rainskills 版本、profile、endpoint、唯一运行环境、workspace/app 绑定或授权状态变化时失效并重新读取。当前 profile 的 transport、鉴权、context、确认与运行时安全契约全部由该 Gate 提供。
 
 不可弱化的不变量：
 

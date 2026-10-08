@@ -135,8 +135,8 @@ required_markers:
     - "本机只允许连接一个 Rainbond 运行环境"
     - "本地软件包部署必须先完成本地项目初始化"
     - "address-only source/image requests do not require local project files"
-    - '"hints": {"team_name": "<team-name>"}'
-    - '"selection": {"option_id": "<option-id>"}'
+    - '"team_name": "<team-name>"'
+    - '"option_id": "<option-id>"'
   rainbond-fullstack-bootstrap:
     - "the user gives a generic current-project deployment request"
     - "route that to `rainbond-app-assistant`"
