@@ -114,3 +114,13 @@ test("env sync discovery metadata is compact and preserves routing boundaries", 
   assert.match(value, /local env files/i);
   assert.match(value, /同步生产环境配置到本地/);
 });
+
+test("plugin manager discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-platform-plugin-manager/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /Rainbond Console plugins/i);
+  assert.match(value, /install/i);
+  assert.match(value, /upgrade/i);
+  assert.match(value, /uninstall/i);
+  assert.match(value, /AI model operations/i);
+});

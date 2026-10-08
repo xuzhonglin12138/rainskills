@@ -1,6 +1,6 @@
 ---
 name: rainbond-platform-plugin-manager
-description: Use for discovering, installing, enabling, upgrading, uninstalling, or checking a Rainbond Console platform plugin or feature extension. Do not use for installing Rainbond itself, deploying ordinary apps, or managing AI models after the plugin is ready.
+description: Discover, install, enable, upgrade, uninstall, or check Rainbond Console plugins. Exclude Rainbond installation, ordinary app deployment, and AI model operations after the plugin is ready.
 ---
 
 # Rainbond Platform Plugin Manager
