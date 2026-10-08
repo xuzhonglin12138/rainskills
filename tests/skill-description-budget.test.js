@@ -143,3 +143,13 @@ test("platform installer discovery metadata is compact and preserves routing bou
   assert.match(value, /Rainskills confirms no reachable platform/i);
   assert.match(value, /Exclude application deployment/i);
 });
+
+test("root skill discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "root description exceeds 320-byte budget");
+  assert.match(value, /single Rainskills runtime/i);
+  assert.match(value, /Install/i);
+  assert.match(value, /connect/i);
+  assert.match(value, /reconnect/i);
+  assert.match(value, /not application deployment/i);
+});

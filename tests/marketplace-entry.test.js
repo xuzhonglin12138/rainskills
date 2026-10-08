@@ -36,7 +36,7 @@ test("repository exposes one complete Rainskills marketplace entry", () => {
   const skill = read("SKILL.md");
 
   assert.match(skill, /^---\nname: rainskills\n/);
-  assert.match(skill, /description: Use when /);
+  assert.match(skill, /description: .*single Rainskills runtime/i);
   assert.match(skill, /single marketplace entry/i);
   assert.match(skill, /install\.sh/);
   assert.match(skill, /every bundled `rainbond-\*` Skill as an independent Skill/i);
