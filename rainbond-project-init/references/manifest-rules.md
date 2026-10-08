@@ -73,7 +73,7 @@ If the user explicitly asks for a v2 draft, architecture draft, or multi-source 
 - generate `schema_version: 2`
 - allow per-component `source.kind`
 - prefer `image` and `source`
-- allow `template` only as a reserved schema option, not an executable default
+- allow `template` when the manifest carries executable install metadata or a curated mapping resolves it
 
 When generating a v2 draft:
 - clearly state it is a design-layer manifest
@@ -98,7 +98,7 @@ However, for the current validated workflow, the generated `rainbond.app.json` m
 - component env stored as an object map
 - no `source.kind` block by default
 
-If the repository strongly suggests a future `source` or `template` workflow, record that in `Open Questions` or `Follow-up Advice` rather than generating a schema that the current bootstrap skill cannot consume.
+If the repository strongly suggests a template workflow, preserve it as a template handoff. Never convert it into a bootstrap component merely to keep one execution path.
 
 Current execution support:
 - `image`: supported
@@ -471,13 +471,15 @@ Rules for v2 draft mode:
 - `binding.region_name`
 - `binding.app_name`
 - `binding.app_id` (at every Rainbond Tool boundary, normalize a decimal session string to a positive integer; reject non-numeric IDs)
-- `platform.server_name`
+- `binding.platform.server_name`
 - `preferences.default_environment`
 - `preferences.auto_use_manifest`
 - `metadata.linked_at`
 - `metadata.linked_by`
 - `metadata.status`
 - optional empty `runtime_components`
+
+Historical `mcp.server_name` is a migration alias only: when reading it, rewrite the value to `binding.platform.server_name` and remove the legacy key before the next write. Never create new `platform.server_name` or `mcp.server_name` fields.
 
 Do not store:
 - tokens

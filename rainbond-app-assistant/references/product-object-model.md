@@ -857,7 +857,7 @@ May contain:
 - `region_name`
 - `app_name`
 - `app_id`
-- `platform.server_name`
+- `binding.platform.server_name`
 - `metadata.status`
 - link metadata
 - preferences such as `default_environment`
@@ -879,7 +879,7 @@ Example:
     "team_name": "example-team",
     "region_name": "cn-north-1",
     "app_name": "example-app",
-    "app_id": "123",
+    "app_id": 123,
     "platform": {
       "server_name": "rio.cn-north-1.rainbond.me"
     }
@@ -1281,16 +1281,7 @@ Current human-readable sections map as:
 - `Execution Summary` -> `ComponentSource[]`
 - `Next Step` -> `next_action`
 
-Target output object:
-
-```yaml
-ProjectInitResult:
-  project: Project
-  environment: Environment
-  component_sources: ComponentSource[]
-  init_status: linked | pending_verification | blocked
-  next_action: stop | bootstrap
-```
+Canonical output: `rainbond-project-init/schemas/project-init-result.schema.yaml`. Do not redefine its fields or enums here; embedded profiles that omit local project initialization also omit this schema.
 
 ### 13.2 `rainbond-fullstack-bootstrap`
 
