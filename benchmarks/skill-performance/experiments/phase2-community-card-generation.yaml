@@ -1,0 +1,30 @@
+experiment_id: phase2-community-card-generation
+track: performance
+classification: maintenance_only
+base_sha: d398af28a2a5b908db450c4d4e82e0fa97d3c93b
+candidate_sha: null
+treatment: Replace duplicated Community Card blocks with one canonical source and deterministic generated references.
+primary_scenario: deploy-current-project
+primary_metric: editable_community_card_block_bytes
+minimum_effect: zero complete Community Card marker blocks remain outside generated references
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Every top-level customer workflow still loads the exact terminal Community Card policy.
+  - Pure queries, structured/automation mode, intermediate progress, cancellation, and pending user input still suppress the card.
+  - Successful and failed terminal outcomes preserve their existing card rules and fixed QR content.
+  - Generated references are deterministic, source-digested, packaged, and link-valid.
+prompt_hash: 36a7952f3b3e4da425b2b5882070e53c8a1d24c763bb85a28c2c117455fa58b8
+fixture_hash: 5119c7d7f804f01508a4634bd2a472042c9b4bf2d7743ebcda02c23eff660645
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  community_card_blocks: 11
+  community_card_block_bytes: 11781
+  source_skill_bytes: 243584
+result: pending
+human_checkpoint: approved

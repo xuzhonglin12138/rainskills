@@ -2,7 +2,7 @@ experiment_id: phase2-runtime-routing-generation
 track: performance
 classification: maintenance_only
 base_sha: 31011c529b5f0fc9595635c6f7557c3ddba06beb
-candidate_sha: null
+candidate_sha: d398af28a2a5b908db450c4d4e82e0fa97d3c93b
 treatment: Replace duplicated Runtime Routing blocks with one canonical mode source rendered per Skill from the validated Runtime overlay.
 primary_scenario: deploy-current-project
 primary_metric: source_runtime_routing_block_bytes
@@ -26,5 +26,19 @@ baseline:
   routing_blocks: 12
   routing_block_bytes: 12489
   source_skill_bytes: 250075
-result: pending
+measurement:
+  before_source_runtime_routing_block_bytes: 12489
+  after_source_runtime_routing_block_bytes: 0
+  before_source_skill_bytes: 250075
+  after_source_skill_bytes: 243584
+  source_skill_relative_change: -0.0260
+  generated_runtime_routing_bytes: 12471
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+  runtime_contract_generation: 8/8 passed
+result: neutral_refactor
 human_checkpoint: approved
