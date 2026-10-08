@@ -138,7 +138,7 @@ required_markers:
     - '"hints": {"team_name": "<team-name>"}'
     - '"selection": {"option_id": "<option-id>"}'
   rainbond-fullstack-bootstrap:
-    - "Do not use for a generic current-project deployment request"
+    - "the user gives a generic current-project deployment request"
     - "route that to `rainbond-app-assistant`"
     - "1) 云端环境（免费体验）"
     - "2) 本机环境"

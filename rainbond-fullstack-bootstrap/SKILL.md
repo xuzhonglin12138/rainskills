@@ -1,6 +1,6 @@
 ---
 name: rainbond-fullstack-bootstrap
-description: "Use only when the user explicitly asks to create the Rainbond app and component topology for a known current project or manifest. Trigger phrases include: 只帮我创建应用和组件，不要继续排障 / create topology / bootstrap only. Do not use for a generic current-project deployment request; route that to rainbond-app-assistant."
+description: "Create a Rainbond app and component topology for a known current project or manifest. Use only for “只帮我创建应用和组件，不要继续排障”, “create topology”, or “bootstrap only”. Generic current-project deployment starts with rainbond-app-assistant."
 ---
 
 # Rainbond Fullstack Bootstrap

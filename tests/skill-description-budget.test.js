@@ -55,3 +55,12 @@ test("delivery verifier discovery metadata is compact and preserves routing boun
   assert.match(value, /existing Rainbond app/i);
   assert.match(value, /rainbond-app-assistant/);
 });
+
+test("bootstrap discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-fullstack-bootstrap/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /component topology/i);
+  assert.match(value, /current project|manifest/i);
+  assert.match(value, /bootstrap only/i);
+  assert.match(value, /rainbond-app-assistant/);
+});
