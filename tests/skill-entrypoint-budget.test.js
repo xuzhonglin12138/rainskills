@@ -77,3 +77,8 @@ test("env sync entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-env-sync", 12 * 1024);
   assertReferenceBudgets("rainbond-env-sync");
 });
+
+test("template installer entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-template-installer", 12 * 1024);
+  assertReferenceBudgets("rainbond-template-installer");
+});
