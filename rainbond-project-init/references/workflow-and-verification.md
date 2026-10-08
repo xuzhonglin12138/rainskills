@@ -35,6 +35,7 @@ Follow this order.
 - if it exists, capture `app_id`
 - if it does not exist, create it
 - do not stop at "app missing"; missing app means initialization must continue into app creation
+- when adopting one exact existing app, reuse it, repair both local files to the verified identity, and do not call app creation
 
 6. Write local binding
 - create or update `.rainbond/local.json`

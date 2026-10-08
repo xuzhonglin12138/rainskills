@@ -1,0 +1,49 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const test = require("node:test");
+
+const root = path.resolve(__dirname, "..");
+
+function assertEntrypoint(skillId, budget) {
+  const skillRoot = path.join(root, skillId);
+  const entrypoint = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
+  assert(Buffer.byteLength(entrypoint, "utf8") <= budget, `${skillId} entrypoint exceeds ${budget} bytes`);
+  for (const heading of [
+    "Purpose and ownership",
+    "Fast path",
+    "Conditional reading table",
+    "Workflow",
+    "Hard stops",
+    "Safety invariants",
+    "Output selection",
+    "Anti-patterns",
+  ]) assert.match(entrypoint, new RegExp(`^## ${heading}$`, "m"), `${skillId}: ${heading}`);
+  for (const row of entrypoint.split("\n").filter((line) => line.startsWith("|"))) {
+    const links = row.match(/\[[^\]]+\]\([^)]+\)/g) || [];
+    assert(links.length <= 2, `${skillId} conditional row loads more than two references: ${row}`);
+  }
+  for (const match of entrypoint.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
+    if (/^(?:https?:|#)/.test(match[1])) continue;
+    assert(fs.existsSync(path.resolve(skillRoot, match[1])), `${skillId}: missing ${match[1]}`);
+  }
+}
+
+function assertReferenceBudgets(skillId) {
+  const references = path.join(root, skillId, "references");
+  for (const file of fs.readdirSync(references, { recursive: true })) {
+    const absolute = path.join(references, file);
+    if (!fs.statSync(absolute).isFile() || !file.endsWith(".md")) continue;
+    assert(
+      fs.statSync(absolute).size <= 16 * 1024,
+      `${skillId}/${file} exceeds the 16 KiB reference hard limit`,
+    );
+  }
+}
+
+test("project init entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-project-init", 14 * 1024);
+  assertReferenceBudgets("rainbond-project-init");
+});
