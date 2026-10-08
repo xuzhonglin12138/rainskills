@@ -1,0 +1,25 @@
+experiment_id: phase1-ai-assistant-description
+track: performance
+classification: maintenance_only
+base_sha: b5ddd2cbee88909f0551c986d61eaa32c83c32fa
+candidate_sha: null
+treatment: Shorten only rainbond-ai-assistant frontmatter.description without changing its body or workflow.
+primary_scenario: rainbond-ai-assistant.01
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 320 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - AI Engine model and instance lifecycle requests stay owned by this Skill.
+  - Ordinary application deployment and Rainbond installation stay outside this Skill.
+  - CPU/GPU, ModelScope, monitoring, and deletion boundaries remain discoverable.
+prompt_hash: ab3d94d191ffd01c03e4bb1e7f4d60138024f4ea02097d696dde3db9c5eb62a8
+fixture_hash: 43c6c4e55849af4e4efd2ba12b3755ab298f16e04d6b006e88f170038948c4f7
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: auto_approved_by_user
