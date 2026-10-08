@@ -1,0 +1,26 @@
+experiment_id: phase1-opensource-description
+track: performance
+classification: maintenance_only
+base_sha: 9347741e3a5d3aacfc4d473a6b2bfa8665166156
+candidate_sha: null
+treatment: Shorten only rainbond-opensource-app-deploy frontmatter.description without changing its body or workflow.
+primary_scenario: deploy-bare-git
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 320 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Supplied Compose, Helm, and image-set descriptors stay owned by rainbond-opensource-app-deploy.
+  - Explicit named Harbor, Dify, and n8n suites stay owned by rainbond-opensource-app-deploy.
+  - Current/local projects and ordinary Git stay owned by rainbond-app-assistant.
+  - Confirmed market templates stay owned by rainbond-template-installer.
+prompt_hash: 782eea91eecdf3efe134ac8b3acf78a18f4590b914f1e459448d65e174b09de2
+fixture_hash: ddad7d26db81439e241bc55e1239c13161e04c05eff0b439bcf51e43fee7ff27
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: pending
