@@ -279,7 +279,7 @@ Recommended structure:
   "synced_at": "2026-04-01T14:30:00Z",
   "metadata": {
     "status": "synced",
-    "synced_by": "Claude Code"
+    "synced_by": "rainbond-env-sync"
   }
 }
 ```
@@ -321,7 +321,6 @@ Examples to skip:
 - `DB_PORT`
 - `DB_USER`
 - `DB_PASS`
-- `DB_NAME`
 - `REDIS_PASSWORD`
 - `KAFKA_BROKERS`
 - `PORT*_HOST`
@@ -335,12 +334,18 @@ This skill stores **environment override intent**, not a raw runtime dump.
 
 Provider connection envs and dependency-derived runtime connection values are always treated as **runtime connection metadata**, even when they differ from `rainbond.app.json` or from older local env files.
 
+`DB_NAME` is source-sensitive instead of unconditionally denied:
+- `DB_NAME` from `connection_envs` or dependency injection -> `runtime_metadata`; skip it.
+- `DB_NAME` on an ordinary component that is durable, non-sensitive, and different from baseline -> keep and persist it.
+- `DB_NAME` with unknown source or ownership -> `ambiguous`; must not write it.
+
+Runtime coordinates `DB_HOST`, `DB_PORT`, `API_HOST`, and `API_PORT` are always unconditionally excluded.
+
 Examples of runtime connection metadata that must always be skipped:
 - `DB_HOST`
 - `DB_PORT`
 - `DB_USER`
 - `DB_PASS`
-- `DB_NAME`
 - `REDIS_PASSWORD`
 - `KAFKA_BROKERS`
 - `PORT*_HOST`
@@ -365,7 +370,7 @@ Follow this order.
 
 ### Fixed Tool fast path and conflict gate
 
-Read `rainbond_query_components`, `rainbond_manage_component_envs(operation=summary)`, and `rainbond_manage_component_connection_envs(operation=summary)` for the requested components. Before any write, call `rainbond_analyze_env_conflicts`; if it reports a conflict, stop and show only non-sensitive key names. Do not overwrite automatically and do not run `list` or `describe` to discover known Tools.
+Read `rainbond_query_components`, `rainbond_manage_component_envs(operation=summary)`, and `rainbond_manage_component_connection_envs(operation=summary)` for the requested components. Before any write, call `rainbond_analyze_env_conflicts`. Conflict gate has higher priority than drift reconciliation. If any conflict is reported, must not write any file, including status, timestamps, or sync metadata; stop and show only non-sensitive key names. Drift reconciliation runs only when there are no conflicts. Do not overwrite automatically and do not run `list` or `describe` to discover known Tools.
 
 1. Resolve context
 - read user explicit target environment if provided
@@ -394,6 +399,7 @@ For each relevant component:
 - compare with project baseline in `rainbond.app.json`
 - identify values that represent meaningful non-sensitive overrides
 - classify provider connection envs and dependency-injected connection values as runtime connection metadata before delta evaluation
+- classify `DB_NAME` by source and ownership using the three explicit branches above; unknown provenance is `ambiguous`, not a writable delta
 
 5. Filter values
 - keep only values that satisfy the Keep rules
@@ -404,6 +410,7 @@ For each relevant component:
 - if unsure, prefer skipping and explain why
 
 6. Write target file
+- execute this step only when conflict analysis returned no conflicts
 - update:
   - `schema_version`
   - `environment`
@@ -422,10 +429,12 @@ For each relevant component:
 
 ## Drift Reporting
 
-If Rainbond runtime differs from local files:
+If Rainbond runtime differs from local files and conflict analysis returned no conflicts:
 - trust MCP
 - update the env file based on MCP-derived, filtered values
 - explicitly report the drift in output
+
+Drift reconciliation is only allowed when there are no conflicts. A conflict stops the run without changing env content, `synced_at`, `metadata.status`, or `metadata.synced_by`.
 
 Examples:
 - local app name differs from bound app
@@ -484,7 +493,7 @@ EnvironmentSyncResult:
   synced_at: string
   metadata:
     status: synced | drifted | unlinked
-    synced_by: string
+    synced_by: rainbond-env-sync
   next_action: string
 ```
 
@@ -514,14 +523,14 @@ Example object:
   },
   "skip_reasons": {
     "sensitive": ["DB_PASSWORD"],
-    "runtime_metadata": ["DB_HOST", "DB_NAME", "API_PORT"],
+    "runtime_metadata": ["DB_HOST", "API_PORT"],
     "baseline_match": ["TZ"],
     "ambiguous": []
   },
   "synced_at": "2026-04-14T03:55:00Z",
   "metadata": {
     "status": "synced",
-    "synced_by": "env-sync v1"
+    "synced_by": "rainbond-env-sync"
   },
   "next_action": "bootstrap"
 }
@@ -542,7 +551,7 @@ Sync succeeded and updated `.rainbond/env.preview.json`.
 
 ### Skipped Values
 - sensitive values: `DB_PASSWORD`
-- runtime metadata: `DB_HOST`, `DB_NAME`, `API_PORT`
+- runtime metadata: `DB_HOST`, `API_PORT`, and provider-injected `DB_NAME`
 - values skipped because they matched baseline: `TZ`
 - ambiguous values intentionally not persisted: `none`
 
@@ -574,7 +583,6 @@ EnvironmentSyncResult:
       - DB_PASSWORD
     runtime_metadata:
       - DB_HOST
-      - DB_NAME
       - API_PORT
     baseline_match:
       - TZ
@@ -582,7 +590,7 @@ EnvironmentSyncResult:
   synced_at: "2026-04-14T03:55:00Z"
   metadata:
     status: synced
-    synced_by: env-sync v1
+    synced_by: rainbond-env-sync
   next_action: bootstrap
 ```
 ````
@@ -650,7 +658,8 @@ Skip:
 - passwords
 - usernames tied to secrets
 - platform runtime metadata
-- provider connection envs and dependency-injected connection values (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`, `REDIS_PASSWORD`, `KAFKA_BROKERS`, `PORT*_HOST`, `PORT*_PORT`, `API_HOST`, `API_PORT`)
+- provider connection envs and dependency-injected connection values (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `REDIS_PASSWORD`, `KAFKA_BROKERS`, `PORT*_HOST`, `PORT*_PORT`, `API_HOST`, `API_PORT`)
+- `DB_NAME` only when it came from provider `connection_envs` or dependency injection; keep ordinary durable non-sensitive deltas, and classify unknown provenance as ambiguous without writing
 - any value identical to `rainbond.app.json`
 
 Typical next actions after sync:

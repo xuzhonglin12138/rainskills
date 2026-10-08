@@ -947,7 +947,7 @@ Example:
   "synced_at": "2026-04-01T14:30:00Z",
   "metadata": {
     "status": "synced",
-    "synced_by": "local-sync"
+    "synced_by": "rainbond-env-sync"
   }
 }
 ```
@@ -955,6 +955,7 @@ Example:
 Rule:
 
 - keep only durable non-sensitive values that differ from the project baseline
+- the example `DB_NAME` is an ordinary component-owned durable override; provider `connection_envs` or dependency-injected `DB_NAME` remains runtime metadata and is not persisted
 - do not persist runtime-derived coordinates such as `DB_HOST`, `DB_PORT`, `API_HOST`, or `API_PORT`
 
 ### 8.4 `.rainbond/secrets.<env>.json`
