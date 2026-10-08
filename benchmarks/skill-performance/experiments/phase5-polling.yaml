@@ -2,7 +2,7 @@ experiment_id: phase5-polling
 track: performance
 classification: maintenance_only
 base_sha: 8d107e862e6a861dd1d3d62a429da41bc36dd10a
-candidate_sha: null
+candidate_sha: 812b2999241da0833de7d475b2d85f4a73b196f8
 treatment: Add one protected read-only poll command that keeps bounded polling inside the CLI and returns only state transitions, final state, blocker, and retryability.
 primary_scenario: install-plugin-and-resume-ai
 primary_metric: model_visible_poll_calls
@@ -26,5 +26,20 @@ baseline:
   model_visible_poll_calls: 5
   backend_requests: 5
   repeated_unchanged_states: 4
-result: pending
+measurement:
+  before_model_visible_poll_calls: 5
+  after_model_visible_poll_calls: 1
+  before_backend_requests: 5
+  after_backend_requests: 5
+  before_repeated_unchanged_states: 4
+  after_repeated_unchanged_states: 0
+  relative_model_visible_change: -0.8000
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  protected_poll: 5/5 passed
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5

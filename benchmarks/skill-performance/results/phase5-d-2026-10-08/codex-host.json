@@ -1,0 +1,16 @@
+{
+  "schema": "rainskills.codex-host-evals.v1",
+  "benchmark_layer": "codex_host",
+  "control_status": "unavailable",
+  "attempted_at": "2026-10-08T21:27:00+08:00",
+  "candidate_sha": "812b2999241da0833de7d475b2d85f4a73b196f8",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "high",
+  "fixture_only": true,
+  "result": "unavailable",
+  "reason": "codex exec produced no events and did not exit within 120 seconds; the run was interrupted. Earlier Phase 0 attempts also recorded HTTP 401 for the stored API credential.",
+  "raw_jsonl": "unavailable",
+  "usage": "unavailable",
+  "timing": "unavailable",
+  "cache_metrics": "unavailable"
+}
