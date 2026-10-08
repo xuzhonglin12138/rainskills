@@ -1,0 +1,30 @@
+experiment_id: phase2-user-result-generation
+track: performance
+classification: maintenance_only
+base_sha: 37c70099c9e29142bc3d257899cdb553aab4e178
+candidate_sha: null
+treatment: Replace duplicated default user-result policy blocks with one canonical source and deterministic generated references while retaining Skill-specific output contracts.
+primary_scenario: deploy-current-project
+primary_metric: editable_user_result_block_bytes
+minimum_effect: zero complete user-result marker blocks remain outside generated references
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Default customer responses remain concise Chinese and structured output remains explicit opt-in.
+  - Success and failure reports use only verified facts and never expose internal contracts, tool traces, YAML, or JSON by default.
+  - Skill-specific schemas, state vocabularies, success criteria, and terminal Community Card policy remain unchanged.
+  - Generated references are deterministic, source-digested, packaged, and link-valid.
+prompt_hash: 36a7952f3b3e4da425b2b5882070e53c8a1d24c763bb85a28c2c117455fa58b8
+fixture_hash: 5119c7d7f804f01508a4634bd2a472042c9b4bf2d7743ebcda02c23eff660645
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  user_result_blocks: 2
+  user_result_block_bytes: 3642
+  source_skill_bytes: 237192
+result: pending
+human_checkpoint: approved
