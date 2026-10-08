@@ -1,0 +1,25 @@
+experiment_id: phase1-app-version-description
+track: performance
+classification: maintenance_only
+base_sha: 70e059b72f55949f4cf275f743be1cc1a3584441
+candidate_sha: null
+treatment: Shorten only rainbond-app-version-assistant frontmatter.description without changing its body or workflow.
+primary_scenario: rainbond-app-version-assistant.01
+primary_metric: description_utf8_bytes
+minimum_effect: description is at most 320 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Explicit snapshot, publishing, and rollback operations stay owned by this Skill.
+  - Generic app deployment stays outside this Skill.
+  - Existing-app, preview, confirmation, and rollback rules remain unchanged.
+prompt_hash: 756b318a765b3de1a86efac0528acd1501dfd9a7c89571f9afc07bc7e374d500
+fixture_hash: 7ecb875e85a02774545a4ad3737a289e9bb4b2cf0381b301aac169a96fd1e81a
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+result: pending
+human_checkpoint: auto_approved_by_user
