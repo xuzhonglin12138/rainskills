@@ -134,3 +134,12 @@ test("platform query discovery metadata is compact and preserves routing boundar
   assert.match(value, /mutation/i);
   assert.match(value, /troubleshooting/i);
 });
+
+test("platform installer discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-platform-installer/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /Install Rainbond/i);
+  assert.match(value, /local, server, multi-node, or existing-Kubernetes/i);
+  assert.match(value, /Rainskills confirms no reachable platform/i);
+  assert.match(value, /Exclude application deployment/i);
+});
