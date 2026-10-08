@@ -2,7 +2,7 @@ experiment_id: phase3-platform-query-entrypoint
 track: performance
 classification: maintenance_only
 base_sha: adcbbbb078eef16f3d8d1bf5d5ca780690758eff
-candidate_sha: null
+candidate_sha: 10a1016f901944e68927c7563a6591c61e72208c
 treatment: Normalize rainbond-platform-query/SKILL.md into the shared minimal-router structure while preserving its exclusive read-only query contract.
 primary_scenario: rainbond-platform-query.01
 primary_metric: entrypoint_utf8_bytes
@@ -23,5 +23,16 @@ paired_judge:
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
 baseline:
   entrypoint_utf8_bytes: 4095
-result: pending
+measurement:
+  before_entrypoint_utf8_bytes: 4095
+  after_entrypoint_utf8_bytes: 3141
+  relative_change: -0.2330
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+  api_bridge: 42/42 passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5
