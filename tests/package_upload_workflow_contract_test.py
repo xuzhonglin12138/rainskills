@@ -10,7 +10,7 @@ SOURCE_AND_PACKAGE_RULES = (
     REPO_ROOT
     / "rainbond-fullstack-bootstrap"
     / "modules"
-    / "40-source-and-package-rules.md"
+    / "45-package-rules.md"
 )
 APP_ASSISTANT_SKILL = REPO_ROOT / "rainbond-app-assistant" / "SKILL.md"
 BOOTSTRAP_SKILL = REPO_ROOT / "rainbond-fullstack-bootstrap" / "SKILL.md"

@@ -31,19 +31,34 @@ function assertEntrypoint(skillId, budget) {
   }
 }
 
+function markdownFiles(directory) {
+  if (!fs.existsSync(directory)) return [];
+  const files = [];
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...markdownFiles(absolute));
+    else if (entry.name.endsWith(".md")) files.push(absolute);
+  }
+  return files;
+}
+
 function assertReferenceBudgets(skillId) {
-  const references = path.join(root, skillId, "references");
-  for (const file of fs.readdirSync(references, { recursive: true })) {
-    const absolute = path.join(references, file);
-    if (!fs.statSync(absolute).isFile() || !file.endsWith(".md")) continue;
-    assert(
-      fs.statSync(absolute).size <= 16 * 1024,
-      `${skillId}/${file} exceeds the 16 KiB reference hard limit`,
-    );
+  for (const directory of ["references", "modules"]) {
+    for (const absolute of markdownFiles(path.join(root, skillId, directory))) {
+      assert(
+        fs.statSync(absolute).size <= 16 * 1024,
+        `${path.relative(root, absolute)} exceeds the 16 KiB reference hard limit`,
+      );
+    }
   }
 }
 
 test("project init entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-project-init", 14 * 1024);
   assertReferenceBudgets("rainbond-project-init");
+});
+
+test("bootstrap entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-fullstack-bootstrap", 14 * 1024);
+  assertReferenceBudgets("rainbond-fullstack-bootstrap");
 });

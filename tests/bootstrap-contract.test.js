@@ -17,7 +17,12 @@ function read(relativePath) {
 test("bootstrap modules defer to one closed proxy policy", () => {
   const rootSkill = read("rainbond-fullstack-bootstrap/SKILL.md");
   const creation = read("rainbond-fullstack-bootstrap/modules/30-creation-rules.md");
-  const source = read("rainbond-fullstack-bootstrap/modules/40-source-and-package-rules.md");
+  const source = [
+    read("rainbond-fullstack-bootstrap/modules/40-source-rules.md"),
+    read("rainbond-fullstack-bootstrap/modules/42-source-topology.md"),
+    read("rainbond-fullstack-bootstrap/modules/44-source-build-rules.md"),
+    read("rainbond-fullstack-bootstrap/modules/45-package-rules.md"),
+  ].join("\n");
 
   assert.match(rootSkill, /github\.com[^\n]*https:\/\/ghfast\.top/);
   assert.match(rootSkill, /docker\.io[^\n]*docker\.1ms\.run/);
