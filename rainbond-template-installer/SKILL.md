@@ -1,6 +1,6 @@
 ---
 name: rainbond-template-installer
-description: "Use when the user explicitly asks to install a local or cloud Rainbond application template into a new or existing target app. Trigger phrases include: 从模板安装 WordPress 应用 / 安装应用模板 / install app template. Not for a third-party public image or upstream container stack; use rainbond-opensource-app-deploy."
+description: "Install a confirmed local or cloud Rainbond application template into a new or existing app. Use for ‘从模板安装 WordPress 应用’, ‘安装应用模板’, or ‘install app template’. Public images and upstream container stacks use rainbond-opensource-app-deploy."
 ---
 
 # Rainbond Template Installer

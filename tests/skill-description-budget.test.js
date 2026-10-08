@@ -74,3 +74,13 @@ test("project init discovery metadata is compact and preserves routing boundarie
   assert.match(value, /rainbond-app-assistant/);
   assert.match(value, /bare Git URL/i);
 });
+
+test("template installer discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-template-installer/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /local or cloud Rainbond application template/i);
+  assert.match(value, /new or existing app/i);
+  assert.match(value, /从模板安装 WordPress 应用/);
+  assert.match(value, /public images/i);
+  assert.match(value, /rainbond-opensource-app-deploy/);
+});
