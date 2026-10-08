@@ -12,7 +12,7 @@ Diagnose an existing linked Rainbond app, apply at most the smallest evidence-ba
 ## Fast path
 
 1. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session; when unavailable, follow [generated Runtime Routing](references/generated/runtime-routing.md).
-2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), reuse valid runtime/context/app identity, then call `rainbond_get_app_health_overview` before expanding evidence.
+2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), then issue one `snapshot app` request containing the known app reads, including `rainbond_get_app_health_overview`; expand only abnormal evidence.
 3. Classify build, runtime, dependency, config, access, or capacity failure; read only the matching decision branch.
 4. Anchor every mutation to fresh state, execute once after confirmation, and re-read the affected resource.
 5. Return a verified handoff or one blocker.

@@ -45,7 +45,7 @@ Load only the active row. A single execution branch may read at most two conditi
 3. **Create in dependency order.** Providers first, then services, then frontends. Template components are never executed here.
 4. **Configure before deploy.** Apply env, storage, config files, ports, proxy mode, and explicit dependencies before the first affected deployment.
 5. **Converge writes once.** Unknown create/update/deploy results are queried by exact identity before retry; no write is replayed speculatively.
-6. **Verify and hand off.** Use fresh component/app evidence to return `troubleshooter`, `delivery_verifier`, `code_build_handoff`, or `none`.
+6. **Verify and hand off.** Use one bounded read-only `snapshot app` for the known verification reads, then return `troubleshooter`, `delivery_verifier`, `code_build_handoff`, or `none`.
 
 For a known single dependency edge, do not call `describe`; query `operation=summary` exactly once before the write, do not re-query `operation=summary` after a successful `add`, and use the returned `dependency` object as the completion evidence.
 

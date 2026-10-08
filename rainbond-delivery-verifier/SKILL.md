@@ -12,7 +12,7 @@ Decide whether an existing Rainbond app is converged, usable, and backed by a ve
 ## Fast path
 
 1. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session; if absent, follow [generated Runtime Routing](references/generated/runtime-routing.md).
-2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), reuse valid runtime/context/app identity, then call `rainbond_get_app_health_overview`.
+2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), then issue one `snapshot delivery` request containing `rainbond_get_app_detail` and `rainbond_get_app_health_overview`; expand only abnormal evidence.
 3. Inspect only the component, storage, access, proxy, static-asset, or probe evidence required by the current delivery shape.
 4. Use the bounded delivery adapter for URL verification; classify the final state from fresh evidence.
 5. Return the real access URL, verified scope, caveats/blockers, and one next step.

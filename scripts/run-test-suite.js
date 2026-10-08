@@ -22,6 +22,7 @@ const TEST_SCRIPTS = Object.freeze([
   "test:troubleshooter-contract",
   "test:env-sync-contract",
   "test:handoff-context",
+  "test:read-snapshot",
   "test:delivery-probe",
   "test:auto-update",
   "test:launcher",

@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: 27ad2f1d24c06ce1de9786cfa75bd6f82f4fd1cce04545c3c22266d47210ed56 -->
+<!-- source-sha256: 97bc74521544a37f812523d87f97585de91a5700c7c8bb310d5fcf7cccf153c2 -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）
@@ -26,7 +26,7 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
 
 - `skill_id`: `rainbond-delivery-verifier`
 - `supported_profiles`: `cli, embedded`
-- `command_set`: `context_resolve, read, delivery_probe, handoff_create, handoff_validate, call, call_confirm`
+- `command_set`: `context_resolve, read, snapshot, delivery_probe, handoff_create, handoff_validate, call, call_confirm`
 - `version_guard`: `none`
 - `missing_runtime_mode`: `existing_application`
 - `scope_discriminator`: `workspace`
@@ -138,6 +138,19 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
         "rainbond-delivery-verifier"
       ],
       "stdin_schema_source": "tool-catalog"
+    },
+    "snapshot": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "snapshot",
+        "<runtime|app|component|delivery>",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-delivery-verifier"
+      ],
+      "stdin_schema_source": "rainskills.read-snapshot.v1.request"
     },
     "delivery_probe": {
       "argv": [

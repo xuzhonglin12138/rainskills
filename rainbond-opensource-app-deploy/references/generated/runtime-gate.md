@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: f8e8d3dd72f8480b898a00618892229ea09a30b06110d589c393ae7ce3f0aaec -->
+<!-- source-sha256: 6facdcfb72baa5169c29d7288a8e7b431d105f93627123309d8f4bacd701e3a5 -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）
@@ -26,7 +26,7 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
 
 - `skill_id`: `rainbond-opensource-app-deploy`
 - `supported_profiles`: `cli`
-- `command_set`: `context_resolve, read, call, call_confirm`
+- `command_set`: `context_resolve, read, snapshot, call, call_confirm`
 - `version_guard`: `none`
 - `missing_runtime_mode`: `new_application`
 - `scope_discriminator`: `workspace`
@@ -138,6 +138,19 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
         "rainbond-opensource-app-deploy"
       ],
       "stdin_schema_source": "tool-catalog"
+    },
+    "snapshot": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "snapshot",
+        "<runtime|app|component|delivery>",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-opensource-app-deploy"
+      ],
+      "stdin_schema_source": "rainskills.read-snapshot.v1.request"
     },
     "call": {
       "argv": [

@@ -454,7 +454,7 @@
      - 如果用户要求操作这些组件，明确告知：需要通过 Kubernetes 命令（如 `kubectl rollout restart deployment/<name> -n rbd-system`）或 Rainbond 集群管理控制台进行，超出本技能的操作范围，不要假装可以执行
 28a. 已知 `service_id` 的组件在构建、部署或运行操作后失败或立即异常时，调用 `rainbond_get_operation_failure_context({team_name, region_name, app_id, service_id, event_id?})`，按其 `classified_reason` 决定停下、只读核实或低风险修复；`unknown` 回退既有证据链，禁止盲目重放写操作。CLI 在确认令牌生成前报告的 missing/invalid field 属于参数校验失败，尚未进入组件操作：按 Console Tool schema 修正参数一次，不调用 failure context，也不查询组件残留。
     `event_log_tail` 只作为敏感诊断证据使用，绝不能复制、引用或向用户展示其原文；输出只能使用 `classified_reason`、非敏感摘要和已脱敏字段。
-28b. 运行态或交付健康检查先调用 `rainbond_get_app_health_overview`；仅 `abnormal` 或 `unknown` 组件再读取 component summary、日志、事件或存储明细。
+28b. 运行态或交付健康检查先用一次 `snapshot app|delivery` 聚合已知只读请求（包含 `rainbond_get_app_health_overview`）；仅 `abnormal` 或 `unknown` 组件再读取有 cursor/time/tail 边界的明细。
 29. **仅给 bare Git URL 时默认 root + 空 `subdirectories`**：当用户给的只是一个 Git URL（无本地 manifest、无明确子目录提示），默认 `subdirectories=""`（仓库根）进入 source 检测，让后端判断这个仓库结构。**不要**先问用户"根目录还是子目录"。
     - 单项目仓库（一个 buildable root）→ 后端检测通过，正常 build
     - 多组件 / 多 example 仓库 → 后端返回 `multiple services detected` 或等价歧义信号 → 按 Iron Law 10 停下问用户选哪个子目录

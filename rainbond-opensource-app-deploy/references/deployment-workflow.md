@@ -116,7 +116,7 @@ Deploy only after the step 1 readiness gates pass. Use `rainbond_operate_app` fo
 
 ## 4. Check application health
 
-Use `rainbond_get_app_health_overview` as the default whole-application signal. Inspect each abnormal component's blocker, then obtain the minimum supporting pod, event, log, env, dependency, port, and storage evidence needed to explain it.
+Use one `snapshot app` request containing `rainbond_get_app_health_overview` as the default whole-application signal. Inspect each abnormal component's blocker, then obtain only bounded pod, event, log, env, dependency, port, and storage evidence needed to explain it.
 
 Continue to step 6 only when every required component is green. If any required component is building, waiting, abnormal, or capacity-blocked, continue to step 5.
 

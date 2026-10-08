@@ -214,6 +214,9 @@ function parseCommand(args) {
   if (command === "handoff" && !HANDOFF_SKILLS.has(skillId)) {
     throw new BridgeError("handoff command is not allowed for this skill", EXIT.USAGE);
   }
+  if (command === "snapshot" && skillId === "rainbond-platform-query") {
+    throw new BridgeError("platform query skill only allows the query command", EXIT.USAGE);
+  }
   if (
     command === "context"
     && remaining[1] === "resolve"
@@ -250,6 +253,15 @@ function parseCommand(args) {
     && remaining[3] === "-"
   ) {
     return { command, action: remaining[1], input: remaining[3], ...context };
+  }
+  if (
+    command === "snapshot"
+    && ["runtime", "app", "component", "delivery"].includes(remaining[1])
+    && remaining.length === 4
+    && remaining[2] === "--input"
+    && remaining[3] === "-"
+  ) {
+    return { command, scope: remaining[1], input: remaining[3], ...context };
   }
   if (
     command === "query"
@@ -549,7 +561,7 @@ async function executeWithUsageTelemetry(command, config) {
 }
 
 function commandTracksBusinessUsage(command) {
-  return command?.command === "read" || command?.command === "call";
+  return command?.command === "read" || command?.command === "call" || command?.command === "snapshot";
 }
 
 function loadSkillBinding(config, skillId, rootSkillId) {
@@ -1337,6 +1349,22 @@ async function execute(command, config) {
   if (command.command === "package-upload") {
     return executePackageUpload(command, config);
   }
+  if (command.command === "snapshot") {
+    const { executeReadSnapshot } = require("./read-snapshot.js");
+    return executeReadSnapshot(command.argumentsValue, {
+      callTool: async (name, argumentsValue) => {
+        const result = await rpcRequest(config, "tools/call", { name, arguments: argumentsValue });
+        if (!result || result.isError || !("structuredContent" in result)) {
+          throw new BridgeError("snapshot read failed", EXIT.TOOL);
+        }
+        return sanitizeToolResult(
+          result.structuredContent,
+          [],
+          collectSensitiveArgumentRedactions(argumentsValue),
+        );
+      },
+    });
+  }
   if (command.command === "status") {
     const tools = await listTools(config);
     const cached = loadCachedCatalog(config);
@@ -1456,7 +1484,7 @@ async function main(args = process.argv.slice(2)) {
   let argumentRedactions = [];
   try {
     command = parseCommand(args);
-    if (["read", "call", "package-upload", "query", "context", "delivery", "handoff"].includes(command.command)) {
+    if (["read", "call", "package-upload", "query", "context", "delivery", "handoff", "snapshot"].includes(command.command)) {
       const argumentsValue = readArguments(command.input);
       command.argumentsValue = argumentsValue;
       argumentRedactions = collectArgumentRedactions(argumentsValue);
