@@ -1314,19 +1314,7 @@ Current human-readable sections map as:
 - `Verification Result` -> updated `RuntimeState`
 - `Follow-up Advice` -> next handoff guidance
 
-Target output object:
-
-```yaml
-TroubleshootResult:
-  runtime_state: RuntimeState
-  blocker_bucket: string | null
-  actions_taken: string[]
-  verification_summary:
-    db_status: string
-    api_status: string
-    frontend_access_status: string
-  next_handoff: none | delivery_verifier | code_build_handoff
-```
+Canonical output: `rainbond-fullstack-troubleshooter/schemas/troubleshoot-result.schema.yaml`. Do not redefine its fields or enums here; embedded profiles use the transported schema and generated compact contract bundled with the troubleshooter.
 
 ### 13.4 `rainbond-delivery-verifier`
 
