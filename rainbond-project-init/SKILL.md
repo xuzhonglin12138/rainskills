@@ -1,6 +1,6 @@
 ---
 name: rainbond-project-init
-description: "Initialize or adopt/link a local project to Rainbond, including generating or repairing rainbond.app.json and .rainbond/local.json. Use when explicitly requested or when rainbond-app-assistant finds an uninitialized current workspace or local package before deployment. Do not use for a bare Git URL or image reference with no local project context."
+description: "Initialize, adopt, or link a local project to Rainbond; generate or repair rainbond.app.json and .rainbond/local.json. Use when explicitly requested or when rainbond-app-assistant finds an unlinked workspace or local package. Do not use for a bare Git URL or image without local project context."
 ---
 
 # Rainbond Project Init

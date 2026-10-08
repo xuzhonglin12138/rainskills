@@ -64,3 +64,13 @@ test("bootstrap discovery metadata is compact and preserves routing boundaries",
   assert.match(value, /bootstrap only/i);
   assert.match(value, /rainbond-app-assistant/);
 });
+
+test("project init discovery metadata is compact and preserves routing boundaries", () => {
+  const value = description("rainbond-project-init/SKILL.md");
+  assert(Buffer.byteLength(value, "utf8") <= 320, "specialist description exceeds 320-byte budget");
+  assert.match(value, /local project/i);
+  assert.match(value, /rainbond\.app\.json/);
+  assert.match(value, /\.rainbond\/local\.json/);
+  assert.match(value, /rainbond-app-assistant/);
+  assert.match(value, /bare Git URL/i);
+});
