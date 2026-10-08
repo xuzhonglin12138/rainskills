@@ -14,7 +14,7 @@ If the user gives a generic current-project deployment request, route that to `r
 ## Fast path
 
 1. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session; if absent, follow [generated Runtime Routing](references/generated/runtime-routing.md).
-2. Validate the current project binding, selected environment, manifest, and execution subset.
+2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), current project binding, selected environment, manifest, and execution subset; reuse valid runtime/context facts.
 3. Create providers before consumers, configure components before first deploy, and record every deferred edge.
 4. Deploy only affected components, wait with bounded convergence rules, verify fresh state, then choose one handoff.
 
@@ -64,6 +64,7 @@ For a known single dependency edge, do not call `describe`; query `operation=sum
 - Package upload uses the fixed protected helper contract and always cleans local staging according to its stop rules.
 - Preserve source kind, ref, monorepo context, Dockerfile choice, and user-selected delivery mode.
 - **Always-on Guardrail 7 — proxy policy is closed:** rewrite `github.com` only to `https://ghfast.top`, rewrite `docker.io` only to `docker.1ms.run`, and for Other public registries try the original URL directly unless a canonical policy explicitly allows another mapping.
+- Every write invalidates only the affected mutable snapshot; runtime and identity fingerprints remain reusable until an explicit schema invalidation condition occurs.
 
 ## Output selection
 

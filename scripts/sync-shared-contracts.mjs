@@ -20,6 +20,14 @@ const customerSkills = Object.freeze([
   "rainbond-project-init",
   "rainbond-template-installer",
 ]);
+const handoffSkills = Object.freeze([
+  "rainbond-app-assistant",
+  "rainbond-project-init",
+  "rainbond-fullstack-bootstrap",
+  "rainbond-fullstack-troubleshooter",
+  "rainbond-delivery-verifier",
+  "rainbond-template-installer",
+]);
 const sharedContracts = Object.freeze([
   {
     id: "Community Card",
@@ -105,6 +113,29 @@ function run({ sourceRoot, check }) {
       if (!editableFiles.some((file) => fs.readFileSync(file, "utf8").includes(`generated/${contract.generated}`))) {
         throw new Error(`${skillId} does not discover its generated ${contract.id}`);
       }
+    }
+  }
+  const handoffSchema = fs.readFileSync(
+    path.join(sourceRoot, "contracts", "handoff-context.schema.yaml"),
+    "utf8",
+  );
+  const handoffExpected = `# generated-by: scripts/sync-shared-contracts.mjs\n# source-sha256: ${sha256(handoffSchema)}\n${handoffSchema}`;
+  for (const skillId of handoffSkills) {
+    const generatedPath = path.join(
+      sourceRoot,
+      skillId,
+      "schemas",
+      "generated",
+      "handoff-context.schema.yaml",
+    );
+    const current = fs.existsSync(generatedPath) ? fs.readFileSync(generatedPath, "utf8") : null;
+    if (current !== handoffExpected) {
+      stale.push(path.relative(sourceRoot, generatedPath));
+      if (!check) writeAtomically(generatedPath, handoffExpected);
+    }
+    const entrypoint = fs.readFileSync(path.join(sourceRoot, skillId, "SKILL.md"), "utf8");
+    if (!entrypoint.includes("schemas/generated/handoff-context.schema.yaml")) {
+      throw new Error(`${skillId} does not discover its generated HandoffContext schema`);
     }
   }
   if (check && stale.length > 0) throw new Error(`generated shared contract is stale: ${stale.join(", ")}`);

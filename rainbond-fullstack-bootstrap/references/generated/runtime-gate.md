@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: 01f1eeec286455dd7db35c7b178f3236ee4e8dc8d32196be70999cba34b4562b -->
+<!-- source-sha256: 016c8ac6e9983e966f663f04a5f49c8db3a7580d50d10509483ac0bc368b8a73 -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）
@@ -26,7 +26,7 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
 
 - `skill_id`: `rainbond-fullstack-bootstrap`
 - `supported_profiles`: `cli, embedded`
-- `command_set`: `context_resolve, list, describe, read, package_upload, call, call_confirm`
+- `command_set`: `context_resolve, list, describe, read, package_upload, handoff_create, handoff_validate, call, call_confirm`
 - `version_guard`: `required`
 - `missing_runtime_mode`: `new_application`
 - `scope_discriminator`: `workspace`
@@ -173,6 +173,32 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
         "rainbond-fullstack-bootstrap"
       ],
       "stdin_schema_source": "rainbond_init_package_upload.upload_request"
+    },
+    "handoff_create": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "handoff",
+        "create",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-fullstack-bootstrap"
+      ],
+      "stdin_schema_source": "contracts/handoff-context.schema.yaml#create-input"
+    },
+    "handoff_validate": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "handoff",
+        "validate",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-fullstack-bootstrap"
+      ],
+      "stdin_schema_source": "contracts/handoff-context.schema.yaml#validation-input"
     },
     "call": {
       "argv": [

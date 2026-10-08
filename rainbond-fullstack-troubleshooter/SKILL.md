@@ -12,7 +12,7 @@ Diagnose an existing linked Rainbond app, apply at most the smallest evidence-ba
 ## Fast path
 
 1. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session; when unavailable, follow [generated Runtime Routing](references/generated/runtime-routing.md).
-2. Resolve the exact existing app/component and call `rainbond_get_app_health_overview` before expanding evidence.
+2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), reuse valid runtime/context/app identity, then call `rainbond_get_app_health_overview` before expanding evidence.
 3. Classify build, runtime, dependency, config, access, or capacity failure; read only the matching decision branch.
 4. Anchor every mutation to fresh state, execute once after confirmation, and re-read the affected resource.
 5. Return a verified handoff or one blocker.
@@ -55,6 +55,7 @@ The canonical structured result is [troubleshoot-result.schema.yaml](schemas/tro
 - ConfigMap recovery performs one save, one restart, and one fresh verification; repeated blind saves are forbidden.
 - 401/403, confirmation, credential, and replay behavior comes from the generated Gate and cannot be weakened.
 - Logs and events are bounded evidence; unavailable evidence is not empty or successful evidence.
+- Mutations refresh only affected runtime state in the HandoffContext. Fingerprint mismatch, reconnect, 401/403, source change, not-found, revision conflict, or stale mutable state forces targeted refresh.
 
 ## Output selection
 

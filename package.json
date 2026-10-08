@@ -90,6 +90,7 @@
     "test:bootstrap-contract": "node --test tests/bootstrap-contract.test.js",
     "test:troubleshooter-contract": "node --test tests/troubleshooter-contract.test.js",
     "test:env-sync-contract": "node --test tests/env-sync-contract.test.js",
+    "test:handoff-context": "node --test tests/handoff-context.test.js",
     "test:delivery-probe": "node --test tests/delivery-probe.test.js",
     "test:auto-update": "node --test tests/auto-update.test.js",
     "test:launcher": "node --test tests/console-origin.test.js tests/host-targets.test.js tests/local-cli-installer.test.js tests/npx-launcher.test.js tests/runtime-state.test.js tests/single-runtime.test.js tests/single-runtime-cli.test.js tests/single-runtime-launcher.test.js tests/skill-manifest-builder.test.js",

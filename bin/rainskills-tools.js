@@ -70,6 +70,14 @@ const ENTERPRISE_SCOPED_PLATFORM_QUERY_TOOLS = new Set([
   "rainbond_query_apps",
   "rainbond_query_components",
 ]);
+const HANDOFF_SKILLS = new Set([
+  "rainbond-app-assistant",
+  "rainbond-project-init",
+  "rainbond-fullstack-bootstrap",
+  "rainbond-fullstack-troubleshooter",
+  "rainbond-delivery-verifier",
+  "rainbond-template-installer",
+]);
 
 const EXIT = Object.freeze({
   USAGE: 2,
@@ -203,6 +211,9 @@ function parseCommand(args) {
   if (command === "delivery" && skillId !== "rainbond-delivery-verifier") {
     throw new BridgeError("delivery probe requires rainbond-delivery-verifier", EXIT.USAGE);
   }
+  if (command === "handoff" && !HANDOFF_SKILLS.has(skillId)) {
+    throw new BridgeError("handoff command is not allowed for this skill", EXIT.USAGE);
+  }
   if (
     command === "context"
     && remaining[1] === "resolve"
@@ -230,6 +241,15 @@ function parseCommand(args) {
       input: remaining[3],
       ...context,
     };
+  }
+  if (
+    command === "handoff"
+    && ["create", "validate"].includes(remaining[1])
+    && remaining.length === 4
+    && remaining[2] === "--input"
+    && remaining[3] === "-"
+  ) {
+    return { command, action: remaining[1], input: remaining[3], ...context };
   }
   if (
     command === "query"
@@ -1436,7 +1456,7 @@ async function main(args = process.argv.slice(2)) {
   let argumentRedactions = [];
   try {
     command = parseCommand(args);
-    if (["read", "call", "package-upload", "query", "context", "delivery"].includes(command.command)) {
+    if (["read", "call", "package-upload", "query", "context", "delivery", "handoff"].includes(command.command)) {
       const argumentsValue = readArguments(command.input);
       command.argumentsValue = argumentsValue;
       argumentRedactions = collectArgumentRedactions(argumentsValue);
@@ -1470,6 +1490,19 @@ async function main(args = process.argv.slice(2)) {
     if (command.command === "delivery" && command.action === "probe") {
       const { createDeliveryProbe } = require("./delivery-probe.js");
       const output = await createDeliveryProbe()(command.argumentsValue);
+      process.stdout.write(`${JSON.stringify(fitOutput(output))}\n`);
+      return;
+    }
+    if (command.command === "handoff") {
+      const { createHandoffContext, validateHandoffContext } = require("./handoff-context.js");
+      const output = command.action === "create"
+        ? createHandoffContext(command.argumentsValue)
+        : validateHandoffContext(command.argumentsValue.context, {
+          current: command.argumentsValue.current,
+          signal: command.argumentsValue.signal,
+          now: command.argumentsValue.now,
+          maxAgeMs: command.argumentsValue.max_age_ms,
+        });
       process.stdout.write(`${JSON.stringify(fitOutput(output))}\n`);
       return;
     }

@@ -15,7 +15,7 @@ Initialize only the current local project: create or repair `rainbond.app.json`,
 2. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session before platform access; when no runtime exists, follow [generated Runtime Routing](references/generated/runtime-routing.md).
 3. Resolve identity from explicit input, existing binding, manifest, then bounded repository inference.
 4. Reuse one verified existing app or create the missing app; normalize `app_id` to a positive integer.
-5. Write canonical files, verify them, and select exactly one downstream action.
+5. Write canonical files, verify them, create or refresh the protected [HandoffContext](schemas/generated/handoff-context.schema.yaml), and select exactly one downstream action.
 
 ## Conditional reading table
 
@@ -56,6 +56,7 @@ The exact field rules and v1/v2 generation decisions live in the active manifest
 - Never persist credentials, confirmation IDs, runtime IDs, operation IDs, or raw platform output.
 - Platform mutations follow the generated Gate and execute once after confirmation; unknown results are queried before retry.
 - Existing-app adoption must make local files agree with verified platform identity before bootstrap.
+- A valid incoming HandoffContext reuses runtime and workspace identity; writes refresh affected mutable state only. Invalid fingerprints, reconnect, 401/403, source changes, not-found, revision conflict, or stale state force targeted refresh.
 
 ## Output selection
 

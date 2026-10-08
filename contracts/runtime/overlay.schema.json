@@ -13,7 +13,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "enum": ["context_resolve", "list", "describe", "read", "query", "package_upload", "delivery_probe", "call", "call_confirm"] }
+      "items": { "enum": ["context_resolve", "list", "describe", "read", "query", "package_upload", "delivery_probe", "handoff_create", "handoff_validate", "call", "call_confirm"] }
     },
     "version_guard": { "enum": ["required", "none"] },
     "missing_runtime_mode": { "enum": ["new_application", "existing_application", "linked_project", "ai_workload", "plugin_management", "read_only_query"] },

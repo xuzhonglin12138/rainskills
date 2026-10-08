@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: 8c572a4e05e9ba50277543cbcb772066917367033e5c02aa861b1852d9d99c4d -->
+<!-- source-sha256: 27ad2f1d24c06ce1de9786cfa75bd6f82f4fd1cce04545c3c22266d47210ed56 -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）
@@ -26,7 +26,7 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
 
 - `skill_id`: `rainbond-delivery-verifier`
 - `supported_profiles`: `cli, embedded`
-- `command_set`: `context_resolve, read, delivery_probe, call, call_confirm`
+- `command_set`: `context_resolve, read, delivery_probe, handoff_create, handoff_validate, call, call_confirm`
 - `version_guard`: `none`
 - `missing_runtime_mode`: `existing_application`
 - `scope_discriminator`: `workspace`
@@ -153,6 +153,32 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
       "policy_schema_source": "schemas/delivery-probe-policy.schema.yaml",
       "stdin_schema_source": "schemas/delivery-probe-input.schema.yaml",
       "result_schema_source": "schemas/delivery-probe-result.schema.yaml"
+    },
+    "handoff_create": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "handoff",
+        "create",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-delivery-verifier"
+      ],
+      "stdin_schema_source": "contracts/handoff-context.schema.yaml#create-input"
+    },
+    "handoff_validate": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "handoff",
+        "validate",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-delivery-verifier"
+      ],
+      "stdin_schema_source": "contracts/handoff-context.schema.yaml#validation-input"
     },
     "call": {
       "argv": [

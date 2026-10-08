@@ -12,7 +12,7 @@ Resolve one confirmed Rainbond marketplace template and version, install it into
 ## Fast path
 
 1. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session; if absent, follow [generated Runtime Routing](references/generated/runtime-routing.md).
-2. Resolve `local|cloud` source, exact template identity, version, and target-app policy from verified catalog facts.
+2. Validate or create the [HandoffContext](schemas/generated/handoff-context.schema.yaml), then resolve `local|cloud` source, exact template identity, version, and target-app policy from verified catalog facts.
 3. Confirm any ambiguous version, app reuse, name collision, or destructive install choice before mutation.
 4. Install once, deploy only when requested, wait for bounded convergence, and verify real service state.
 
@@ -50,6 +50,7 @@ Load only the active row. Do not load output examples while the template or targ
 - Each install/deploy mutation executes once after confirmation; timeout or 5xx requires read-back.
 - Installed, deployed, running, and delivered remain distinct states.
 - Credentials, internal namespaces, raw tool payloads, and unrelated app details never enter user output.
+- Template installation writes invalidate the mutable snapshot and refresh only affected app/runtime state before downstream handoff.
 
 ## Output selection
 

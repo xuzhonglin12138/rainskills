@@ -17,7 +17,7 @@ const OVERLAY_KEYS = Object.freeze([
 const PROFILES = new Set(["cli", "embedded"]);
 const COMMANDS = new Set([
   "context_resolve", "list", "describe", "read", "query", "package_upload",
-  "delivery_probe", "call", "call_confirm",
+  "delivery_probe", "handoff_create", "handoff_validate", "call", "call_confirm",
 ]);
 const VERSION_GUARDS = new Set(["required", "none"]);
 const MISSING_RUNTIME_MODES = new Set([
@@ -92,6 +92,14 @@ function buildCommand(skillId, command) {
     policy_schema_source: "schemas/delivery-probe-policy.schema.yaml",
     stdin_schema_source: "schemas/delivery-probe-input.schema.yaml",
     result_schema_source: "schemas/delivery-probe-result.schema.yaml",
+  };
+  if (command === "handoff_create") return {
+    argv: commandArgv(skillId, "handoff", "create", "--input", "-"),
+    stdin_schema_source: "contracts/handoff-context.schema.yaml#create-input",
+  };
+  if (command === "handoff_validate") return {
+    argv: commandArgv(skillId, "handoff", "validate", "--input", "-"),
+    stdin_schema_source: "contracts/handoff-context.schema.yaml#validation-input",
   };
   if (command === "call") return { argv: commandArgv(skillId, "call", "<tool>", "--input", "-"), stdin_schema_source: "tool-catalog" };
   if (command === "call_confirm") return { argv: [...commandArgv(skillId, "call", "<tool>", "--input", "-"), "--confirm", "<confirmation-id>"], stdin_schema_source: "same-confirmed-input" };

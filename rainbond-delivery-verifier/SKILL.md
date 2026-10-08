@@ -12,7 +12,7 @@ Decide whether an existing Rainbond app is converged, usable, and backed by a ve
 ## Fast path
 
 1. Read the [generated Runtime Gate](references/generated/runtime-gate.md) once per session; if absent, follow [generated Runtime Routing](references/generated/runtime-routing.md).
-2. Resolve the exact existing app and call `rainbond_get_app_health_overview`.
+2. Validate the incoming [HandoffContext](schemas/generated/handoff-context.schema.yaml), reuse valid runtime/context/app identity, then call `rainbond_get_app_health_overview`.
 3. Inspect only the component, storage, access, proxy, static-asset, or probe evidence required by the current delivery shape.
 4. Use the bounded delivery adapter for URL verification; classify the final state from fresh evidence.
 5. Return the real access URL, verified scope, caveats/blockers, and one next step.
@@ -53,6 +53,7 @@ Canonical schemas: [probe policy](schemas/delivery-probe-policy.schema.yaml) wit
 - Probes carry no Cookie, Authorization, Rainbond credential, or ambient browser state.
 - Reverse-proxy delivery verifies both the page path and its same-host API path; persistence and static frontend checks cannot be silently omitted.
 - Candidate URLs remain visible when manual validation is required, but their status is never promoted to verified.
+- Delivery state is mutable and must be fresh within 30 seconds or revision-matched; stale or invalid HandoffContext state is refreshed without repeating unrelated onboarding.
 
 ## Output selection
 
