@@ -78,6 +78,7 @@
     "test:runtime-contracts": "node scripts/sync-runtime-contracts.mjs --check",
     "test:skill-benchmark": "node --test tests/skill-token-baseline.test.js",
     "test:skill-performance-repository": "node --test tests/skill-performance-repository.test.js",
+    "test:codex-host-evals": "node --test tests/codex-host-evals.test.js",
     "test:effect-evals": "node --test tests/effect-evals.test.js",
     "test:project-init-contract": "node --test tests/project-init-contract.test.js",
     "test:bootstrap-contract": "node --test tests/bootstrap-contract.test.js",

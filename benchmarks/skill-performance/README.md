@@ -1,47 +1,55 @@
-# Skill Token Baseline
+# Skill performance benchmarks
 
-This benchmark records the real Codex token usage for the installed Rainskills entrypoints without calling Rainbond or modifying files.
+Phase 0 separates repository diagnostics from real Codex host telemetry. Bytes are never reported as Token counts, and fixture-only host runs are never presented as controlled deployment evidence.
 
-## Before measurement
+## Effect corpus
 
-```bash
-node benchmarks/skill-performance/measure-skill-tokens.mjs \
-  --label before-YYYY-MM-DD \
-  --model gpt-5.6-sol \
-  --reasoning-effort high \
-  --repetitions 1
-```
-
-## After measurement
-
-After installing the modified Skill bundles, rerun the identical command with a new label:
+`tests/effect-evals/cases/` is the only source for the 28 global smoke cases. Validate it with:
 
 ```bash
-node benchmarks/skill-performance/measure-skill-tokens.mjs \
-  --label after-YYYY-MM-DD \
-  --model gpt-5.6-sol \
-  --reasoning-effort high \
-  --repetitions 1
+node scripts/validate-effect-evals.mjs
 ```
 
-The two measurements are comparable only when the Codex version, model, reasoning effort, config digest, prompts, and installed Skill bundle digests are recorded and reviewed.
+Each case pins its prompt, fixture, and complete content with SHA-256 and declares initial ownership, allowed/forbidden handoffs, behavior expectations, and safety assertions. The corpus is excluded from the npm package.
 
-## Interpretation
+## Repository layer
 
-- `input_tokens` includes `cached_input_tokens`.
-- `output_tokens` includes `reasoning_output_tokens`.
-- Do not add cached input to input tokens or reasoning output to output tokens.
-- The control includes global Codex instructions, tool definitions, conversation scaffolding, and all discovered Skill metadata.
-- Each Skill delta estimates the additional input caused by explicitly activating that entrypoint for the fixed prompt.
-- A single repetition is a before/after context snapshot, not a stable latency benchmark.
-- Performance claims require a preregistered paired AB/BA experiment with repeated runs.
-- The runner stores only sanitized metrics and digests. Raw JSONL and stderr are not persisted.
+Run the eight deterministic scenarios without a model or live Rainbond environment:
 
-## Files
+```bash
+node scripts/run-skill-performance-benchmark.mjs \
+  --output /tmp/rainskills-repository-benchmark.json
+```
 
-Each result directory contains:
+This layer records UTF-8 Markdown bytes and fixture-backed mock trace counts for CLI invocations, backend requests, retries, polls, stdout, stderr, and transport. Its Token and model-timing fields are always `unavailable`.
 
-- `summary.json`: machine-readable environment, bundle digests, run metrics, and aggregates.
-- `report.md`: human-readable table and interpretation boundary.
+## Codex host layer
 
-The baseline created on 2026-10-08 is in `results/before-2026-10-08/`.
+The host runner uses async `codex exec --json --ephemeral`, a fresh temporary workspace, an isolated `.agents/skills` candidate bundle, stdin disabled, a fixed model/reasoning pair, monotonic event-arrival timestamps, and restricted 0600 artifacts.
+
+Without an explicitly controlled Rainbond environment, reset, and cleanup mechanism, write scenarios remain `unavailable`. A safe fixture-only smoke run is available for validating the measurement pipeline, but is marked `control_status=uncontrolled`:
+
+```bash
+node scripts/run-codex-host-evals.mjs \
+  --fixture-only \
+  --model gpt-5.6-sol \
+  --reasoning-effort high \
+  --repetitions 1 \
+  --primary-repetitions 3 \
+  --artifact-root /tmp/rainskills-host-artifacts \
+  --output /tmp/rainskills-host-baseline.json
+```
+
+The runner records raw JSONL structure with local monotonic timestamps and redacts credential-shaped text before saving stdout/stderr. `turn.completed.usage` is the only Codex Token source. Missing usage, compaction, tool spans, platform version, or external-wait attribution stays `unavailable`.
+
+## Legacy entrypoint snapshot
+
+`measure-skill-tokens.mjs` and `results/before-2026-10-08/` are exploratory entrypoint snapshots created before the Correctness Track. That result used one repetition and a dirty pre-correctness worktree, so it is not the formal Phase 0 baseline and cannot support performance claims.
+
+## Interpretation boundary
+
+- Cached input is already included in input tokens.
+- Reasoning output is already included in output tokens.
+- Fresh Codex tasks do not imply an empty provider cache.
+- Fixture-only host runs do not prove real Rainbond delivery behavior.
+- Formal Performance Track decisions require a clean frozen base SHA, controlled fresh-session A/B data, preregistered treatment and minimum effect, deterministic guardrails, and the required human checkpoint.
