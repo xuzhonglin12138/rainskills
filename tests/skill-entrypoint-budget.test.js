@@ -62,3 +62,8 @@ test("bootstrap entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-fullstack-bootstrap", 14 * 1024);
   assertReferenceBudgets("rainbond-fullstack-bootstrap");
 });
+
+test("troubleshooter entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-fullstack-troubleshooter", 16 * 1024);
+  assertReferenceBudgets("rainbond-fullstack-troubleshooter");
+});
