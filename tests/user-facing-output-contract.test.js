@@ -224,7 +224,7 @@ test("successful deployment replies end with the four customer next actions", ()
   for (const relativePath of [
     "rainbond-app-assistant/references/output-contract.md",
     "rainbond-app-assistant/references/workflow-rules.md",
-    "rainbond-delivery-verifier/SKILL.md",
+    "rainbond-delivery-verifier/references/output-contract.md",
   ]) {
     assert.match(read(relativePath), /你接下来可以：/, relativePath);
     assert.match(read(relativePath), /将应用迁移到自己的 Rainbond/, relativePath);

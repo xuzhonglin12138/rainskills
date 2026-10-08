@@ -67,3 +67,8 @@ test("troubleshooter entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-fullstack-troubleshooter", 16 * 1024);
   assertReferenceBudgets("rainbond-fullstack-troubleshooter");
 });
+
+test("delivery verifier entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-delivery-verifier", 12 * 1024);
+  assertReferenceBudgets("rainbond-delivery-verifier");
+});
