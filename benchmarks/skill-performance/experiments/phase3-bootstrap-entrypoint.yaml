@@ -2,7 +2,7 @@ experiment_id: phase3-bootstrap-entrypoint
 track: performance
 classification: maintenance_only
 base_sha: 0e025bca32a5ccc8d93915ee7845f1c26c886d2d
-candidate_sha: null
+candidate_sha: 2062af1df6d9d81a484cb8662ab51b32e25e0c1f
 treatment: Convert rainbond-fullstack-bootstrap/SKILL.md into a minimal conditional router and split oversized supporting modules by decision cluster.
 primary_scenario: create-three-component-topology
 primary_metric: entrypoint_utf8_bytes
@@ -24,5 +24,17 @@ paired_judge:
 baseline:
   entrypoint_utf8_bytes: 33846
   largest_module_utf8_bytes: 31854
-result: pending
+measurement:
+  before_entrypoint_utf8_bytes: 33846
+  after_entrypoint_utf8_bytes: 7176
+  relative_change: -0.7879
+  largest_module_utf8_bytes: 12292
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+  bootstrap_fixtures: 18/18 passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5
