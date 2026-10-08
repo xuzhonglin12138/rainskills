@@ -1,0 +1,28 @@
+experiment_id: phase3-bootstrap-entrypoint
+track: performance
+classification: maintenance_only
+base_sha: 0e025bca32a5ccc8d93915ee7845f1c26c886d2d
+candidate_sha: null
+treatment: Convert rainbond-fullstack-bootstrap/SKILL.md into a minimal conditional router and split oversized supporting modules by decision cluster.
+primary_scenario: create-three-component-topology
+primary_metric: entrypoint_utf8_bytes
+minimum_effect: entrypoint is at most 14336 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures and 18 bootstrap fixtures remain green.
+  - Persistence, dependency direction, provider contract, proxy, source/package, and confirmation rules remain unchanged.
+  - Every linked supporting document resolves and no conditional module exceeds 16384 bytes.
+  - A normal branch loads at most two conditional documents and no more than 32768 supporting bytes.
+prompt_hash: 3a126a340fd6725a0d821c5379457cacc85b7eab869ba7c14ad01cbc5af574e2
+fixture_hash: 8c64c922672d508e0129b650bd0db87aab0005e47fafec8bc267c0a40920a245
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  entrypoint_utf8_bytes: 33846
+  largest_module_utf8_bytes: 31854
+result: pending
+human_checkpoint: preapproved_through_phase5

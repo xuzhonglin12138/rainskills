@@ -2,7 +2,7 @@ experiment_id: phase3-project-init-entrypoint
 track: performance
 classification: maintenance_only
 base_sha: ce965f66a178825499d6f4e3c8f415df2b58c27f
-candidate_sha: null
+candidate_sha: 0e025bca32a5ccc8d93915ee7845f1c26c886d2d
 treatment: Convert rainbond-project-init/SKILL.md into a minimal conditional router and remove duplicated workflow text from its entrypoint.
 primary_scenario: initialize-monorepo
 primary_metric: entrypoint_utf8_bytes
@@ -24,5 +24,17 @@ paired_judge:
 baseline:
   entrypoint_utf8_bytes: 39028
   largest_reference_utf8_bytes: 21731
-result: pending
+measurement:
+  before_entrypoint_utf8_bytes: 39028
+  after_entrypoint_utf8_bytes: 6104
+  relative_change: -0.8436
+  largest_reference_utf8_bytes: 13492
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+  project_init_contract: 4/4 passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5
