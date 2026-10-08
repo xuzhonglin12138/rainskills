@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "只帮我确认现有 Rainbond 应用 delivered-demo 是否已经交付成功，并给我真实访问地址。请检查关键组件和实际访问路径，完整输出结构化 DeliveryVerificationResult。",
+    "expected": "确认关键组件运行并验证首选用户 URL 可达后，返回 runtime_healthy、delivered、verified 和真实 preferred_access_url。"
+  },
+  {
+    "id": 2,
+    "prompt": "只帮我做最终交付验证并给访问地址。现有应用是前端通过同一域名反向代理 api：根页面能打开，但同一 host 的 /api 返回 502；db 和 frontend 显示 running。请完整输出结构化 DeliveryVerificationResult。",
+    "expected": "不能仅凭根页面或组件存在判定成功；保留候选 URL，但因同域 API 失败判定 runtime_unhealthy 和 blocked，下一步指向 troubleshooter。"
+  }
+]

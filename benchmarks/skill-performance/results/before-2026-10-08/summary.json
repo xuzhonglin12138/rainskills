@@ -1,0 +1,588 @@
+{
+  "schema": "rainskills.skill-token-baseline.v1",
+  "label": "before-2026-10-08",
+  "recordedAt": "2026-10-08T08:01:06.639Z",
+  "environment": {
+    "repositoryRoot": "/Users/guox/Desktop/Project/rainskills",
+    "gitCommit": "40ecfa7ac458d0f295397ab5437c680d936d1c26",
+    "worktreeClean": false,
+    "codexVersion": "codex-cli 0.147.0",
+    "codexConfigSha256": "0ba5fed7bf09dff80cc9978f609083f7ed7640726aa7bd28e6027509efde1c9c",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "high",
+    "repetitions": 1,
+    "sandbox": "read-only",
+    "sessionMode": "fresh_ephemeral"
+  },
+  "skillDigests": {
+    "rainskills": {
+      "path": "/Users/guox/.codex/skills/rainskills/SKILL.md",
+      "bytes": 8958,
+      "sha256": "08869012a23ecb9fe13e703a2263e7ed359fdafc213c86167ee75cd4e67efea4"
+    },
+    "rainbond-ai-assistant": {
+      "path": "/Users/guox/.codex/skills/rainbond-ai-assistant/SKILL.md",
+      "bytes": 5986,
+      "sha256": "6ae39555c80a56cc6f81fcb798c32345cffbd6cb2187e692bf3b9f6116e9f437"
+    },
+    "rainbond-app-assistant": {
+      "path": "/Users/guox/.codex/skills/rainbond-app-assistant/SKILL.md",
+      "bytes": 6962,
+      "sha256": "8300cf89787389842308230bdaf88361b3986df5f11d00278df461ac5ae4a50a"
+    },
+    "rainbond-app-version-assistant": {
+      "path": "/Users/guox/.codex/skills/rainbond-app-version-assistant/SKILL.md",
+      "bytes": 24044,
+      "sha256": "edaae70a199a632d66e7c2573b98b8126c4f988a5786a1a6f1aeb54bd1b851c2"
+    },
+    "rainbond-delivery-verifier": {
+      "path": "/Users/guox/.codex/skills/rainbond-delivery-verifier/SKILL.md",
+      "bytes": 26082,
+      "sha256": "f2a22c92741db1a7c9cc88a98cf5c976c50cc9b379dce907c6a274b68b833910"
+    },
+    "rainbond-env-sync": {
+      "path": "/Users/guox/.codex/skills/rainbond-env-sync/SKILL.md",
+      "bytes": 23640,
+      "sha256": "b5b6cdeac2dbaca590f89c87f6f89d10cdbbad07bf8ece14e2e26e7c5ee40d3c"
+    },
+    "rainbond-fullstack-bootstrap": {
+      "path": "/Users/guox/.codex/skills/rainbond-fullstack-bootstrap/SKILL.md",
+      "bytes": 43684,
+      "sha256": "bc392eb6a39f3c2d5c4136f7314ef273d85737c04b8a113cae351f5781b4f272"
+    },
+    "rainbond-fullstack-troubleshooter": {
+      "path": "/Users/guox/.codex/skills/rainbond-fullstack-troubleshooter/SKILL.md",
+      "bytes": 65275,
+      "sha256": "2e872e60001a4a97be7f547877b3872bebd1f3646776d183c723b96e513e7323"
+    },
+    "rainbond-opensource-app-deploy": {
+      "path": "/Users/guox/.codex/skills/rainbond-opensource-app-deploy/SKILL.md",
+      "bytes": 6102,
+      "sha256": "a7910385885ab268b0a252064ba8d5ef60773db39f075af039b90ed40bc5d18a"
+    },
+    "rainbond-platform-installer": {
+      "path": "/Users/guox/.codex/skills/rainbond-platform-installer/SKILL.md",
+      "bytes": 14703,
+      "sha256": "77412ed521c5fa6c4ba80afddfc90b91182f43fe12095ffa471acce51a251317"
+    },
+    "rainbond-platform-plugin-manager": {
+      "path": "/Users/guox/.codex/skills/rainbond-platform-plugin-manager/SKILL.md",
+      "bytes": 3351,
+      "sha256": "c0dff806597b964ce26a0ec1001997dc7fc1a461e0bdbb5dac1ffe9c8307f9f8"
+    },
+    "rainbond-platform-query": {
+      "path": "/Users/guox/.codex/skills/rainbond-platform-query/SKILL.md",
+      "bytes": 11004,
+      "sha256": "42ba5851d24adbd8571a1d8d299bee55fcb6b5c4e25bdb6b6d07d1748de1cb03"
+    },
+    "rainbond-project-init": {
+      "path": "/Users/guox/.codex/skills/rainbond-project-init/SKILL.md",
+      "bytes": 57978,
+      "sha256": "37b80f208960cf57c34b0ca028db24af0f2217db9c2bc5b1e9308facb041c6dd"
+    },
+    "rainbond-template-installer": {
+      "path": "/Users/guox/.codex/skills/rainbond-template-installer/SKILL.md",
+      "bytes": 23275,
+      "sha256": "5a9a17bb6ad30e542848b1f7179284ce70496d730b87c6296fe2b4b1f8bb6263"
+    }
+  },
+  "runs": [
+    {
+      "scenarioId": "control",
+      "skill": null,
+      "repetition": 1,
+      "promptSha256": "eee7abee0fe2e7338de881ec5c76b3b247d9c6bcadb402e1064526330a6611c7",
+      "threadId": "01a11a86-1d02-78d0-8a64-f0d823c51183",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 18803,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 18803,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 18808
+      },
+      "endToEndMs": 7283.227125,
+      "timeToFirstItemMs": 4199.502708,
+      "stderrLineCount": 16,
+      "stderrSha256": "92fbda7b4b174df69c8307477cf6a7b5e08b86867e6ee7ea9941b406db9efc3a"
+    },
+    {
+      "scenarioId": "rainskills",
+      "skill": "rainskills",
+      "repetition": 1,
+      "promptSha256": "7d4fdfc29fded80a81f1439daf8c847f5b081de9ccb4e70a4c2ecf383e880f54",
+      "threadId": "01a11a86-38c7-76e2-90e0-324481e6c8fe",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 20994,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 20994,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 20999
+      },
+      "endToEndMs": 11622.207458,
+      "timeToFirstItemMs": 8847.090875,
+      "stderrLineCount": 16,
+      "stderrSha256": "05e355f4234402b7d37533837ad70cb359e844cca8b6b5841db7366e336a5cb6"
+    },
+    {
+      "scenarioId": "rainbond-ai-assistant",
+      "skill": "rainbond-ai-assistant",
+      "repetition": 1,
+      "promptSha256": "bf43c859d3b55c8be5a93f4e33ed6c8ce7aceb4efab86f45198e17056c226071",
+      "threadId": "01a11a86-662e-7583-ab69-6f149507584c",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 20278,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 20278,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 20283
+      },
+      "endToEndMs": 6955.169167,
+      "timeToFirstItemMs": 3467.623459,
+      "stderrLineCount": 16,
+      "stderrSha256": "ba6cb3705e097e3b5b5fd16a4ef751a3da04ba84b5b3618adce4b12e864ca6f9"
+    },
+    {
+      "scenarioId": "rainbond-app-assistant",
+      "skill": "rainbond-app-assistant",
+      "repetition": 1,
+      "promptSha256": "a304b15ef627cfb04a8a96f9c7eff5163dcc58d0eb28ebd7ea59cc06709890df",
+      "threadId": "01a11a86-8114-7a02-b1bf-bede12f78829",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 20497,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 20497,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 20502
+      },
+      "endToEndMs": 6011.897208,
+      "timeToFirstItemMs": 3159.94325,
+      "stderrLineCount": 16,
+      "stderrSha256": "2c6129d383e30b94758a0d701ab1bfd2ad056fd073aa4b1a86cfdcb3c4dd941c"
+    },
+    {
+      "scenarioId": "rainbond-app-version-assistant",
+      "skill": "rainbond-app-version-assistant",
+      "repetition": 1,
+      "promptSha256": "6b3d5cfc3b9c6e4cbe7c6d8d8a4849de997c4b04689f9e3267716d84a0561d1d",
+      "threadId": "01a11a86-98dc-74d2-a04b-e346e7a091e8",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 24528,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 24528,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 24533
+      },
+      "endToEndMs": 7301.513667,
+      "timeToFirstItemMs": 4983.751459,
+      "stderrLineCount": 16,
+      "stderrSha256": "6b3166cad4f2a3a945d8e312b60d464868f1393ccb803147a10640bfa40cd971"
+    },
+    {
+      "scenarioId": "rainbond-delivery-verifier",
+      "skill": "rainbond-delivery-verifier",
+      "repetition": 1,
+      "promptSha256": "054c2b7642a8d10c689099d4e937def096277a5f4e597aaed473e0a2fc795717",
+      "threadId": "01a11a86-b55e-7a43-9b90-cf9697e098ec",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 24788,
+        "cachedInputTokens": 18560,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 6228,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 24793
+      },
+      "endToEndMs": 5702.17075,
+      "timeToFirstItemMs": 3180.463417,
+      "stderrLineCount": 16,
+      "stderrSha256": "29ca56cecdac9f33893bc89a0268a068fdc372343524fdc61a3c8eb7cd9866af"
+    },
+    {
+      "scenarioId": "rainbond-env-sync",
+      "skill": "rainbond-env-sync",
+      "repetition": 1,
+      "promptSha256": "69fb029c68b18d22b94b8dd70e647453b0c86481749eeedbe04156d8127c4fb2",
+      "threadId": "01a11a86-cb5b-7181-a9c0-f53c55988509",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 24543,
+        "cachedInputTokens": 18560,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 5983,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 24548
+      },
+      "endToEndMs": 5741.107125,
+      "timeToFirstItemMs": 4335.267167,
+      "stderrLineCount": 16,
+      "stderrSha256": "564328098393facdafff38ff5ec92896a2fd69a84e7effbf56e5ce64d5b50c3b"
+    },
+    {
+      "scenarioId": "rainbond-fullstack-bootstrap",
+      "skill": "rainbond-fullstack-bootstrap",
+      "repetition": 1,
+      "promptSha256": "a5eba9ece8d4d39ec752232e0c83635a44a980ccbb3ea428cf8ad43f4ad4013f",
+      "threadId": "01a11a86-e20b-7aa2-8eff-a021e31b4566",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 28714,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 28714,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 28719
+      },
+      "endToEndMs": 7896.567375,
+      "timeToFirstItemMs": 3776.736792,
+      "stderrLineCount": 16,
+      "stderrSha256": "24b405cb37ad47ad3a8e85b872fa7e1af1ebf2cbccb2fa29cfac4aa2e5b604bc"
+    },
+    {
+      "scenarioId": "rainbond-fullstack-troubleshooter",
+      "skill": "rainbond-fullstack-troubleshooter",
+      "repetition": 1,
+      "promptSha256": "07d1170cd6a6095ed9123c7f3384b5ba3f651aa26a57c23b8426f5ecb8809e41",
+      "threadId": "01a11a87-00a1-76c3-936e-017aa0de3bfe",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 33187,
+        "cachedInputTokens": 0,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 33187,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 33192
+      },
+      "endToEndMs": 11271.679084,
+      "timeToFirstItemMs": 6147.315542,
+      "stderrLineCount": 16,
+      "stderrSha256": "c73492a11ce3acb8ed09ff2fbf6b7bd59816fbf712c9d66e780f55c081e8ec06"
+    },
+    {
+      "scenarioId": "rainbond-opensource-app-deploy",
+      "skill": "rainbond-opensource-app-deploy",
+      "repetition": 1,
+      "promptSha256": "db24e466a6d169a6ebbc2f563bba07f9deeb8ba63ee60056f0391c213315e466",
+      "threadId": "01a11a87-2caa-7020-bd66-b97b36bcb3fb",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 20321,
+        "cachedInputTokens": 18560,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 1761,
+        "outputTokens": 46,
+        "reasoningOutputTokens": 39,
+        "totalTokens": 20367
+      },
+      "endToEndMs": 6915.479167,
+      "timeToFirstItemMs": 4629.67275,
+      "stderrLineCount": 16,
+      "stderrSha256": "a5054489756d3d2788332de68826c48f1e94e12050555c320c1ee452369e9ddd"
+    },
+    {
+      "scenarioId": "rainbond-platform-installer",
+      "skill": "rainbond-platform-installer",
+      "repetition": 1,
+      "promptSha256": "5fc3cb1b10dd71c6f86e2f1637b3cff8275fb9bc22b555b9835a0e10865ab615",
+      "threadId": "01a11a87-47ac-74d0-bf26-e7b5c1881bb9",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 22382,
+        "cachedInputTokens": 16384,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 5998,
+        "outputTokens": 38,
+        "reasoningOutputTokens": 31,
+        "totalTokens": 22420
+      },
+      "endToEndMs": 6986.409292,
+      "timeToFirstItemMs": 5854.021875,
+      "stderrLineCount": 16,
+      "stderrSha256": "a743cca6ea9c6738c4c5ef7e2cc9229d1a5c7a278c6af567974ac7bc08ba57fc"
+    },
+    {
+      "scenarioId": "rainbond-platform-plugin-manager",
+      "skill": "rainbond-platform-plugin-manager",
+      "repetition": 1,
+      "promptSha256": "1717dde2610b5f9d703039c8fb8aa21e5815bfa94497dc9d3dd81f8da3130e18",
+      "threadId": "01a11a87-62f5-7530-b6a1-877da458cbc1",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 19682,
+        "cachedInputTokens": 18560,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 1122,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 19687
+      },
+      "endToEndMs": 5485.84375,
+      "timeToFirstItemMs": 3623.597125,
+      "stderrLineCount": 16,
+      "stderrSha256": "a551aa0b5703fd8b59207a89e28d8fff34bb32f9b43f7929bdcc9575b77e4a8e"
+    },
+    {
+      "scenarioId": "rainbond-platform-query",
+      "skill": "rainbond-platform-query",
+      "repetition": 1,
+      "promptSha256": "61db6b6f2b98e09e348ca652a27a303d644f79f4768284a946f214469f396f8d",
+      "threadId": "01a11a87-7866-78a0-b661-2776bbbbe3d2",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 21510,
+        "cachedInputTokens": 16384,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 5126,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 21515
+      },
+      "endToEndMs": 6807.1055,
+      "timeToFirstItemMs": 4832.499416,
+      "stderrLineCount": 16,
+      "stderrSha256": "065ec5fe0fc75e9be4fc8e62ae664a06ac0d4b07e675f9006cb29f4de46db2c9"
+    },
+    {
+      "scenarioId": "rainbond-project-init",
+      "skill": "rainbond-project-init",
+      "repetition": 1,
+      "promptSha256": "3ccdc99445755637b0c0711458d64a726b897a1051b0992fcc3ba3db1c8185a0",
+      "threadId": "01a11a87-92fd-7962-b285-24ef57ff26df",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 31808,
+        "cachedInputTokens": 16384,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 15424,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 31813
+      },
+      "endToEndMs": 5201.451208,
+      "timeToFirstItemMs": 3932.4075,
+      "stderrLineCount": 16,
+      "stderrSha256": "fb4864799d1a0a64d7d9f922973e4db005ed35217f4e5b84a67fac8e6171b43b"
+    },
+    {
+      "scenarioId": "rainbond-template-installer",
+      "skill": "rainbond-template-installer",
+      "repetition": 1,
+      "promptSha256": "ffeef9adf456e2830fd1493e3c6a401ed464971be46da8fc0a4d78645eebf6cc",
+      "threadId": "01a11a87-a74f-78d1-ab14-feb3c3d420ef",
+      "agentMessage": "READY",
+      "usage": {
+        "inputTokens": 24399,
+        "cachedInputTokens": 18560,
+        "cacheWriteInputTokens": 0,
+        "uncachedInputTokens": 5839,
+        "outputTokens": 5,
+        "reasoningOutputTokens": 0,
+        "totalTokens": 24404
+      },
+      "endToEndMs": 6466.056208,
+      "timeToFirstItemMs": 4265.901916,
+      "stderrLineCount": 16,
+      "stderrSha256": "5fa1318395d357de1f18221ee6740b327f5846fa63dc434ef15cd3385d91609e"
+    }
+  ],
+  "aggregates": [
+    {
+      "scenarioId": "control",
+      "skill": null,
+      "repetitions": 1,
+      "inputTokensMedian": 18803,
+      "inputTokensAverage": 18803,
+      "inputDeltaVsControl": 0,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 7283.227125,
+      "timeToFirstItemMsMedian": 4199.502708
+    },
+    {
+      "scenarioId": "rainskills",
+      "skill": "rainskills",
+      "repetitions": 1,
+      "inputTokensMedian": 20994,
+      "inputTokensAverage": 20994,
+      "inputDeltaVsControl": 2191,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 11622.207458,
+      "timeToFirstItemMsMedian": 8847.090875
+    },
+    {
+      "scenarioId": "rainbond-ai-assistant",
+      "skill": "rainbond-ai-assistant",
+      "repetitions": 1,
+      "inputTokensMedian": 20278,
+      "inputTokensAverage": 20278,
+      "inputDeltaVsControl": 1475,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 6955.169167,
+      "timeToFirstItemMsMedian": 3467.623459
+    },
+    {
+      "scenarioId": "rainbond-app-assistant",
+      "skill": "rainbond-app-assistant",
+      "repetitions": 1,
+      "inputTokensMedian": 20497,
+      "inputTokensAverage": 20497,
+      "inputDeltaVsControl": 1694,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 6011.897208,
+      "timeToFirstItemMsMedian": 3159.94325
+    },
+    {
+      "scenarioId": "rainbond-app-version-assistant",
+      "skill": "rainbond-app-version-assistant",
+      "repetitions": 1,
+      "inputTokensMedian": 24528,
+      "inputTokensAverage": 24528,
+      "inputDeltaVsControl": 5725,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 7301.513667,
+      "timeToFirstItemMsMedian": 4983.751459
+    },
+    {
+      "scenarioId": "rainbond-delivery-verifier",
+      "skill": "rainbond-delivery-verifier",
+      "repetitions": 1,
+      "inputTokensMedian": 24788,
+      "inputTokensAverage": 24788,
+      "inputDeltaVsControl": 5985,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 18560,
+      "endToEndMsMedian": 5702.17075,
+      "timeToFirstItemMsMedian": 3180.463417
+    },
+    {
+      "scenarioId": "rainbond-env-sync",
+      "skill": "rainbond-env-sync",
+      "repetitions": 1,
+      "inputTokensMedian": 24543,
+      "inputTokensAverage": 24543,
+      "inputDeltaVsControl": 5740,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 18560,
+      "endToEndMsMedian": 5741.107125,
+      "timeToFirstItemMsMedian": 4335.267167
+    },
+    {
+      "scenarioId": "rainbond-fullstack-bootstrap",
+      "skill": "rainbond-fullstack-bootstrap",
+      "repetitions": 1,
+      "inputTokensMedian": 28714,
+      "inputTokensAverage": 28714,
+      "inputDeltaVsControl": 9911,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 7896.567375,
+      "timeToFirstItemMsMedian": 3776.736792
+    },
+    {
+      "scenarioId": "rainbond-fullstack-troubleshooter",
+      "skill": "rainbond-fullstack-troubleshooter",
+      "repetitions": 1,
+      "inputTokensMedian": 33187,
+      "inputTokensAverage": 33187,
+      "inputDeltaVsControl": 14384,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 0,
+      "endToEndMsMedian": 11271.679084,
+      "timeToFirstItemMsMedian": 6147.315542
+    },
+    {
+      "scenarioId": "rainbond-opensource-app-deploy",
+      "skill": "rainbond-opensource-app-deploy",
+      "repetitions": 1,
+      "inputTokensMedian": 20321,
+      "inputTokensAverage": 20321,
+      "inputDeltaVsControl": 1518,
+      "outputTokensMedian": 46,
+      "cachedInputTokensMedian": 18560,
+      "endToEndMsMedian": 6915.479167,
+      "timeToFirstItemMsMedian": 4629.67275
+    },
+    {
+      "scenarioId": "rainbond-platform-installer",
+      "skill": "rainbond-platform-installer",
+      "repetitions": 1,
+      "inputTokensMedian": 22382,
+      "inputTokensAverage": 22382,
+      "inputDeltaVsControl": 3579,
+      "outputTokensMedian": 38,
+      "cachedInputTokensMedian": 16384,
+      "endToEndMsMedian": 6986.409292,
+      "timeToFirstItemMsMedian": 5854.021875
+    },
+    {
+      "scenarioId": "rainbond-platform-plugin-manager",
+      "skill": "rainbond-platform-plugin-manager",
+      "repetitions": 1,
+      "inputTokensMedian": 19682,
+      "inputTokensAverage": 19682,
+      "inputDeltaVsControl": 879,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 18560,
+      "endToEndMsMedian": 5485.84375,
+      "timeToFirstItemMsMedian": 3623.597125
+    },
+    {
+      "scenarioId": "rainbond-platform-query",
+      "skill": "rainbond-platform-query",
+      "repetitions": 1,
+      "inputTokensMedian": 21510,
+      "inputTokensAverage": 21510,
+      "inputDeltaVsControl": 2707,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 16384,
+      "endToEndMsMedian": 6807.1055,
+      "timeToFirstItemMsMedian": 4832.499416
+    },
+    {
+      "scenarioId": "rainbond-project-init",
+      "skill": "rainbond-project-init",
+      "repetitions": 1,
+      "inputTokensMedian": 31808,
+      "inputTokensAverage": 31808,
+      "inputDeltaVsControl": 13005,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 16384,
+      "endToEndMsMedian": 5201.451208,
+      "timeToFirstItemMsMedian": 3932.4075
+    },
+    {
+      "scenarioId": "rainbond-template-installer",
+      "skill": "rainbond-template-installer",
+      "repetitions": 1,
+      "inputTokensMedian": 24399,
+      "inputTokensAverage": 24399,
+      "inputDeltaVsControl": 5596,
+      "outputTokensMedian": 5,
+      "cachedInputTokensMedian": 18560,
+      "endToEndMsMedian": 6466.056208,
+      "timeToFirstItemMsMedian": 4265.901916
+    }
+  ]
+}

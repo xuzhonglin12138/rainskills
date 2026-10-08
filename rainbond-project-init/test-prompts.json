@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "当前 monorepo 还没接入 Rainbond，frontend/ 和 backend/ 共用仓库根目录的 pnpm-lock.yaml，Git remote 是 Gitee。目标 team 是 dev-team，region 是 cn，应用名 shop。只做初始化，不要部署。",
+    "expected": "生成 schema v1 manifest，保留仓库根构建上下文和组件子目录；复用或创建目标应用并写入 linked local state；因用户只要求初始化而停止。"
+  },
+  {
+    "id": 2,
+    "prompt": "帮我初始化当前项目。这里还没有 manifest，Git remote 是原始 GitHub 地址；我能访问多个 team，但没有指定，用你觉得合适的 team 就行。",
+    "expected": "不得静默选择 team；要求用户明确选择，并按规则处理 GitHub 代理确认。身份确认前不创建应用或声称 linked，也不扫描项目目录外的绑定文件。"
+  }
+]

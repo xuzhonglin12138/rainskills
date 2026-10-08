@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "帮我安装 AI Engine 平台插件，并持续监测到 RUNNING。",
+    "expected": "查询安装状态；仅 absent 时在审批后安装一次；accepted 不等于 ready，持续轮询到 installed=true 且 status=RUNNING；未知写结果先读真状态而不重放。"
+  },
+  {
+    "id": 2,
+    "prompt": "我想部署 Qwen；如果 AI Engine 插件没装就先装，装好后继续原来的模型部署。",
+    "expected": "保留 AI 部署的根意图；插件缺失时审批安装并监测到 RUNNING，然后同一任务恢复模型部署；失败时停止且不丢原意图。"
+  }
+]

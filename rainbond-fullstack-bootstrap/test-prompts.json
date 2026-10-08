@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "当前项目已有完整的 rainbond.app.json，定义了 mysql、api、web 三个组件：api 依赖 mysql，web 通过 reverse-proxy 访问 api。只帮我创建应用和组件拓扑，不要继续排障；请完整输出结构化 BootstrapResult。",
+    "expected": "创建三个组件并按提供方连接契约配置显式依赖；不在消费者重复写连接变量；全部运行时返回 runtime_healthy 并交给 delivery verifier。"
+  },
+  {
+    "id": 2,
+    "prompt": "给已有应用 x-pi 添加一个 MySQL 组件并创建相关依赖。当前应用只有一个 nginx 组件；我没有指定数据库版本、哪个组件消费 MySQL，也没有提供数据库凭据。只做 bootstrap，并输出完整结构化结果。",
+    "expected": "不得把 nginx 推断为数据库消费者或生成凭据；在任何写调用前停止，说明需要明确消费者、版本和凭据来源。"
+  }
+]

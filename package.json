@@ -76,6 +76,7 @@
     "verify:published": "node scripts/verify-published-package.js",
     "test:runtime-version": "node --test tests/runtime-version-sync.test.js",
     "test:runtime-contracts": "node scripts/sync-runtime-contracts.mjs --check",
+    "test:skill-benchmark": "node --test tests/skill-token-baseline.test.js",
     "test:auto-update": "node --test tests/auto-update.test.js",
     "test:launcher": "node --test tests/console-origin.test.js tests/host-targets.test.js tests/local-cli-installer.test.js tests/npx-launcher.test.js tests/runtime-state.test.js tests/single-runtime.test.js tests/single-runtime-cli.test.js tests/single-runtime-launcher.test.js tests/skill-manifest-builder.test.js",
     "test:api-bridge": "node --test tests/api-bridge.test.js",

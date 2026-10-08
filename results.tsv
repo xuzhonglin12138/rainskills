@@ -1,0 +1,15 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-10-08T14:02:08+0800	baseline	rainskills	-	75.8	baseline	-	paired prompt simulation plus repository test suite	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-ai-assistant	-	88.0	baseline	-	paired prompt simulation plus deterministic AI evals	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-app-assistant	-	78.7	baseline	-	paired prompt simulation plus routing and response fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-app-version-assistant	-	73.0	baseline	-	paired prompt simulation plus routing and integration fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-delivery-verifier	-	81.7	baseline	-	paired prompt simulation plus six deterministic fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-env-sync	-	76.5	baseline	-	paired prompt simulation plus contract tests	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-fullstack-bootstrap	-	81.1	baseline	-	paired prompt simulation plus eighteen deterministic fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-fullstack-troubleshooter	-	79.9	baseline	-	paired prompt simulation plus ten deterministic fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-opensource-app-deploy	-	85.8	baseline	-	paired prompt simulation plus routing fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-platform-installer	-	90.3	baseline	-	paired prompt simulation plus 246 platform tests	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-platform-plugin-manager	-	86.2	baseline	-	paired prompt simulation plus plugin and AI evals	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-platform-query	-	72.1	baseline	-	paired prompt simulation plus routing fixtures	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-project-init	-	73.1	baseline	-	paired prompt simulation plus project-init gate tests	full_test
+2026-10-08T14:02:08+0800	baseline	rainbond-template-installer	-	75.4	baseline	-	paired prompt simulation plus routing and integration fixtures	full_test
