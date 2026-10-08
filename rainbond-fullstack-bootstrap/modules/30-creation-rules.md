@@ -163,7 +163,7 @@ For services not in this list, recall the documented data directory from the ima
 
 **Rules**:
 - inspect existing component storage before deploying the stateful-service component
-- if no durable storage is already mounted at the data directory, use `rainbond_manage_component_storage(operation=create_volume, volume_type=share-file, volume_path=<data-dir>)` **before** `rainbond_operate_app(action=deploy)`
+- if no durable storage is already mounted at the data directory, use `rainbond_manage_component_storage(operation=create_volume, volume_name=<short-name>, volume_type=share-file, volume_path=<data-dir>)` **before** `rainbond_operate_app(action=deploy)`
 - prefer the smallest durable storage binding accepted by the platform; do not invent a storage class, PVC name, host path, reclaim policy, or data-retention guarantee
 - if the storage Tool call fails or the platform does not expose a usable storage provider, do not silently ignore it; report missing persistence as a bootstrap caveat or blocker depending on user intent
 - if no stateful service component is present, no persistence check is required
@@ -234,52 +234,15 @@ If local mapping and current platform evidence disagree:
 - report drift
 - keep going with runtime components discovered through Rainbond Tools
 
-## 10. Image Registry Proxy Prompt
+## 10. Transport proxy policy
 
-For any in-scope image-backed component, before calling component creation, evaluate the `image` field against the public-registry list below and ask the user once whether to keep the raw image or switch to a mirror. This is a creation-time prompt, not a post-failure recovery step — the goal is to avoid the "create → wait for build/pull → fails → read logs → finally suggest a mirror" cycle.
+Apply `../SKILL.md` **Always-on Guardrail 7** exactly; it is the only proxy policy.
 
-### What counts as "raw public registry"
-
-Trigger when **any** of the following matches the `image` value:
-
-1. **Bare Docker Hub references** (no registry hostname at all):
-   - `<image>:<tag>` such as `nginx:latest`, `redis:7-alpine`
-   - `<org>/<image>:<tag>` such as `library/nginx:latest`, `mysql/mysql-server:8.0`, `bitnami/postgresql:16`
-   - These implicitly resolve to `docker.io/library/<image>:<tag>` or `docker.io/<org>/<image>:<tag>` respectively, and must be treated the same as explicit `docker.io/...`.
-
-2. **Explicit public-registry prefixes**:
-   - `docker.io/...`
-   - `quay.io/...`
-   - `gcr.io/...`
-   - `ghcr.io/...`
-   - `k8s.gcr.io/...`
-   - `registry.k8s.io/...`
-
-Do **not** trigger when the image is already on a known registry mirror or on a private registry (i.e. a hostname that is neither in the public list above nor a bare Docker Hub reference):
-- known mirrors include `docker.1ms.run/...`, `m.daocloud.io/...`, `dockerhub.azk8s.cn/...`, `mirror.gcr.io/...`, and any host the manifest or user has already chosen for this run
-- private hostnames such as `harbor.example.internal/...`, `registry.cn-hangzhou.aliyuncs.com/<your-namespace>/...`, or `<corp-registry>:5000/...` are assumed reachable and untouched
-
-Also skip when the user already opted out of a mirror earlier in the same run.
-
-### Prompt content
-
-- ask once whether to keep the raw image reference or switch to a registry mirror
-- recommend `docker.1ms.run/<full-path>` first; treat it as the default Docker mirror across this skill
-  - for bare Docker Hub refs, expand to the full path first: `nginx:latest` → `docker.1ms.run/library/nginx:latest`
-  - for explicit registry refs, preserve the registry segment: `docker.io/library/postgres:17` → `docker.1ms.run/library/postgres:17`, `quay.io/foo/bar:1` → `docker.1ms.run/quay.io/foo/bar:1`
-- `m.daocloud.io/<full-path>` may be offered as an explicit alternate choice (e.g. `m.daocloud.io/docker.io/library/postgres:17`)
-- do **not** propose less-established mirrors (e.g. `dockerpull.com`, vendor-specific community proxies) unless the user explicitly asks for them
-- if another in-scope component or the existing `rainbond.app.json` already uses a specific mirror, reuse the same mirror instead of introducing a second one
-
-### Scope and reuse
-
-- treat this as a **one-time prompt per bootstrap run**: once the user picks "use mirror" or "keep raw" for the first matching image, apply the same choice to every remaining matching image in the same run without re-asking
-- the mirror is a transport hint only; it does not change `execution_mode` or delivery mode, and is not a fallback signal
-- if the user explicitly opts out, proceed with the raw image but record the opt-out in `actions_taken` so that a subsequent pull failure can be classified correctly as `external artifact unreachable` rather than as a missed prompt
-
-### Boundary
-
-- this rule only inspects the explicit `image` field; it does not try to predict which base images a source-backed Dockerfile or Buildpack will pull. Source-backed pulls that fail at build time still flow through the `external artifact unreachable` blocker bucket described in [40-source-and-package-rules.md](40-source-and-package-rules.md).
+- Bare or explicit Docker Hub references use the canonical `docker.1ms.run` mapping automatically unless the user explicitly opted out or supplied another proxy.
+- Other public registries use the original URL first. Ask for a proxy only after an observed pull failure.
+- Private registries and already-mirrored URLs pass through unchanged.
+- Never derive mappings such as `docker.1ms.run/quay.io/...`; proxy URLs are closed-list facts.
+- This module only evaluates the explicit `image` field. Source-build pull failures follow the source blocker path.
 
 ## 11. Allow component subset execution
 

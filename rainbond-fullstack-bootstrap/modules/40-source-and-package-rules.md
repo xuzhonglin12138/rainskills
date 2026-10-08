@@ -46,17 +46,13 @@ If the user provides a proxied Git URL:
 - use the provided proxied URL as `git_url`
 - do not reinterpret a Git proxy URL as an image hint or fallback signal
 
-### GitHub Proxy Prompt
+### GitHub transport proxy
 
-If all of the following are true:
-- `git_url` is a raw `https://github.com/...` URL
-- the user did not explicitly provide a proxy URL
-- the URL is not already under `https://ghfast.top/` or `https://gh.rainbond.cc/`
+Apply `../SKILL.md` **Always-on Guardrail 7** exactly; it is the only proxy policy.
 
-Then:
-- ask once whether to keep the raw GitHub URL or switch to a proxy URL before calling source creation
-- recommend `https://ghfast.top/https://github.com/...` first
-- `https://gh.rainbond.cc/https://github.com/...` may be offered as an explicit alternate
+- A raw `https://github.com/...` source URL uses the canonical `https://ghfast.top/<full-original-url>` mapping automatically.
+- Preserve a user-supplied proxy verbatim, preserve already-mirrored URLs, and honor an explicit raw-URL opt-out for the remainder of the run.
+- Do not invent or offer alternate GitHub proxy hosts. On a proxied-source failure, report the observed failure and ask whether to retry the original URL.
 
 ### Source-create Precheck
 

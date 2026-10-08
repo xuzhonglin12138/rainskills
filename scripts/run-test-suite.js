@@ -11,6 +11,7 @@ const TEST_SCRIPTS = Object.freeze([
   "test:runtime-contracts",
   "test:skill-benchmark",
   "test:project-init-contract",
+  "test:bootstrap-contract",
   "test:auto-update",
   "test:launcher",
   "test:api-bridge",

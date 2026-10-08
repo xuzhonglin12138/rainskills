@@ -93,11 +93,12 @@ Convergence gates:
 ### 6. Ensure minimum topology
 
 - ensure dependencies exist from manifest `depends_on` with `rainbond_manage_component_dependency`
-- also wire accepted inferred topology edges such as `backend -> db` and `proxy/web -> backend` when the manifest or deployment reasoning used those links to make the app work
+- apply the accepted provenance in parent `SKILL.md` **Always-on Guardrail 18**; dependency direction is always consumer `service_id` -> provider `dep_service_id`
+- also wire topology edges such as `backend -> db` and `proxy/web -> backend` only when the edge is supported by manifest/Compose, env or config references, project documentation, current runtime evidence, or explicit user confirmation
 - for every multi-component topology, build an explicit dependency checklist before handoff:
   - list provider components such as databases, caches, brokers, queues, search services, object storage, and backend/API services
   - list consumer components such as backend/API services, workers, frontends/proxies, admin consoles, dashboards, migration jobs, and management UIs
-  - include edges declared in the manifest and edges strongly inferred from README instructions, service roles, image conventions, env names, config hostnames, exposed internal ports, proxy upstreams, or connection workflows used by the application
+  - include edges declared in the manifest and accepted edges supported by README instructions, env/config references, proxy upstreams, runtime evidence, or explicit user confirmation; roles or image conventions alone are not evidence
   - query the current dependency summary before adding edges, add missing accepted edges, then query again to verify the visible Rainbond topology
 - if the dependency tool reports `requires_open_inner`, open the target component's inner port or retry with `open_inner=true` and the target `container_port`
 - do not report that Rainbond Tool lacks explicit dependency management; `rainbond_manage_component_dependency` is the explicit dependency management tool
