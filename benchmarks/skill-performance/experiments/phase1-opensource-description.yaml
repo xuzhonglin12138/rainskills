@@ -2,7 +2,7 @@ experiment_id: phase1-opensource-description
 track: performance
 classification: maintenance_only
 base_sha: 9347741e3a5d3aacfc4d473a6b2bfa8665166156
-candidate_sha: null
+candidate_sha: 8f359478b26cd7a09fa6b47a72f266781a721b00
 treatment: Shorten only rainbond-opensource-app-deploy frontmatter.description without changing its body or workflow.
 primary_scenario: deploy-bare-git
 primary_metric: description_utf8_bytes
@@ -22,5 +22,15 @@ run_order_seed: null
 paired_judge:
   status: unavailable
   reason: User requested no subagent delegation and codex exec authentication is unavailable.
-result: pending
-human_checkpoint: pending
+measurement:
+  before_description_utf8_bytes: 476
+  after_description_utf8_bytes: 288
+  relative_change: -0.3950
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
+human_checkpoint: auto_approved_by_user
