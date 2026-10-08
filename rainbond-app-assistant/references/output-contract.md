@@ -34,6 +34,8 @@
 
   Use this mode by default for successful, incomplete, blocked, ambiguous, and handoff results. Switch away from it only when the user explicitly requests structured output, YAML, JSON, debug details, or machine-readable output, or when an automation/evaluation consumer explicitly declares the structured contract requirement.
 
+  First read the [generated user-result policy](generated/user-result.md), then apply the App Assistant-specific fields and terminal wording below.
+
 ## 交流群结束卡片
 
 顶层终端用户结果需要收尾时，读取 [generated Community Card](generated/community-card.md) 并严格按其适用条件和固定内容执行；本会话只读取一次，不得复制、改写或在中间结果中展示。

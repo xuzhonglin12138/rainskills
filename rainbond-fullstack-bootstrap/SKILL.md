@@ -9,6 +9,8 @@ description: "Create a Rainbond app and component topology for a known current p
 
 普通用户回复默认使用简洁中文，只说明应用和组件的创建/复用结果、当前运行状态、依赖或存储等重要变更，以及唯一下一步。内部 `BootstrapResult` 仍可用于阶段衔接和校验，但不直接展示。
 
+先读取 [generated user-result policy](references/generated/user-result.md)，再应用本 Skill 的拓扑、组件、依赖和存储结果规则。
+
 - 成功时说明实际创建或复用的组件、是否运行正常，以及需要用户注意的配置。
 - 未完成时说明直接阻塞原因；只有确有安全可执行方案时才补充解决办法。
 - 默认不得展示内部对象、状态枚举、team/region/app ID、关系 ID、Skill/工具名、YAML、JSON 或英文编排标题。

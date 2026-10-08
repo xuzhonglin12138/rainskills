@@ -9,6 +9,8 @@ description: "Sync non-sensitive preview or production overrides from a linked R
 
 普通用户回复默认使用简洁中文，只说明同步的环境、更新的本地文件、保留或跳过的配置类别，以及唯一下一步。内部同步结果对象仍可用于校验，但不直接展示。
 
+先读取 [generated user-result policy](references/generated/user-result.md)，再应用本 Skill 的同步文件、配置分类和冲突结果规则。
+
 - 成功时说明哪个环境文件已更新，以及哪些非敏感配置发生了变化。
 - 未完成时说明直接原因；不得为了完整报告而回显运行时元数据或敏感值。
 - 默认不得展示内部对象、状态枚举、team/region/app ID、Skill/工具名、YAML、JSON 或英文编排标题。

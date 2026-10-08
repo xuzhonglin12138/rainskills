@@ -9,6 +9,8 @@ description: "Initialize, adopt, or link a local project to Rainbond; generate o
 
 普通用户回复默认使用简洁中文，只说明初始化是否完成、应用和环境、创建或更新的项目文件、仍需确认的问题，以及唯一下一步。内部 `ProjectInitResult` 仍可用于校验和下游衔接，但不直接展示。
 
+先读取 [generated user-result policy](references/generated/user-result.md)，再应用本 Skill 的绑定文件、身份歧义和 next_action 规则。
+
 - 成功时说明 `rainbond.app.json` 和 `.rainbond/local.json` 的实际处理结果。
 - 未完成时说明直接原因，并只提出当前真正需要用户处理的一项。
 - 默认不得展示内部对象、状态枚举、team/region/app ID、Skill/工具名、YAML、JSON 或英文编排标题。

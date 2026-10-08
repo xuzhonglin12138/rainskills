@@ -11,6 +11,10 @@ description: "Deploy supplied third-party Compose, Helm, or image-set descriptor
 
 顶层终端用户结果需要收尾时，读取 [generated Community Card](references/generated/community-card.md) 并严格按其适用条件和固定内容执行；本会话只读取一次，不得复制、改写或在中间结果中展示。
 
+## 用户可见结果协议
+
+最终回复前读取 [generated user-result policy](references/generated/user-result.md)，再报告本 Skill 实际创建的拓扑、组件健康、依赖/存储验证、真实地址、smoke 结果和唯一 blocker。
+
 ## Phase 0：静态归属与资料取证
 
 只根据用户意图决定归属：

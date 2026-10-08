@@ -102,7 +102,8 @@ test("every top-level customer workflow uses the shared terminal community card 
 
 test("ordinary user replies default to concise Chinese without internal contracts", () => {
   for (const skill of customerFacingSkills) {
-    const content = read(`${skill}/SKILL.md`);
+    const entrypoint = read(`${skill}/SKILL.md`);
+    const content = `${entrypoint}\n${read(`${skill}/references/generated/user-result.md`)}`;
     assert.match(
       content,
       /(?:用户可见结果协议|简洁结果协议)/,

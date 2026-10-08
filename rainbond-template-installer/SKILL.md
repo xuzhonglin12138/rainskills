@@ -9,6 +9,8 @@ description: "Install a confirmed local or cloud Rainbond application template i
 
 普通用户回复默认使用简洁中文，只说明模板名称和版本、目标应用、安装结果、已安装服务及唯一下一步。内部 `TemplateInstallResult` 仍可用于校验，但不直接展示。
 
+先读取 [generated user-result policy](references/generated/user-result.md)，再应用本 Skill 的模板、版本、目标应用和部署状态规则。
+
 - 成功时说明模板是否安装完成，以及用户接下来可以访问或检查什么。
 - 未完成时说明直接原因；只有确有安全可执行方案时才补充解决办法。
 - 默认不得展示内部对象、状态枚举、team/region/app ID、模板内部 ID、Skill/工具名、YAML、JSON 或英文编排标题。

@@ -9,6 +9,8 @@ description: "Perform explicit version operations for an existing Rainbond app: 
 
 普通用户回复默认使用简洁中文，只说明应用、版本操作、实际结果、重要风险和唯一下一步。快照、发布或回滚的内部状态对象仍可用于校验和续接，但不直接展示。
 
+先读取 [generated user-result policy](references/generated/user-result.md)，再应用本 Skill 的版本操作专属字段、状态和确认规则。
+
 - 成功时说明实际创建、发布或回滚的版本，以及用户接下来能做什么。
 - 未完成时说明直接原因；只有确有安全可执行方案时才补充解决办法。
 - 默认不得展示内部对象、状态枚举、team/region/app ID、发布记录 ID、Skill/工具名、YAML、JSON 或英文编排标题。

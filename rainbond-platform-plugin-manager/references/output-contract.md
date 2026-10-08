@@ -2,6 +2,8 @@
 
 默认使用简洁中文，不展示内部 YAML/JSON；用户或自动化明确要求机器可读输出时才输出结构化数据。
 
+先读取 [generated user-result policy](generated/user-result.md)，再应用下方插件状态、标识符和恢复规则。
+
 ## 交流群结束卡片
 
 顶层终端用户结果需要收尾时，读取 [generated Community Card](generated/community-card.md) 并严格按其适用条件和固定内容执行；本会话只读取一次，不得复制、改写或在中间结果中展示。

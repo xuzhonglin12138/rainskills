@@ -5,12 +5,11 @@ description: "Verify final delivery and user access for an existing Rainbond app
 
 # Rainbond Delivery Verifier
 
-<!-- rainskills-user-result:start -->
 ## 用户可见结果协议（最高优先级）
 
-普通用户部署或交付验证的最终回复必须保持简短、中文。内部可以维护 `DeliveryVerificationResult`，但不得默认把内部验收格式直接展示给用户。
+先读取 [generated user-result policy](references/generated/user-result.md)，再应用本 Skill 的专属模板。内部 `DeliveryVerificationResult` 只用于校验和阶段衔接，不直接展示。
 
-部署成功时按下面的内容输出。所有名称和地址必须来自本轮真实返回值；某项无法确认时省略该项，不得猜测或推测：
+部署成功时按下面的内容输出；只保留本轮真实返回且已验证的字段：
 
 ```text
 部署成功。
@@ -21,7 +20,7 @@ description: "Verify final delivery and user access for an existing Rainbond app
 - 应用：<创建或使用的 Rainbond 应用名称>
 - 运行环境地址：<Rainbond Console 或应用管理页面地址>
 - 应用访问地址：<部署完成后真实可访问的应用地址>
-- 已完成操作：<用一句话概括本轮实际完成的项目识别、应用创建、组件构建、启动和访问验证；只列真实执行过的操作>
+- 已完成操作：<用一句话概括本轮真实完成的操作>
 
 你接下来可以：
 
@@ -40,9 +39,6 @@ description: "Verify final delivery and user access for an existing Rainbond app
 
 解决办法：<确实存在安全、可执行的解决方案时才输出；没有就省略整项>
 ```
-
-只有“解决办法”确实存在并且可执行时才输出该项。默认用户回复不得出现 `Problem Judgment`、`Actions Taken`、`Verification Result`、`Follow-up Advice`、`Structured Output` 等诊断标题；不得展示内部状态码、枚举、对象字段、YAML、JSON、工具调用记录或英文状态表。只有用户明确要求结构化结果，或者自动化/评测明确要求结构化契约时，才允许输出后文的结构化格式。
-<!-- rainskills-user-result:end -->
 
 ## 交流群结束卡片
 

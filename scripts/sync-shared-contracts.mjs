@@ -7,7 +7,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const communitySkills = Object.freeze([
+const customerSkills = Object.freeze([
   "rainbond-ai-assistant",
   "rainbond-app-assistant",
   "rainbond-app-version-assistant",
@@ -19,6 +19,22 @@ const communitySkills = Object.freeze([
   "rainbond-platform-plugin-manager",
   "rainbond-project-init",
   "rainbond-template-installer",
+]);
+const sharedContracts = Object.freeze([
+  {
+    id: "Community Card",
+    source: "community-card.md",
+    generated: "community-card.md",
+    start: "<!-- rainskills-community-card:start -->",
+    end: "<!-- rainskills-community-card:end -->",
+  },
+  {
+    id: "user-result policy",
+    source: "user-result.md",
+    generated: "user-result.md",
+    start: "<!-- rainskills-user-result:start -->",
+    end: "<!-- rainskills-user-result:end -->",
+  },
 ]);
 
 function parseArgs(argv) {
@@ -62,34 +78,36 @@ function markdownFiles(root) {
 }
 
 function run({ sourceRoot, check }) {
-  const canonicalPath = path.join(sourceRoot, "contracts", "shared", "community-card.md");
-  const canonical = fs.readFileSync(canonicalPath, "utf8");
-  if ((canonical.match(/<!-- rainskills-community-card:start -->/g) || []).length !== 1
-    || (canonical.match(/<!-- rainskills-community-card:end -->/g) || []).length !== 1) {
-    throw new Error("canonical Community Card markers are invalid");
-  }
-  const digest = sha256(canonical);
-  const expected = `<!-- generated-by: scripts/sync-shared-contracts.mjs -->\n<!-- source-sha256: ${digest} -->\n${canonical.trimEnd()}\n`;
   const stale = [];
-  for (const skillId of communitySkills) {
-    const skillRoot = path.join(sourceRoot, skillId);
-    const generatedPath = path.join(skillRoot, "references", "generated", "community-card.md");
-    const current = fs.existsSync(generatedPath) ? fs.readFileSync(generatedPath, "utf8") : null;
-    if (current !== expected) {
-      stale.push(path.relative(sourceRoot, generatedPath));
-      if (!check) writeAtomically(generatedPath, expected);
+  for (const contract of sharedContracts) {
+    const canonicalPath = path.join(sourceRoot, "contracts", "shared", contract.source);
+    const canonical = fs.readFileSync(canonicalPath, "utf8");
+    if ((canonical.split(contract.start).length - 1) !== 1
+      || (canonical.split(contract.end).length - 1) !== 1) {
+      throw new Error(`canonical ${contract.id} markers are invalid`);
     }
-    const editableFiles = markdownFiles(skillRoot).filter((file) => file !== generatedPath);
-    for (const file of editableFiles) {
-      if (fs.readFileSync(file, "utf8").includes("<!-- rainskills-community-card:start -->")) {
-        throw new Error(`editable Community Card remains in ${path.relative(sourceRoot, file)}`);
+    const digest = sha256(canonical);
+    const expected = `<!-- generated-by: scripts/sync-shared-contracts.mjs -->\n<!-- source-sha256: ${digest} -->\n${canonical.trimEnd()}\n`;
+    for (const skillId of customerSkills) {
+      const skillRoot = path.join(sourceRoot, skillId);
+      const generatedPath = path.join(skillRoot, "references", "generated", contract.generated);
+      const current = fs.existsSync(generatedPath) ? fs.readFileSync(generatedPath, "utf8") : null;
+      if (current !== expected) {
+        stale.push(path.relative(sourceRoot, generatedPath));
+        if (!check) writeAtomically(generatedPath, expected);
+      }
+      const editableFiles = markdownFiles(skillRoot).filter((file) => file !== generatedPath);
+      for (const file of editableFiles) {
+        if (fs.readFileSync(file, "utf8").includes(contract.start)) {
+          throw new Error(`editable ${contract.id} remains in ${path.relative(sourceRoot, file)}`);
+        }
+      }
+      if (!editableFiles.some((file) => fs.readFileSync(file, "utf8").includes(`generated/${contract.generated}`))) {
+        throw new Error(`${skillId} does not discover its generated ${contract.id}`);
       }
     }
-    if (!editableFiles.some((file) => fs.readFileSync(file, "utf8").includes("generated/community-card.md"))) {
-      throw new Error(`${skillId} does not discover its generated Community Card`);
-    }
   }
-  if (check && stale.length > 0) throw new Error(`generated Community Card is stale: ${stale.join(", ")}`);
+  if (check && stale.length > 0) throw new Error(`generated shared contract is stale: ${stale.join(", ")}`);
 }
 
 try {
