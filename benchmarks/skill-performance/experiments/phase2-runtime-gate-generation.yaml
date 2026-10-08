@@ -2,7 +2,7 @@ experiment_id: phase2-runtime-gate-generation
 track: performance
 classification: maintenance_only
 base_sha: 09494bdb3959b84a87c762ba6b29405f32ed3e09
-candidate_sha: null
+candidate_sha: 31011c529b5f0fc9595635c6f7557c3ddba06beb
 treatment: Replace the duplicated Runtime Gate blocks with one profile-aware canonical base, strictly validated per-Skill overlays, and deterministic generated references.
 primary_scenario: deploy-current-project
 primary_metric: main_skill_inline_runtime_gate_bytes
@@ -27,5 +27,20 @@ baseline:
   inline_runtime_gate_blocks: 8
   inline_runtime_gate_bytes: 49939
   source_skill_bytes: 300631
-result: pending
+measurement:
+  before_main_skill_inline_runtime_gate_bytes: 49939
+  after_main_skill_inline_runtime_gate_bytes: 0
+  before_source_skill_bytes: 300631
+  after_source_skill_bytes: 250075
+  source_skill_relative_change: -0.1682
+  generated_runtime_gate_bytes: 79515
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+  runtime_contract_generation: 5/5 passed
+  platform_installer: 246/246 passed
+result: neutral_refactor
 human_checkpoint: approved

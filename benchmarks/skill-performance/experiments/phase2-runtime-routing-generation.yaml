@@ -1,0 +1,30 @@
+experiment_id: phase2-runtime-routing-generation
+track: performance
+classification: maintenance_only
+base_sha: 31011c529b5f0fc9595635c6f7557c3ddba06beb
+candidate_sha: null
+treatment: Replace duplicated Runtime Routing blocks with one canonical mode source rendered per Skill from the validated Runtime overlay.
+primary_scenario: deploy-current-project
+primary_metric: source_runtime_routing_block_bytes
+minimum_effect: zero complete Runtime Routing marker blocks remain in source SKILL.md or editable legacy references
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - New-application Skills retain the four flattened runtime choices.
+  - Existing-app, linked-project, AI, plugin, and read-only query Skills never offer a new private platform.
+  - Runtime message IDs, missing-runtime modes, resume targets, and profile boundaries remain explicit.
+  - Embedded artifacts contain no client launcher, Device Flow, or environment-selection menu.
+prompt_hash: 36a7952f3b3e4da425b2b5882070e53c8a1d24c763bb85a28c2c117455fa58b8
+fixture_hash: 5119c7d7f804f01508a4634bd2a472042c9b4bf2d7743ebcda02c23eff660645
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  routing_blocks: 12
+  routing_block_bytes: 12489
+  source_skill_bytes: 250075
+result: pending
+human_checkpoint: approved
