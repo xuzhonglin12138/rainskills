@@ -87,3 +87,8 @@ test("app version entrypoint is a bounded conditional router", () => {
   assertEntrypoint("rainbond-app-version-assistant", 12 * 1024);
   assertReferenceBudgets("rainbond-app-version-assistant");
 });
+
+test("platform query entrypoint is a bounded conditional router", () => {
+  assertEntrypoint("rainbond-platform-query", 4 * 1024);
+  assertReferenceBudgets("rainbond-platform-query");
+});
