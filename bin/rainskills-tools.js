@@ -264,6 +264,15 @@ function parseCommand(args) {
     return { command, scope: remaining[1], input: remaining[3], ...context };
   }
   if (
+    command === "poll"
+    && remaining.length === 4
+    && remaining[1]
+    && remaining[2] === "--input"
+    && remaining[3] === "-"
+  ) {
+    return { command, toolName: remaining[1], input: remaining[3], ...context };
+  }
+  if (
     command === "query"
     && Object.hasOwn(PLATFORM_QUERY_TO_RESOURCE, remaining[1] || "")
     && remaining.length === 4
@@ -561,7 +570,7 @@ async function executeWithUsageTelemetry(command, config) {
 }
 
 function commandTracksBusinessUsage(command) {
-  return command?.command === "read" || command?.command === "call" || command?.command === "snapshot";
+  return ["read", "call", "snapshot", "poll"].includes(command?.command);
 }
 
 function loadSkillBinding(config, skillId, rootSkillId) {
@@ -1365,6 +1374,22 @@ async function execute(command, config) {
       },
     });
   }
+  if (command.command === "poll") {
+    const { executeProtectedPoll } = require("./protected-poll.js");
+    return executeProtectedPoll(command.toolName, command.argumentsValue, {
+      callTool: async (name, argumentsValue) => {
+        const result = await rpcRequest(config, "tools/call", { name, arguments: argumentsValue });
+        if (!result || result.isError || !("structuredContent" in result)) {
+          throw new BridgeError("poll read failed", EXIT.TOOL);
+        }
+        return sanitizeToolResult(
+          result.structuredContent,
+          [],
+          collectSensitiveArgumentRedactions(argumentsValue),
+        );
+      },
+    });
+  }
   if (command.command === "status") {
     const tools = await listTools(config);
     const cached = loadCachedCatalog(config);
@@ -1484,7 +1509,7 @@ async function main(args = process.argv.slice(2)) {
   let argumentRedactions = [];
   try {
     command = parseCommand(args);
-    if (["read", "call", "package-upload", "query", "context", "delivery", "handoff", "snapshot"].includes(command.command)) {
+    if (["read", "call", "package-upload", "query", "context", "delivery", "handoff", "snapshot", "poll"].includes(command.command)) {
       const argumentsValue = readArguments(command.input);
       command.argumentsValue = argumentsValue;
       argumentRedactions = collectArgumentRedactions(argumentsValue);

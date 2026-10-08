@@ -16,7 +16,7 @@ const OVERLAY_KEYS = Object.freeze([
 ]);
 const PROFILES = new Set(["cli", "embedded"]);
 const COMMANDS = new Set([
-  "context_resolve", "list", "describe", "read", "query", "snapshot", "package_upload",
+  "context_resolve", "list", "describe", "read", "query", "snapshot", "poll", "package_upload",
   "delivery_probe", "handoff_create", "handoff_validate", "call", "call_confirm",
 ]);
 const VERSION_GUARDS = new Set(["required", "none"]);
@@ -89,6 +89,10 @@ function buildCommand(skillId, command) {
   if (command === "snapshot") return {
     argv: commandArgv(skillId, "snapshot", "<runtime|app|component|delivery>", "--input", "-"),
     stdin_schema_source: "rainskills.read-snapshot.v1.request",
+  };
+  if (command === "poll") return {
+    argv: commandArgv(skillId, "poll", "<read-tool>", "--input", "-"),
+    stdin_schema_source: "rainskills.protected-poll.v1.request",
   };
   if (command === "package_upload") return { argv: commandArgv(skillId, "package-upload", "--archive", "<archive-path>", "--input", "-"), stdin_schema_source: "rainbond_init_package_upload.upload_request" };
   if (command === "delivery_probe") return {

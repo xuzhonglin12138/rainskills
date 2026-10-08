@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: f35fd74cd246b1aafa80c25c80efabe88b8b1106cf7d8619e0f327c4c564d573 -->
+<!-- source-sha256: 14104741fe0040a368bdacdb86563285edb27f1f1eb81e3bf696c13c3815558a -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）
@@ -26,7 +26,7 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
 
 - `skill_id`: `rainbond-ai-assistant`
 - `supported_profiles`: `cli, embedded`
-- `command_set`: `context_resolve, read, call, call_confirm`
+- `command_set`: `context_resolve, read, poll, call, call_confirm`
 - `version_guard`: `none`
 - `missing_runtime_mode`: `ai_workload`
 - `scope_discriminator`: `workspace`
@@ -139,6 +139,19 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
         "rainbond-ai-assistant"
       ],
       "stdin_schema_source": "tool-catalog"
+    },
+    "poll": {
+      "argv": [
+        "node",
+        "<home>/.rainbond/bin/rainskills-tools.js",
+        "poll",
+        "<read-tool>",
+        "--input",
+        "-",
+        "--skill-id",
+        "rainbond-ai-assistant"
+      ],
+      "stdin_schema_source": "rainskills.protected-poll.v1.request"
     },
     "call": {
       "argv": [

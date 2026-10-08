@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: abc2bdf49f6a9c410831fe046aba3e05d5ce3b17056b6612c8fc63e1baa09cdf -->
+<!-- source-sha256: c223375485cc68db337988efefa9e73ccdc59b9c6a5d79f297e2f8f5b6a733d2 -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）

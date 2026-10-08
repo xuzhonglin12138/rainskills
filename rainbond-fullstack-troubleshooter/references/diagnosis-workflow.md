@@ -2,6 +2,8 @@
 
 Load this reference for evidence collection, operation anchoring, bounded repair, and fresh verification.
 
+For a build, restart, or redeploy that needs repeated status reads, invoke protected `poll` once. The CLI owns the bounded loop and returns only state transitions, final state, blocker, retryability, attempts, and elapsed time; unchanged states never enter model context.
+
 ## Workflow
 
 Follow this order unless there is strong evidence to do otherwise.

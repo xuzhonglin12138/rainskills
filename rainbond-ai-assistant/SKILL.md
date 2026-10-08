@@ -16,7 +16,7 @@ description: Manage Rainbond AI Engine models and instances; discover or downloa
 5. 已知 Tool 直接调用；CLI 字段不确定时只 describe 单个 Tool，名称未知时只窄前缀 list；embedded 使用实时 Tool definition。禁止完整 Catalog discovery。
 6. write/destructive 经当前宿主审批后只执行一次。timeout、5xx、连接中断、审计失败或未知结果后先精确读取真实状态，禁止自动重放。
 7. `accepted`、下载 100%、Job complete、Pod Running 都不是业务终态。模型需 ready/verified；实例需 Running + health + target registration。
-8. 下载、实例创建/部署等需要持续轮询的长任务，写入前必须确认用户选择“持续监测”还是“受理后结束，待下次唤醒再查询”；用户已明确表达时不重复询问。该选择不替代写操作审批。
+8. 下载、实例创建/部署等长任务写入前，确认“持续监测”或“受理后结束”。持续监测只调用一次 protected `poll`，由 CLI 内部执行有界读取并只返回状态变化、终态或 blocker；用户已明确选择时不重复询问。该选择不替代写操作审批。
 9. 每个新实例创建都必须先完成 `startup_safety` 参数决策。用户已指定模型只跳过模型选型，不能跳过资源、上下文、KV cache、多模态和 allocation 安全规划；该规划完成前不得调用创建工具。
 10. 普通部署先理解业务场景，再由助手推导参数方案，不把场景标签绑定固定数值，也不把参数清单交给用户逐项选择。先使用用户约束、会话和平台事实；只询问无法自动解决且影响可启动性、业务能力或授权范围的缺口。省略参数必须有已验证的默认行为依据，创建后核对关键生效值，具体按参数决策指南执行。
 11. 工作空间未确定时只解决工作空间选择，不附带模型、场景和硬件问卷。确定后先查询 capabilities、resource capacity，必要时查询设备事实；不询问用户是否有 GPU、机器配置或应使用 CPU/GPU。用户主动指定的计算方式与预算是约束，须保留。场景提问优先开放式描述用途，示例只使用当前运行时、模型与创建接口已确认支持的任务，不把模型目录标签当作可部署能力。

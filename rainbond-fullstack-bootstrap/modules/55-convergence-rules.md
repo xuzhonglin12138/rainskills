@@ -6,8 +6,8 @@ Builds and deploys are slow and asynchronous. Java / CNB builds can take 2–5 m
 
 Apply this discipline whenever you are waiting on a build or deploy:
 
-- Treat the same `event_id` as one polling target. Two consecutive reads of the same `event_id` (whether `rainbond_get_component_build_logs` or `rainbond_get_component_summary` against the same `service_id`) must be separated by meaningful new state — not just "let's check again".
-- Cap polling: if four consecutive reads of the same `event_id` (or four consecutive same-status `rainbond_get_component_summary` reads on the same component) all show the same in-flight state, stop polling. Return a graceful intermediate reply to the user that says "build still in progress, expected ~N minutes; reply '继续' or 'check' to resume status check" and end the run.
+- Treat the same `event_id` as one polling target. Invoke protected `poll` once with the exact read Tool, status path, terminal values, attempt budget, and timeout; the CLI omits unchanged states and returns only transitions, terminal state, blocker, and retryability.
+- Cap polling inside the CLI. When attempt or timeout budget is exhausted, return a graceful intermediate reply with the latest `event_id`, phase, blocker, and what should become true next; never emit repeated same-status results to model context.
 - Do not bundle redundant reads in one iteration. Pulling `component_summary` + `pods` + `events` + `build_logs` together for the same component on the same iteration is almost always wasted; pick the single source that is most likely to have new information.
 - A status worth re-reading is one where the state has likely changed: immediately after triggering `rainbond_operate_app`, after a manual approval was just granted, after a structurally relevant event (e.g., new `event_id`) appeared. "I want to see if it's done yet" alone is not a justification.
 - If the user explicitly asks "看下进度", treat that as a single polling cycle and apply the same cap.

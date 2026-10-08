@@ -15,7 +15,7 @@ description: Discover, install, enable, upgrade, uninstall, or check Rainbond Co
 4. 只把 `installed=true && status=RUNNING` 当作 ready。installed-state `unavailable` 不是 absent；安装请求 accepted 也不是 ready。
 5. write/destructive 必须走当前宿主审批并只执行一次。timeout、5xx、连接中断或未知结果后先读状态，禁止重放原写请求。
 6. 升级读取 `team_name/app_id` 后复用 `rainbond_upgrade_app`；卸载复用 `rainbond_delete_app`。不得发明插件专用删除 Tool，也不得直接操作 Kubernetes/RBDPlugin。
-7. 插件安装、升级等需要持续轮询的长任务，写入前必须确认用户选择“持续监测”还是“受理后结束，待下次唤醒再查询”；用户已明确表达时不重复询问。该选择不替代写操作审批。
+7. 插件安装、升级等长任务写入前，确认“持续监测”或“受理后结束”。持续监测只调用一次 protected `poll`，由 CLI 内部执行有界读取并只返回状态变化、终态或 blocker；用户已明确选择时不重复询问。该选择不替代写操作审批。
 
 ## 渐进加载路由
 
