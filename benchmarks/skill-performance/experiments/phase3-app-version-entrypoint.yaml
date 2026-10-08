@@ -1,0 +1,27 @@
+experiment_id: phase3-app-version-entrypoint
+track: performance
+classification: maintenance_only
+base_sha: 5fdf9bff0d865a9373cb6589ffc865c71c9b33fd
+candidate_sha: null
+treatment: Convert rainbond-app-version-assistant/SKILL.md into a minimal conditional router and move version operations, workflow, and output detail into bounded references.
+primary_scenario: rainbond-app-version-assistant.01
+primary_metric: entrypoint_utf8_bytes
+minimum_effect: entrypoint is at most 12288 UTF-8 bytes
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Snapshot, direct reuse, publish draft/event, rollback, confirmation, and unknown-result rules remain unchanged.
+  - Every linked reference resolves and no conditional reference exceeds 16384 bytes.
+  - A normal branch loads at most two conditional references and no more than 32768 reference bytes.
+prompt_hash: 756b318a765b3de1a86efac0528acd1501dfd9a7c89571f9afc07bc7e374d500
+fixture_hash: 7ecb875e85a02774545a4ad3737a289e9bb4b2cf0381b301aac169a96fd1e81a
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  entrypoint_utf8_bytes: 16306
+result: pending
+human_checkpoint: preapproved_through_phase5
