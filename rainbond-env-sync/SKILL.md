@@ -1,6 +1,6 @@
 ---
 name: rainbond-env-sync
-description: "Use when a user explicitly asks to sync non-sensitive preview or production environment overrides for a linked Rainbond project into local env files. Trigger phrases include: 同步生产环境配置到本地 / 同步预览环境配置到本地 / sync environment overrides."
+description: "Sync non-sensitive preview or production overrides from a linked Rainbond project into local env files. Use for ‘同步生产环境配置到本地’, ‘同步预览环境配置到本地’, or ‘sync environment overrides’."
 ---
 
 # Rainbond Env Sync
