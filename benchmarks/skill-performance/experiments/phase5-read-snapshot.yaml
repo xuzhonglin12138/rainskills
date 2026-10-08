@@ -1,0 +1,29 @@
+experiment_id: phase5-read-snapshot
+track: performance
+classification: maintenance_only
+base_sha: d52a844d749ea9e86fa082c02a67d6679a97fee4
+candidate_sha: null
+treatment: Add one protected read-only snapshot command that aggregates a bounded list of known read requests into a fixed redacted summary without changing backend evidence scope.
+primary_scenario: verify-same-host-api-failure
+primary_metric: model_visible_snapshot_tool_calls
+minimum_effect: two read calls become one model-visible snapshot call while backend requests remain two
+performance_claim_eligible: false
+control_status: uncontrolled
+guardrails:
+  - All 28 effect cases remain hash-valid.
+  - Existing routing fixtures remain green.
+  - Snapshot accepts only read-classified tools, bounded request count, stdin arguments, and fixed scopes.
+  - Backend requests do not exceed the requested evidence list and mutation confirmation remains unavailable.
+  - Results are redacted, byte-bounded, freshness-stamped, and raw logs are rejected unless cursor/time/tail bounds are explicit.
+  - No ordinary execution path writes benchmark artifacts or raw logs to disk.
+prompt_hash: 097df8659103f3b6067fb6074271f50202714177184da2c0988e0fda9f78587f
+fixture_hash: 18ae9628e8becfbd5c6b6dc5d9182c389f2c0598c65c173732927a1390cae674
+run_order_seed: null
+paired_judge:
+  status: unavailable
+  reason: User requested no subagent delegation and codex exec authentication is unavailable.
+baseline:
+  model_visible_tool_calls: 2
+  backend_requests: 2
+result: pending
+human_checkpoint: preapproved_through_phase5

@@ -2,7 +2,7 @@ experiment_id: phase4-handoff-context
 track: performance
 classification: maintenance_only
 base_sha: 10a1016f901944e68927c7563a6591c61e72208c
-candidate_sha: null
+candidate_sha: d52a844d749ea9e86fa082c02a67d6679a97fee4
 treatment: Add one transport-neutral HandoffContext schema plus protected CLI creation/validation so app-assistant, init, bootstrap, troubleshooter, and delivery reuse verified runtime and identity facts.
 primary_scenario: deploy-current-project
 primary_metric: full_chain_runtime_and_context_resolution_calls
@@ -25,5 +25,17 @@ paired_judge:
 baseline:
   simulated_five_stage_runtime_status_calls: 5
   simulated_five_stage_context_resolve_calls: 5
-result: pending
+measurement:
+  before_simulated_runtime_status_calls: 5
+  after_simulated_runtime_status_calls: 1
+  before_simulated_context_resolve_calls: 5
+  after_simulated_context_resolve_calls: 1
+  host_token_change: unavailable
+  host_timing_change: unavailable
+validation:
+  handoff_context: 7/7 passed
+  routing_fixtures: 37/37 passed
+  effect_cases: 28/28 hash-valid
+  full_test_suite: passed
+result: neutral_refactor
 human_checkpoint: preapproved_through_phase5
