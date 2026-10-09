@@ -1,0 +1,95 @@
+{
+  "schema": "rainskills.codex-host-evals.v1",
+  "benchmark_layer": "codex_host",
+  "run_role": "candidate",
+  "control_status": "uncontrolled",
+  "environment": {
+    "base_sha": "e7fca2f9cafe2fcad64422e3411bc03c5925c57b",
+    "candidate_sha": "812b2999241da0833de7d475b2d85f4a73b196f8",
+    "worktree_clean": true,
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "codex_build": "codex-cli 0.147.0",
+    "host_toolset_digest": "unavailable",
+    "rainbond_catalog_digest": "unavailable",
+    "skill_manifest_digest": "da7a2af0341c8b6f6b411d151fc78086dd4cce10ed907770c926d8d1c1872121",
+    "rainskills_package_version": "0.1.42",
+    "rainskills_cli_version": "0.1.42",
+    "rainskills_protocol_version": "rainskills.single-runtime-contract.v1",
+    "rainbond_platform_version": "unavailable",
+    "validator_digest": "4fba070124a414d917dcfeb5655c4b9d6cfe2a66f97f1a7442a55bd8e394c105",
+    "run_order_seed": "rainskills-phase1-5-abba-2026-10-09-v1",
+    "run_started_at": "2026-10-09T03:20:16.410Z",
+    "test_environment": "fixture_only"
+  },
+  "summary": [
+    {
+      "scenario_id": "deploy-current-project",
+      "planned_runs": 1,
+      "observed_runs": 1,
+      "process_exit_p50_ms": 35595.969541,
+      "process_exit_mad_ms": 0,
+      "process_exit_p95_ms": 35595.969541,
+      "failure_rate": 0,
+      "timeout_rate": 0,
+      "cleanup_failure_rate": 0
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "deploy-current-project",
+      "benchmark_layer": "codex_host",
+      "data_source": "codex_exec_json",
+      "run_role": "candidate",
+      "environment": {
+        "active_skill_bundle_digest": "b62cb2ae588a8e6046facaadaec029d6f42e4601717a69deb2d6e820ed108ee7",
+        "prompt_sha256": "8100a366317574c095a38d19bc3b836f64e56195638ea03bd694468ea2a57903",
+        "fixture_sha256": "5119c7d7f804f01508a4634bd2a472042c9b4bf2d7743ebcda02c23eff660645",
+        "session_mode": "fresh_session",
+        "test_environment": "fixture_only",
+        "reset_method": "fresh temporary workspace",
+        "cleanup_result": "success"
+      },
+      "timing": {
+        "process_exit_ms": 35595.969541,
+        "turn_completed_ms": 33172.660625,
+        "first_event_ms": 16965.111041,
+        "first_tool_ms": "unavailable",
+        "first_user_progress_ms": 16965.111041,
+        "tool_wall_time_ms": 0,
+        "orchestration_and_tool_ms": "unavailable",
+        "external_platform_wait_ms": "unavailable"
+      },
+      "model_calls": 1,
+      "retry_calls": 0,
+      "tool_calls": 0,
+      "poll_calls": 0,
+      "skills_opened": [],
+      "references_opened": [],
+      "markdown_bytes_read": 0,
+      "usage": {
+        "status": "observed",
+        "source": "codex_exec_json",
+        "input_tokens": 16893,
+        "cached_input_tokens": 9216,
+        "cache_write_input_tokens": 0,
+        "uncached_input_tokens": 7677,
+        "output_tokens": 1212,
+        "reasoning_output_tokens": 1036,
+        "total_tokens": 18105,
+        "cache_hit_ratio": 0.5455514118273841
+      },
+      "compaction_count": "unavailable",
+      "result": "success",
+      "final_message": "- 初始 owner：`rainbond-app-assistant`\n- 允许交接：若当前项目尚未初始化或关联 Rainbond，仅交给 `rainbond-project-init`；完成后回到原部署流程。\n- 安全停止点：本评测为只读且禁止工具调用，因此在任何项目初始化、平台探测或部署变更前停止。\n- 预期结果：只确认路由与停止原因；不会实际部署，也不会声称已生成访问地址。",
+      "timed_out": false,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "artifact_directory": "/Users/guox/Desktop/Project/rainskills/benchmarks/skill-performance/results/abba-phase1-5-2026-10-09/host-artifacts/deploy-current-project/pair-13/candidate/raw/deploy-current-project/1",
+      "behavior_assertions": [
+        "按路由、Runtime Gate、初始化、拓扑创建、排障和交付验证渐进编排；保留既定来源路径，直到真实交付或唯一阻塞项才停止。"
+      ]
+    }
+  ]
+}

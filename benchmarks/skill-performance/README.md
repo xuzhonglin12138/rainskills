@@ -42,6 +42,12 @@ node scripts/run-codex-host-evals.mjs \
 
 The runner records raw JSONL structure with local monotonic timestamps and redacts credential-shaped text before saving stdout/stderr. `turn.completed.usage` is the only Codex Token source. Missing usage, compaction, tool spans, platform version, or external-wait attribution stays `unavailable`.
 
+## Paired AB/BA host comparison
+
+`run-codex-host-abba.mjs` compares two clean, detached source worktrees with the same provider-aware host runner. It uses a deterministic seed, incrementally checkpoints every run, resumes only a matching experiment, and reports pairwise relative changes plus separate AB and BA medians. The default protocol runs 20 primary pairs (10 AB and 10 BA) and one exploratory pair for each remaining scenario.
+
+Fixture-only paired runs remain uncontrolled observations: they do not call Rainbond or exercise protected tool aggregation. Do not present them as a live deployment canary.
+
 ## Legacy entrypoint snapshot
 
 `measure-skill-tokens.mjs` and `results/before-2026-10-08/` are exploratory entrypoint snapshots created before the Correctness Track. That result used one repetition and a dirty pre-correctness worktree, so it is not the formal Phase 0 baseline and cannot support performance claims.

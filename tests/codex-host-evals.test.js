@@ -58,3 +58,50 @@ test("Codex host runner can preserve a non-sensitive custom provider while isola
   assert(args.includes("model_providers.OpenAI.supports_websockets=false"));
   assert.doesNotMatch(JSON.stringify(args), /api[_-]?key|token|secret/i);
 });
+
+test("AB/BA plan is deterministic and balanced", async () => {
+  const { buildPairPlan } = await import("../scripts/run-codex-host-abba.mjs");
+  const first = buildPairPlan({ primaryPairs: 20, exploratoryPairs: 1, seed: "fixed-seed" });
+  const second = buildPairPlan({ primaryPairs: 20, exploratoryPairs: 1, seed: "fixed-seed" });
+  assert.deepEqual(first, second);
+  const primary = first.filter((pair) => pair.primary);
+  assert.equal(primary.length, 20);
+  assert.equal(primary.filter((pair) => pair.order === "AB").length, 10);
+  assert.equal(primary.filter((pair) => pair.order === "BA").length, 10);
+  assert.equal(first.length, 27);
+});
+
+test("AB/BA summary reports paired relative changes and order effects", async () => {
+  const { summarizePairs } = await import("../scripts/run-codex-host-abba.mjs");
+  const plan = [
+    { scenario_id: "deploy-current-project", pair_index: 1, order: "AB", primary: true },
+    { scenario_id: "deploy-current-project", pair_index: 2, order: "BA", primary: true },
+  ];
+  const makeRecord = (pairIndex, runRole, input, milliseconds) => ({
+    scenario_id: "deploy-current-project",
+    pair_index: pairIndex,
+    run_role: runRole,
+    result: "success",
+    timed_out: false,
+    usage: {
+      input_tokens: input,
+      uncached_input_tokens: input,
+      cached_input_tokens: 0,
+      output_tokens: 10,
+      total_tokens: input + 10,
+    },
+    timing: { process_exit_ms: milliseconds, turn_completed_ms: milliseconds - 1 },
+  });
+  const records = [
+    makeRecord(1, "base", 100, 1000),
+    makeRecord(1, "candidate", 50, 800),
+    makeRecord(2, "candidate", 60, 900),
+    makeRecord(2, "base", 100, 1000),
+  ];
+  const summary = summarizePairs(records, plan);
+  assert.equal(summary.complete_pairs, 2);
+  assert.equal(summary.primary.input_tokens.pairwise_relative_change_median, -0.45);
+  assert.equal(summary.primary.input_tokens.improved_pairs, 2);
+  assert.equal(summary.primary.input_tokens.ab_relative_change_median, -0.5);
+  assert.equal(summary.primary.input_tokens.ba_relative_change_median, -0.4);
+});

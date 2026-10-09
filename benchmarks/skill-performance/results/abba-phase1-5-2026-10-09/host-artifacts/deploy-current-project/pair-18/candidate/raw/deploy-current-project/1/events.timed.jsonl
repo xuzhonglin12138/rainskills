@@ -1,0 +1,5 @@
+{"received_ms":117.32875,"event":{"type":"thread.started","thread_id":"01a11eb1-b014-7641-9406-a5f7c0609837"}}
+{"received_ms":119.894666,"event":{"type":"turn.started"}}
+{"received_ms":19338.606625,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按隔离候选包中的 `rainbond-app-assistant` 路由规则做只读分析；遵守评测限制，不调用任何工具，也不执行部署。"}}}
+{"received_ms":22050.025375,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-app-assistant`\n- 允许转交：若当前项目尚未初始化或关联，可转交 `rainbond-project-init`，完成后回到部署流程\n- 安全停止点：任何文件写入、Rainbond API 调用或实际资源创建之前\n- 预期结果：仅确认路由与停止边界；不修改文件、不创建应用或组件、不执行实际部署"}}}
+{"received_ms":22127.081083,"event":{"type":"turn.completed","usage":{"input_tokens":16925,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":856,"reasoning_output_tokens":712}}}

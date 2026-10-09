@@ -1,0 +1,95 @@
+{
+  "schema": "rainskills.codex-host-evals.v1",
+  "benchmark_layer": "codex_host",
+  "run_role": "candidate",
+  "control_status": "uncontrolled",
+  "environment": {
+    "base_sha": "e7fca2f9cafe2fcad64422e3411bc03c5925c57b",
+    "candidate_sha": "812b2999241da0833de7d475b2d85f4a73b196f8",
+    "worktree_clean": true,
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "codex_build": "codex-cli 0.147.0",
+    "host_toolset_digest": "unavailable",
+    "rainbond_catalog_digest": "unavailable",
+    "skill_manifest_digest": "da7a2af0341c8b6f6b411d151fc78086dd4cce10ed907770c926d8d1c1872121",
+    "rainskills_package_version": "0.1.42",
+    "rainskills_cli_version": "0.1.42",
+    "rainskills_protocol_version": "rainskills.single-runtime-contract.v1",
+    "rainbond_platform_version": "unavailable",
+    "validator_digest": "4fba070124a414d917dcfeb5655c4b9d6cfe2a66f97f1a7442a55bd8e394c105",
+    "run_order_seed": "rainskills-phase1-5-abba-2026-10-09-v1",
+    "run_started_at": "2026-10-09T03:29:50.503Z",
+    "test_environment": "fixture_only"
+  },
+  "summary": [
+    {
+      "scenario_id": "diagnose-missing-dependency",
+      "planned_runs": 1,
+      "observed_runs": 1,
+      "process_exit_p50_ms": 29557.204,
+      "process_exit_mad_ms": 0,
+      "process_exit_p95_ms": 29557.204,
+      "failure_rate": 0,
+      "timeout_rate": 0,
+      "cleanup_failure_rate": 0
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "diagnose-missing-dependency",
+      "benchmark_layer": "codex_host",
+      "data_source": "codex_exec_json",
+      "run_role": "candidate",
+      "environment": {
+        "active_skill_bundle_digest": "b62cb2ae588a8e6046facaadaec029d6f42e4601717a69deb2d6e820ed108ee7",
+        "prompt_sha256": "9aae3df326950bdea21bbe642472ffafab0caa6f21ca19062bf36c33172259bb",
+        "fixture_sha256": "c18a48d9826bf59b20e61290136d80be29c509ace13a27d4a2c0c26148f9cb8f",
+        "session_mode": "fresh_session",
+        "test_environment": "fixture_only",
+        "reset_method": "fresh temporary workspace",
+        "cleanup_result": "success"
+      },
+      "timing": {
+        "process_exit_ms": 29557.204,
+        "turn_completed_ms": 25931.784041,
+        "first_event_ms": 9276.744166,
+        "first_tool_ms": "unavailable",
+        "first_user_progress_ms": 9276.744166,
+        "tool_wall_time_ms": 0,
+        "orchestration_and_tool_ms": "unavailable",
+        "external_platform_wait_ms": "unavailable"
+      },
+      "model_calls": 1,
+      "retry_calls": 0,
+      "tool_calls": 0,
+      "poll_calls": 0,
+      "skills_opened": [],
+      "references_opened": [],
+      "markdown_bytes_read": 0,
+      "usage": {
+        "status": "observed",
+        "source": "codex_exec_json",
+        "input_tokens": 17016,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "uncached_input_tokens": 17016,
+        "output_tokens": 1878,
+        "reasoning_output_tokens": 1554,
+        "total_tokens": 18894,
+        "cache_hit_ratio": 0
+      },
+      "compaction_count": "unavailable",
+      "result": "success",
+      "final_message": "```yaml\nkind: TroubleshootResult\ninitial_owner: rainbond-fullstack-troubleshooter\nscope: api 运行时数据库连接故障\ndiagnosis:\n  status: confirmed\n  cause: api 缺少指向 postgres 的组件依赖，导致 postgres 服务域名未注入服务发现\n  evidence:\n    - postgres 已运行\n    - 提供方连接变量完整\n    - api 日志显示数据库域名无法解析\n    - 依赖摘要不存在 \"api -> postgres\"\nminimal_risk_fix:\n  action: 添加 \"api -> postgres\" 依赖关系\n  code_change: false\n  database_change: false\nallowed_handoff:\n  target: rainbond-app-assistant\n  scope: 仅执行上述依赖关系修复并验证 api\nsafety_stop:\n  status: stopped_before_mutation\n  reason: 当前为只读夹具评估，禁止调用 Rainbond、外部工具或执行任何修改\nexpected_outcome:\n  - 依赖摘要出现 \"api -> postgres\"\n  - api 能解析 postgres 服务域名\n  - api 恢复启动\n  - 若仍失败，停止继续变更并返回新的运行日志证据\nexecuted: false\n```",
+      "timed_out": false,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "artifact_directory": "/Users/guox/Desktop/Project/rainskills/benchmarks/skill-performance/results/abba-phase1-5-2026-10-09/host-artifacts/diagnose-missing-dependency/pair-1/candidate/raw/diagnose-missing-dependency/1",
+      "behavior_assertions": [
+        "判定 dependency missing，添加 api 到 postgres 的依赖并重新部署 api，用新鲜日志确认原错误消失；运行恢复后交给 delivery verifier，不宣称已经交付。"
+      ]
+    }
+  ]
+}

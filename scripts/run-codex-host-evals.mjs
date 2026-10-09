@@ -43,12 +43,12 @@ function unavailableUsage() {
   };
 }
 
-export function unavailableScenario({ scenarioId, reason }) {
+export function unavailableScenario({ scenarioId, reason, runRole = "baseline" }) {
   return {
     scenario_id: scenarioId,
     benchmark_layer: "codex_host",
     data_source: "unavailable",
-    run_role: "baseline",
+    run_role: runRole,
     timing: {
       process_exit_ms: unavailableValue(),
       turn_completed_ms: unavailableValue(),
@@ -411,7 +411,7 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
     scenario_id: scenario.id,
     benchmark_layer: "codex_host",
     data_source: "codex_exec_json",
-    run_role: "baseline",
+    run_role: options.runRole,
     environment: {
       active_skill_bundle_digest: bundle.digest,
       prompt_sha256: sha256(prompt),
@@ -492,6 +492,11 @@ function parseArgs(argv) {
     providerWireApi: "responses",
     providerRequiresOpenAIAuth: true,
     providerSupportsWebsockets: false,
+    sourceRoot: null,
+    runRole: "baseline",
+    baseSha: null,
+    candidateSha: null,
+    runOrderSeed: null,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
@@ -513,6 +518,11 @@ function parseArgs(argv) {
     else if (argument === "--provider-wire-api") options.providerWireApi = value;
     else if (argument === "--provider-requires-openai-auth") options.providerRequiresOpenAIAuth = value === "true";
     else if (argument === "--provider-supports-websockets") options.providerSupportsWebsockets = value === "true";
+    else if (argument === "--source-root") options.sourceRoot = path.resolve(value);
+    else if (argument === "--run-role") options.runRole = value;
+    else if (argument === "--base-sha") options.baseSha = value;
+    else if (argument === "--candidate-sha") options.candidateSha = value;
+    else if (argument === "--run-order-seed") options.runOrderSeed = value;
     else throw new Error(`unknown argument: ${argument}`);
     index += 1;
   }
@@ -536,23 +546,33 @@ function parseArgs(argv) {
   if (!new Set(["responses", "chat"]).has(options.providerWireApi)) {
     throw new Error("invalid provider-wire-api");
   }
+  if (!new Set(["baseline", "base", "candidate"]).has(options.runRole)) {
+    throw new Error("invalid run-role");
+  }
+  for (const [name, value] of [["base-sha", options.baseSha], ["candidate-sha", options.candidateSha]]) {
+    if (value !== null && !/^[0-9a-f]{40}$/.test(value)) throw new Error(`invalid ${name}`);
+  }
+  if (options.sourceRoot && !fs.statSync(options.sourceRoot, { throwIfNoEntry: false })?.isDirectory()) {
+    throw new Error("invalid source-root");
+  }
   return options;
 }
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-  const git = gitState(root);
-  const packageVersion = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
-  const cases = new Map(loadEffectCases({ root }).map((entry) => [entry.id, entry]));
-  const allScenarios = parseScenarioConfig(root);
+  const harnessRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const sourceRoot = options.sourceRoot || harnessRoot;
+  const git = gitState(sourceRoot);
+  const packageVersion = JSON.parse(fs.readFileSync(path.join(sourceRoot, "package.json"), "utf8")).version;
+  const cases = new Map(loadEffectCases({ root: harnessRoot }).map((entry) => [entry.id, entry]));
+  const allScenarios = parseScenarioConfig(harnessRoot);
   const scenarios = options.scenario
     ? allScenarios.filter((scenario) => scenario.id === options.scenario)
     : allScenarios;
   if (options.scenario && scenarios.length !== 1) throw new Error(`unknown scenario: ${options.scenario}`);
   const manifestDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "rainskills-host-manifest-"));
   const manifestPath = path.join(manifestDirectory, "manifest.json");
-  buildSkillManifest({ source_root: root, output: manifestPath, revision: git.sha });
+  buildSkillManifest({ source_root: sourceRoot, output: manifestPath, revision: git.sha });
   const skillManifestDigest = sha256(fs.readFileSync(manifestPath));
   fs.rmSync(manifestDirectory, { recursive: true, force: true });
   options.artifactRoot ||= path.join(os.tmpdir(), "rainskills-host-evals", options.label);
@@ -567,25 +587,30 @@ async function main() {
       : options.repetitions;
     for (let repetition = 1; repetition <= runs; repetition += 1) {
       if (!options.execute) {
-        records.push(unavailableScenario({ scenarioId: scenario.id, reason: "host execution not requested" }));
+        records.push(unavailableScenario({
+          scenarioId: scenario.id,
+          reason: "host execution not requested",
+          runRole: options.runRole,
+        }));
       } else if (!options.fixtureOnly && WRITE_SCENARIOS.has(scenario.id)) {
         records.push(unavailableScenario({
           scenarioId: scenario.id,
           reason: "controlled Rainbond test environment, reset, and cleanup are unavailable",
+          runRole: options.runRole,
         }));
       } else {
-        records.push(await executeCodex({ root, scenario, effectCase, options, repetition }));
+        records.push(await executeCodex({ root: sourceRoot, scenario, effectCase, options, repetition }));
       }
     }
   }
   const output = {
     schema: HOST_SCHEMA,
     benchmark_layer: "codex_host",
-    run_role: "baseline",
+    run_role: options.runRole,
     control_status: !options.execute ? "unavailable" : options.fixtureOnly ? "uncontrolled" : "controlled",
     environment: {
-      base_sha: git.clean ? git.sha : null,
-      candidate_sha: null,
+      base_sha: options.baseSha || (git.clean && options.runRole !== "candidate" ? git.sha : null),
+      candidate_sha: options.candidateSha || (git.clean && options.runRole === "candidate" ? git.sha : null),
       worktree_clean: git.clean,
       model_id: options.model,
       reasoning_effort: options.reasoningEffort,
@@ -598,6 +623,7 @@ async function main() {
       rainskills_protocol_version: "rainskills.single-runtime-contract.v1",
       rainbond_platform_version: unavailableValue(),
       validator_digest: sha256(fs.readFileSync(fileURLToPath(import.meta.url))),
+      run_order_seed: options.runOrderSeed,
       run_started_at: runStartedAt,
       test_environment: options.fixtureOnly ? "fixture_only" : unavailableValue(),
     },

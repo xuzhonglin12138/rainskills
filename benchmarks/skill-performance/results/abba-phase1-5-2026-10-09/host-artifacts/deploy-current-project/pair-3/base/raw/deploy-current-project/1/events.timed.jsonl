@@ -1,0 +1,5 @@
+{"received_ms":197.553667,"event":{"type":"thread.started","thread_id":"01a11ea3-26fe-7970-9cac-539badad52f2"}}
+{"received_ms":216.9225,"event":{"type":"turn.started"}}
+{"received_ms":19963.049792,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按隔离候选包中的 `rainbond-app-assistant` 路由规则做静态判定；受本次 fixture-only 限制，不读取工作区、不联网，也不执行任何部署操作。"}}}
+{"received_ms":21508.395333,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-app-assistant`\n- 允许交接：若当前项目尚未初始化，仅可交给 `rainbond-project-init`；初始化完成后应返回原 Skill 继续部署流程。\n- 安全停止点：在任何 Rainbond API、网络调用或文件写入之前停止。\n- 预期结果：本次仅完成路由与策略判定，不实际初始化或部署项目。"}}}
+{"received_ms":21736.841208,"event":{"type":"turn.completed","usage":{"input_tokens":16352,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":902,"reasoning_output_tokens":751}}}
