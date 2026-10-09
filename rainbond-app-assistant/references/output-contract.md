@@ -43,61 +43,29 @@
   In customer report mode:
   - do not append `### Structured Output`
   - do not expose the fenced YAML block
-  - keep the report short and directly useful to the user
-  - state `部署成功`; when only browser confirmation remains, state `部署成功，待浏览器访问确认`
-  - include application name and selected environment
-  - include `部署位置` as a clickable `project.deployment_location_url`
-  - include `访问地址` as a clickable `delivery_state.preferred_access_url`
-  - include only the essential user-facing component status and HTTP verification evidence
-  - when browser confirmation remains, add at most one short validation note
-  - include proxy/mirror usage when it affected the deployment
-  - include warnings that matter after delivery, such as development-only database auth or missing production persistence
-  - every reply whose result line is `部署成功。` or `部署成功，待浏览器访问确认。` must append the following fixed block exactly once after all ordinary report sections; when the community-card policy is eligible, the card is the only content allowed after this block:
-
-    ```text
-    你接下来可以：
-
-    1. 修改代码并重新部署
-    2. 将当前应用创建快照发布版本，用于部署到生产环境
-    3. 查看运行日志
-    4. 将应用迁移到自己的 Rainbond
-    ```
+  - successful body contains only one result line plus one `应用`, `状态`, and verified `地址` field
+  - incomplete body contains only one `状态`, one `阻塞`, and at most one `下一步` field
+  - omit unavailable fields instead of guessing or duplicating them in prose
+  - do not append a fixed next-actions list unless the user explicitly asks for options
+  - emit progress only on a state change or after 30 seconds without a visible message
   - do not expose orchestration enums, lower-level skill names, `Blocking Issue: none`, or the internal action ledger
 
-  Default concise section order:
-  - `### 部署结果`
-  - `### 运行状态`
-  - `### 处理记录` only when non-trivial fixes or proxy changes materially affect later operation
-  - `### 注意事项` when there are production-readiness caveats
-
-  Example concise delivery reply (the public URL is an example only; a real reply must use the exact gateway value from Iron Law 40):
+  Default success shape (the public URL is an example only; a real reply must use the exact verified gateway value from Iron Law 40):
 
   ```markdown
-  ### 部署结果
-  部署成功，待浏览器访问确认。
+  部署成功
+  应用：demo-2048
+  状态：running
+  地址：http://example.invalid/2048
+  ```
 
-  应用：`demo-2048`
-  环境：`preview`
+  Default incomplete shape:
 
-  - 部署位置：[打开 Rainbond 应用](https://run.rainbond.com/#/team/aw9qu6gd/region/rainbond/apps/3283/overview)
-  - 访问地址：[打开 2048](http://example.invalid/2048)
-
-  ### 运行状态
-
-  - `web`：运行中
-  - HTTP 检查：200 OK
-
-  服务运行正常。当前环境无法访问公网域名，请打开访问地址确认页面交互。
-
-  ### 处理记录
-  - 使用镜像代理完成依赖拉取
-
-  你接下来可以：
-
-  1. 修改代码并重新部署
-  2. 将当前应用创建快照发布版本，用于部署到生产环境
-  3. 查看运行日志
-  4. 将应用迁移到自己的 Rainbond
+  ```markdown
+  部署未完成
+  状态：building
+  阻塞：镜像拉取失败
+  下一步：修复镜像地址后重新部署
   ```
 
   ### Structured contract mode

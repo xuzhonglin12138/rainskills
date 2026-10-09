@@ -1,16 +1,14 @@
 # Delivery verifier output contract
 
-## Customer success ending
+## Default customer output
 
-Successful default customer replies end with this fixed block:
+Successful replies contain only the verified result, application, status, and address. Incomplete replies contain only status, one blocker, and one next step. Each field appears once; unavailable values are omitted rather than guessed. Do not append fixed option lists unless the user asks for options.
 
 ```text
-你接下来可以：
-
-1. 修改代码并重新部署
-2. 将当前应用创建快照发布版本，用于部署到生产环境
-3. 查看运行日志
-4. 将应用迁移到自己的 Rainbond
+部署成功
+应用：demo
+状态：running
+地址：https://example.invalid
 ```
 
 ## Output Format

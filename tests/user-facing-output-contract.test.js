@@ -6,12 +6,6 @@ const { spawnSync } = require("node:child_process");
 const test = require("node:test");
 
 const root = path.resolve(__dirname, "..");
-const successfulDeploymentNextActions = `你接下来可以：
-
-1. 修改代码并重新部署
-2. 将当前应用创建快照发布版本，用于部署到生产环境
-3. 查看运行日志
-4. 将应用迁移到自己的 Rainbond`;
 const communityCard = `欢迎扫码加入交流群，一起交流使用经验。
 
 ![交流群二维码](https://www.rainbond.com/wechat/rainbond-xzs.png)`;
@@ -216,47 +210,42 @@ test("reply validators accept customer text by default and reject internal contr
   }
 });
 
-test("successful deployment replies end with the four customer next actions", () => {
+test("default deployment replies use one bounded success or blocker shape", () => {
   const entrypoint = read("rainbond-app-assistant/SKILL.md");
-  assert.match(entrypoint, /部署成功后的固定动作块/);
+  assert.doesNotMatch(entrypoint, /部署成功后的固定动作块/);
   assert.match(entrypoint, /references\/output-contract\.md/);
 
   for (const relativePath of [
+    "contracts/shared/user-result.md",
     "rainbond-app-assistant/references/output-contract.md",
     "rainbond-app-assistant/references/workflow-rules.md",
+    "rainbond-fullstack-bootstrap/modules/70-output-contract.md",
+    "rainbond-fullstack-troubleshooter/references/output-contract.md",
     "rainbond-delivery-verifier/references/output-contract.md",
   ]) {
-    assert.match(read(relativePath), /你接下来可以：/, relativePath);
-    assert.match(read(relativePath), /将应用迁移到自己的 Rainbond/, relativePath);
+    const content = read(relativePath);
+    assert.doesNotMatch(content, /你接下来可以：/, relativePath);
+    assert.doesNotMatch(content, /将应用迁移到自己的 Rainbond/, relativePath);
   }
 
-  for (const relativePath of [
-    "rainbond-app-assistant/evals/04-delivered-stop-without-promotion.response.md",
-    "rainbond-app-assistant/evals/11-delivered-with-proxy-and-local-binding.response.md",
-    "rainbond-app-assistant/evals/16-source-delivered-manual-validation.response.md",
-  ]) {
-    const response = read(relativePath).trim();
-    assert.equal(
-      response.split(successfulDeploymentNextActions).length - 1,
-      1,
-      relativePath,
-    );
-    assert.equal(response.endsWith(successfulDeploymentNextActions), true, relativePath);
-  }
+  const canonical = read("contracts/shared/user-result.md");
+  assert.match(canonical, /成功正文[^\n]*结果[^\n]*应用[^\n]*状态[^\n]*地址/);
+  assert.match(canonical, /未完成正文[^\n]*状态[^\n]*单一阻塞[^\n]*唯一下一步/);
+  assert.match(canonical, /同一字段[^\n]*只出现一次/);
 });
 
-test("customer validators reject a successful deployment without the next actions", () => {
+test("customer validators accept bounded success and reject duplicate fields", () => {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "rainskills-success-actions-"));
-  const incompleteResponse = path.join(temporary, "incomplete.md");
-  const completeResponse = path.join(temporary, "complete.md");
+  const conciseResponse = path.join(temporary, "concise.md");
+  const duplicateResponse = path.join(temporary, "duplicate.md");
   fs.writeFileSync(
-    incompleteResponse,
-    "部署成功。\n\n- 应用：demo\n- 访问地址：https://example.com\n",
+    conciseResponse,
+    "部署成功\n应用：demo\n状态：running\n地址：https://example.com\n",
     "utf8",
   );
   fs.writeFileSync(
-    completeResponse,
-    `部署成功。\n\n- 应用：demo\n- 访问地址：https://example.com\n\n${successfulDeploymentNextActions}\n`,
+    duplicateResponse,
+    "部署成功\n应用：demo\n状态：running\n状态：running\n地址：https://example.com\n",
     "utf8",
   );
 
@@ -264,14 +253,14 @@ test("customer validators reject a successful deployment without the next action
     "rainbond-app-assistant/scripts/validate_app_assistant_output.py",
     "rainbond-delivery-verifier/scripts/validate_delivery_verifier_output.py",
   ]) {
-    const rejected = spawnSync("python3", [path.join(root, validator), incompleteResponse], {
-      encoding: "utf8",
-    });
-    assert.notEqual(rejected.status, 0, validator);
-
-    const accepted = spawnSync("python3", [path.join(root, validator), completeResponse], {
+    const accepted = spawnSync("python3", [path.join(root, validator), conciseResponse], {
       encoding: "utf8",
     });
     assert.equal(accepted.status, 0, accepted.stderr || accepted.stdout || validator);
+
+    const rejected = spawnSync("python3", [path.join(root, validator), duplicateResponse], {
+      encoding: "utf8",
+    });
+    assert.notEqual(rejected.status, 0, validator);
   }
 });

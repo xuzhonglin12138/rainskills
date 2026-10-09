@@ -31,11 +31,12 @@ If the system is already `runtime_healthy`, stop and say so. Do not continue mak
 
 ## Output Format
 
+Default customer output is concise: a successful result contains only result, application, status, and a verified address when available; an incomplete result contains only status, one blocker, and one next step. Each field appears once. Do not append fixed option lists or the structured evidence ledger.
+
 Structured output is used only when the user or an automated evaluation explicitly requests it. Read the canonical [schema](../schemas/troubleshoot-result.schema.yaml) and generated [compact contract](generated/troubleshoot-contract.md) before constructing the final object.
 
 The schema is the only authority for fields, required keys, types, and enums. This reference retains human-readable sections, consistency rules, and examples only. Append one final `### Structured Output` section with fenced `yaml`, and place no prose after it.
 
-Consistency rules:
 Consistency rules:
 - every non-null `blocker_bucket` must include a canonical bucket, `dominant_evidence`, `stop_reason`, and `recommended_next_action`
 - `source build failed` must use the evidence order `component_events -> build_logs` before any runtime-log reasoning

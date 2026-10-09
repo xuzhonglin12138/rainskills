@@ -28,16 +28,11 @@ SECRET_ASSIGNMENT = re.compile(
 
 MASKED_VALUES = {"***", "[masked]", "<masked>", "redacted", "<redacted>", "null"}
 
-SUCCESSFUL_DEPLOYMENT_NEXT_ACTIONS = """你接下来可以：
-
-1. 修改代码并重新部署
-2. 将当前应用创建快照发布版本，用于部署到生产环境
-3. 查看运行日志
-4. 将应用迁移到自己的 Rainbond"""
-
 SUCCESSFUL_DEPLOYMENT_PATTERN = re.compile(
-    r"(?m)^部署成功(?:，待浏览器访问确认)?。$"
+    r"(?m)^部署成功(?:，待浏览器访问确认)?。?$"
 )
+INCOMPLETE_DEPLOYMENT_PATTERN = re.compile(r"(?m)^部署未完成。?$")
+DEFAULT_FIELDS = ("应用", "状态", "地址", "阻塞", "下一步")
 
 
 def validate_customer_output(response_text: str, expected: dict[str, Any] | None = None) -> list[str]:
@@ -60,12 +55,20 @@ def validate_customer_output(response_text: str, expected: dict[str, Any] | None
             break
 
     if SUCCESSFUL_DEPLOYMENT_PATTERN.search(response_text):
-        if response_text.count(SUCCESSFUL_DEPLOYMENT_NEXT_ACTIONS) != 1:
-            errors.append(
-                "successful deployment response must contain the four customer next actions exactly once"
-            )
-        if not response_text.rstrip().endswith(SUCCESSFUL_DEPLOYMENT_NEXT_ACTIONS):
-            errors.append("successful deployment response must end with the customer next actions")
+        for field in ("应用", "状态", "地址"):
+            if len(re.findall(rf"(?m)^(?:-\s*)?{field}：", response_text)) != 1:
+                errors.append(f"successful deployment response must contain one {field} field")
+        if "你接下来可以：" in response_text:
+            errors.append("successful deployment response must not append fixed next actions")
+
+    if INCOMPLETE_DEPLOYMENT_PATTERN.search(response_text):
+        for field in ("状态", "阻塞"):
+            if len(re.findall(rf"(?m)^(?:-\s*)?{field}：", response_text)) != 1:
+                errors.append(f"incomplete deployment response must contain one {field} field")
+
+    for field in DEFAULT_FIELDS:
+        if len(re.findall(rf"(?m)^(?:-\s*)?{field}：", response_text)) > 1:
+            errors.append(f"customer response repeats the {field} field")
 
     assertions = (expected or {}).get("assert", {})
     for needle in assertions.get("prose_contains", []):
