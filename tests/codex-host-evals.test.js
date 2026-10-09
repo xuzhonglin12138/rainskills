@@ -1,6 +1,9 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 const test = require("node:test");
 
 test("Codex host events normalize usage and overlapping tool timing", async () => {
@@ -53,10 +56,62 @@ test("Codex host runner can preserve a non-sensitive custom provider while isola
     },
   });
   assert(args.includes("--ignore-user-config"));
+  assert.deepEqual(args.filter((value) => ["plugins", "remote_plugin", "plugin_sharing"].includes(value)), [
+    "plugins", "remote_plugin", "plugin_sharing",
+  ]);
   assert(args.includes('model_provider="OpenAI"'));
   assert(args.includes('model_providers.OpenAI.base_url="https://code.agent-app.ai"'));
   assert(args.includes("model_providers.OpenAI.supports_websockets=false"));
   assert.doesNotMatch(JSON.stringify(args), /api[_-]?key|token|secret/i);
+});
+
+test("Codex host runner isolates user skills and plugins while copying only auth", async () => {
+  const { prepareIsolatedCodexEnvironment } = await import("../scripts/run-codex-host-evals.mjs");
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "rainskills-host-isolation-"));
+  const authSource = path.join(workspace, "source-auth.json");
+  fs.writeFileSync(authSource, '{"OPENAI_API_KEY":"test-only"}\n', { mode: 0o600 });
+  const result = prepareIsolatedCodexEnvironment({
+    workspace,
+    authSource,
+    baseEnvironment: {
+      PATH: process.env.PATH,
+      HOME: "/user/home",
+      CODEX_APP_TOOLS_PIPE_PATH: "/user/plugin.sock",
+      CODEX_THREAD_ID: "thread-id",
+      OPENAI_API_KEY: "must-not-leak",
+    },
+  });
+  assert.equal(result.childEnvironment.CODEX_HOME, result.isolatedCodexHome);
+  assert.equal(result.childEnvironment.HOME, result.isolatedHome);
+  assert.equal(result.childEnvironment.CODEX_APP_TOOLS_PIPE_PATH, undefined);
+  assert.equal(result.childEnvironment.CODEX_THREAD_ID, undefined);
+  assert.equal(result.childEnvironment.OPENAI_API_KEY, undefined);
+  assert.equal(result.authCopied, true);
+  const copiedAuth = path.join(result.isolatedCodexHome, "auth.json");
+  assert.equal(fs.readFileSync(copiedAuth, "utf8"), fs.readFileSync(authSource, "utf8"));
+  assert.equal(fs.statSync(copiedAuth).mode & 0o777, 0o600);
+  fs.rmSync(workspace, { recursive: true, force: true });
+});
+
+test("controlled live host runs use fixed non-interactive execution without credential argv", async () => {
+  const { buildCodexArgs } = await import("../scripts/run-codex-host-evals.mjs");
+  const args = buildCodexArgs({
+    workspace: "/tmp/workspace",
+    prompt: "controlled prompt",
+    options: {
+      model: "gpt-5.6-sol",
+      reasoningEffort: "high",
+      controlledLive: true,
+      providerName: "OpenAI",
+      providerBaseUrl: "https://code.agent-app.ai",
+      providerWireApi: "responses",
+      providerRequiresOpenAIAuth: true,
+      providerSupportsWebsockets: false,
+    },
+  });
+  assert(args.includes("danger-full-access"));
+  assert(args.includes('approval_policy="never"'));
+  assert.doesNotMatch(JSON.stringify(args), /RAINBOND_JWT|OPENAI_API_KEY|Bearer\s/i);
 });
 
 test("AB/BA plan is deterministic and balanced", async () => {
@@ -69,6 +124,14 @@ test("AB/BA plan is deterministic and balanced", async () => {
   assert.equal(primary.filter((pair) => pair.order === "AB").length, 10);
   assert.equal(primary.filter((pair) => pair.order === "BA").length, 10);
   assert.equal(first.length, 27);
+  const alternate = buildPairPlan({
+    primaryPairs: 2,
+    exploratoryPairs: 0,
+    seed: "fixed-seed",
+    primaryScenario: "initialize-monorepo",
+  });
+  assert.equal(alternate.length, 2);
+  assert(alternate.every((pair) => pair.scenario_id === "initialize-monorepo"));
 });
 
 test("AB/BA summary reports paired relative changes and order effects", async () => {

@@ -7,6 +7,7 @@ import path from "node:path";
 import process from "node:process";
 import { execFileSync, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import YAML from "yaml";
 import { EXPECTED_SKILLS, canonicalJson, loadEffectCases, sha256 } from "./validate-effect-evals.mjs";
 import { buildSkillManifest } from "./build-skill-manifest.mjs";
@@ -23,6 +24,7 @@ const WRITE_SCENARIOS = new Set([
   "reject-unsupported-multimodal-bypass",
 ]);
 const TOOL_ITEM_PATTERN = /(?:command|tool|mcp|web_search|computer|file_change)/i;
+const require = createRequire(import.meta.url);
 
 function unavailableValue() {
   return "unavailable";
@@ -230,7 +232,7 @@ function directoryDigest(directory) {
 }
 
 function copySkillBundles(root, workspace) {
-  const target = path.join(workspace, ".agents", "skills");
+  const target = path.join(workspace, ".codex", "skills");
   fs.mkdirSync(target, { recursive: true });
   for (const skillId of EXPECTED_SKILLS) {
     const destination = path.join(target, skillId);
@@ -252,6 +254,43 @@ function copySkillBundles(root, workspace) {
   return { path: target, digest: directoryDigest(target) };
 }
 
+export function prepareIsolatedCodexEnvironment({ workspace, baseEnvironment, authSource }) {
+  const isolatedHome = path.join(workspace, ".isolated-home");
+  const isolatedCodexHome = path.join(workspace, ".isolated-codex-home");
+  fs.mkdirSync(isolatedHome, { recursive: true, mode: 0o700 });
+  fs.mkdirSync(isolatedCodexHome, { recursive: true, mode: 0o700 });
+  fs.chmodSync(isolatedHome, 0o700);
+  fs.chmodSync(isolatedCodexHome, 0o700);
+  let authCopied = false;
+  if (authSource) {
+    const sourceStat = fs.statSync(authSource, { throwIfNoEntry: false });
+    if (sourceStat?.isFile()) {
+      const target = path.join(isolatedCodexHome, "auth.json");
+      fs.copyFileSync(authSource, target);
+      fs.chmodSync(target, 0o600);
+      authCopied = true;
+    }
+  }
+  const childEnvironment = {
+    ...baseEnvironment,
+    HOME: isolatedHome,
+    CODEX_HOME: isolatedCodexHome,
+    XDG_CONFIG_HOME: path.join(isolatedHome, ".config"),
+    XDG_CACHE_HOME: path.join(isolatedHome, ".cache"),
+    XDG_DATA_HOME: path.join(isolatedHome, ".local", "share"),
+    RAINSKILLS_TELEMETRY_DISABLED: "1",
+    RAINSKILLS_CREDENTIAL_SOURCE: "environment",
+    RAINBOND_URL: "",
+    RAINBOND_JWT: "",
+  };
+  for (const name of Object.keys(childEnvironment)) {
+    if (name.startsWith("CODEX_") && name !== "CODEX_HOME") delete childEnvironment[name];
+  }
+  delete childEnvironment.OPENAI_API_KEY;
+  delete childEnvironment.OPENAI_API_KEY_PATH;
+  return { childEnvironment, isolatedHome, isolatedCodexHome, authCopied };
+}
+
 function gitState(root) {
   const sha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
   const status = execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
@@ -266,15 +305,28 @@ function parseScenarioConfig(root) {
   return document.scenarios;
 }
 
-function makePrompt(effectCase, entrySkill, fixtureOnly) {
-  const prefix = fixtureOnly
+function makePrompt(effectCase, entrySkill, options) {
+  const prefix = options.fixtureOnly
     ? [
         "This is a read-only fixture-only Codex host evaluation.",
         `Use the $${entrySkill} Skill from the isolated candidate bundle.`,
         "Do not call Rainbond, network, web, browser, shell, or any external tool. Do not modify files.",
         "Analyze the request using only the Skill and the hash-pinned policy fixture. State the initial owner, any allowed handoff, the safety stop, and the expected outcome concisely.",
       ]
-    : [
+    : options.controlledLive
+      ? [
+        "This is a controlled disposable Rainbond end-to-end evaluation.",
+        `Use the $${entrySkill} Skill from the isolated repository bundle and follow its allowed handoffs.`,
+        `For this isolated benchmark, run the runtime preflight only as: node ${options.liveCliPath} status --skill-id rainbond-app-assistant.`,
+        `Use business operations only through the protected CLI at ${options.liveCliPath}; do not use curl, direct HTTP, a browser, or any other network path.`,
+        `The user authorizes creating and mutating only the exact disposable app ${options.liveAppName} in team ${options.liveTeamName} and region ${options.liveRegionName}.`,
+        `Use image ${options.liveImage} for one component named ${options.liveComponentName}; configure container port ${options.liveContainerPort}, deploy it, wait with bounded polling, and verify delivery when the platform provides an address.`,
+        "Required milestones for both variants: explicitly activate project-init and create rainbond.app.json plus .rainbond/local.json for this exact image component; activate bootstrap; create and deploy the topology; expose port 80; wait for bounded convergence; then activate delivery-verifier and verify the user URL.",
+        "Do not activate troubleshooter unless fresh health evidence is abnormal. Do not list the entire tool catalog or describe a Tool whose schema is already given by the active Skill.",
+        "Do not touch any pre-existing app or component. Do not delete the disposable app; the harness performs exact-name cleanup after the run.",
+        "Do not expose credentials or environment variables. Keep progress and the final result concise.",
+      ]
+      : [
         `Use the $${entrySkill} Skill from the isolated candidate bundle.`,
         "This run is read-only. Do not perform mutations; stop when the request would require a controlled Rainbond write environment.",
       ];
@@ -293,10 +345,101 @@ function redactArtifactText(value) {
     .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "<redacted-jwt>");
 }
 
+function parseCliJson(stdout) {
+  const lines = String(stdout).split(/\r?\n/).filter((line) => line.trim());
+  for (const line of lines.reverse()) {
+    try { return JSON.parse(line); } catch (_error) { /* inspect the preceding line */ }
+  }
+  throw new Error("protected CLI did not return JSON");
+}
+
+function runProtectedCli({ cliPath, args, input, environment }) {
+  const stdout = execFileSync(process.execPath, [cliPath, ...args], {
+    input: `${JSON.stringify(input)}\n`,
+    encoding: "utf8",
+    env: environment,
+    stdio: ["pipe", "pipe", "pipe"],
+    timeout: 180_000,
+    maxBuffer: 2 * 1024 * 1024,
+  });
+  return parseCliJson(stdout);
+}
+
+function confirmedProtectedCall({ cliPath, toolName, input, skillId, environment }) {
+  const baseArgs = ["call", toolName, "--input", "-", "--skill-id", skillId];
+  const prepared = runProtectedCli({ cliPath, args: baseArgs, input, environment });
+  if (!prepared?.requires_confirmation || typeof prepared.confirmation_id !== "string") {
+    throw new Error(`protected CLI did not prepare ${toolName}`);
+  }
+  return runProtectedCli({
+    cliPath,
+    args: [
+      "call", toolName, "--input", "-", "--confirm", prepared.confirmation_id,
+      "--skill-id", skillId,
+    ],
+    input,
+    environment,
+  });
+}
+
+function cleanupDisposableApp(options) {
+  const environment = {
+    ...process.env,
+    RAINSKILLS_TELEMETRY_DISABLED: "1",
+    RAINSKILLS_CREDENTIAL_SOURCE: "environment",
+    RAINBOND_URL: options.liveCredentials.console_origin,
+    RAINBOND_JWT: options.liveCredentials.token,
+    RAINBOND_ALLOW_INSECURE_HTTP: String(options.liveCredentials.allow_insecure_http),
+  };
+  const query = runProtectedCli({
+    cliPath: options.liveCliPath,
+    args: ["read", "rainbond_query_apps", "--input", "-", "--skill-id", "rainbond-app-assistant"],
+    input: {
+      enterprise_id: options.liveEnterpriseId,
+      query: options.liveAppName,
+      page: 1,
+      page_size: 20,
+    },
+    environment,
+  });
+  const exact = Array.isArray(query?.items)
+    ? query.items.filter((app) => app?.app_name === options.liveAppName)
+    : [];
+  if (exact.length === 0) return { result: "success", deleted: false };
+  if (exact.length !== 1 || exact[0].team_name !== options.liveTeamName) {
+    throw new Error("disposable app lookup was not unique in the benchmark team");
+  }
+  const prepared = confirmedProtectedCall({
+    cliPath: options.liveCliPath,
+    toolName: "rainbond_delete_app",
+    input: { app_id: exact[0].app_id },
+    skillId: "rainbond-app-assistant",
+    environment,
+  });
+  if (!prepared?.requires_confirmation || typeof prepared.confirmation_token !== "string") {
+    throw new Error("Rainbond did not return an app deletion confirmation token");
+  }
+  const deleted = confirmedProtectedCall({
+    cliPath: options.liveCliPath,
+    toolName: "rainbond_delete_app",
+    input: {
+      app_id: exact[0].app_id,
+      confirm: true,
+      confirmation_token: prepared.confirmation_token,
+    },
+    skillId: "rainbond-app-assistant",
+    environment,
+  });
+  if (deleted?.deleted !== true) throw new Error("Rainbond did not confirm disposable app deletion");
+  return { result: "success", deleted: true, app_id: exact[0].app_id };
+}
+
 export function buildCodexArgs({ workspace, prompt, options }) {
   const args = [
     "exec", "--json", "--ephemeral", "--ignore-user-config", "--ignore-rules",
-    "--skip-git-repo-check", "-s", "read-only", "-C", workspace,
+    "--disable", "plugins", "--disable", "remote_plugin", "--disable", "plugin_sharing",
+    "--skip-git-repo-check", "-s", options.controlledLive ? "danger-full-access" : "read-only",
+    "-c", "approval_policy=\"never\"", "-C", workspace,
     "-m", options.model,
     "-c", `model_reasoning_effort=${JSON.stringify(options.reasoningEffort)}`,
   ];
@@ -318,10 +461,11 @@ export function buildCodexArgs({ workspace, prompt, options }) {
 async function executeCodex({ root, scenario, effectCase, options, repetition }) {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), `rainskills-host-${scenario.id}-`));
   fs.chmodSync(workspace, 0o700);
+  if (options.controlledLive) cleanupDisposableApp(options);
   const bundle = copySkillBundles(root, workspace);
   const fixture = { kind: "policy_scenario", name: effectCase.id };
   safeWrite(path.join(workspace, "EVAL_FIXTURE.json"), `${JSON.stringify(fixture, null, 2)}\n`);
-  const prompt = makePrompt(effectCase, scenario.entry_skill, options.fixtureOnly);
+  const prompt = makePrompt(effectCase, scenario.entry_skill, options);
   const artifactDirectory = path.join(options.artifactRoot, scenario.id, String(repetition));
   fs.mkdirSync(artifactDirectory, { recursive: true, mode: 0o700 });
   fs.chmodSync(artifactDirectory, 0o700);
@@ -333,15 +477,28 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
   let artifactBytes = 0;
   let timedOut = false;
   const args = buildCodexArgs({ workspace, prompt, options });
-  const childEnvironment = {
-    ...process.env,
-    RAINSKILLS_TELEMETRY_DISABLED: "1",
-    RAINSKILLS_CREDENTIAL_SOURCE: "environment",
-    RAINBOND_URL: "",
-    RAINBOND_JWT: "",
-  };
-  delete childEnvironment.OPENAI_API_KEY;
-  delete childEnvironment.OPENAI_API_KEY_PATH;
+  const authRoot = process.env.CODEX_HOME || path.join(os.homedir(), ".codex");
+  const isolatedRuntime = prepareIsolatedCodexEnvironment({
+    workspace,
+    baseEnvironment: process.env,
+    authSource: path.join(authRoot, "auth.json"),
+  });
+  const { childEnvironment } = isolatedRuntime;
+  if (options.controlledLive) {
+    childEnvironment.RAINSKILLS_CREDENTIAL_SOURCE = "environment";
+    childEnvironment.RAINBOND_URL = options.liveCredentials.console_origin;
+    childEnvironment.RAINBOND_JWT = options.liveCredentials.token;
+    childEnvironment.RAINBOND_ALLOW_INSECURE_HTTP = String(
+      options.liveCredentials.allow_insecure_http,
+    );
+    const manifestPath = path.join(
+      isolatedRuntime.isolatedHome,
+      ".rainbond",
+      "bin",
+      "rainskills-skill-manifest.json",
+    );
+    buildSkillManifest({ source_root: root, output: manifestPath, revision: options.sourceSha });
+  }
   const child = spawn("codex", args, {
     cwd: workspace,
     env: childEnvironment,
@@ -400,10 +557,18 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
     exitCode: completion.exitCode,
     timedOut,
   });
+  let cleanup = { result: "success", deleted: false };
+  if (options.controlledLive) {
+    try {
+      cleanup = cleanupDisposableApp(options);
+    } catch (_error) {
+      cleanup = { result: "failed", deleted: false };
+    }
+  }
   const markdownPaths = [...normalized.skills_opened, ...normalized.references_opened];
   normalized.markdown_bytes_read = markdownPaths.reduce((sum, observed) => {
     const suffix = observed.replace(/^.*?(?=(?:rainskills|rainbond-[^/]+)\/)/, "");
-    const candidate = path.join(workspace, ".agents", "skills", suffix);
+    const candidate = path.join(workspace, ".codex", "skills", suffix);
     return sum + (fs.existsSync(candidate) ? fs.statSync(candidate).size : 0);
   }, 0);
   fs.rmSync(workspace, { recursive: true, force: true });
@@ -419,7 +584,10 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
       session_mode: "fresh_session",
       test_environment: options.fixtureOnly ? "fixture_only" : "unavailable",
       reset_method: "fresh temporary workspace",
-      cleanup_result: "success",
+      cleanup_result: cleanup.result,
+      cleanup_deleted_disposable_app: cleanup.deleted,
+      host_isolation: "isolated_home_codex_home_and_repo_skill_scope",
+      isolated_auth_copy: isolatedRuntime.authCopied,
     },
     ...normalized,
     timed_out: timedOut,
@@ -497,11 +665,21 @@ function parseArgs(argv) {
     baseSha: null,
     candidateSha: null,
     runOrderSeed: null,
+    controlledLive: false,
+    liveCliPath: null,
+    liveAppName: null,
+    liveTeamName: null,
+    liveRegionName: null,
+    liveEnterpriseId: null,
+    liveImage: "nginx:alpine",
+    liveComponentName: "web",
+    liveContainerPort: 80,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === "--execute") { options.execute = true; continue; }
     if (argument === "--fixture-only") { options.execute = true; options.fixtureOnly = true; continue; }
+    if (argument === "--controlled-live") { options.execute = true; options.controlledLive = true; continue; }
     const value = argv[index + 1];
     if (!value || value.startsWith("--")) throw new Error(`missing value for ${argument}`);
     if (argument === "--label") options.label = value;
@@ -523,6 +701,14 @@ function parseArgs(argv) {
     else if (argument === "--base-sha") options.baseSha = value;
     else if (argument === "--candidate-sha") options.candidateSha = value;
     else if (argument === "--run-order-seed") options.runOrderSeed = value;
+    else if (argument === "--live-cli-path") options.liveCliPath = path.resolve(value);
+    else if (argument === "--live-app-name") options.liveAppName = value;
+    else if (argument === "--live-team-name") options.liveTeamName = value;
+    else if (argument === "--live-region-name") options.liveRegionName = value;
+    else if (argument === "--live-enterprise-id") options.liveEnterpriseId = value;
+    else if (argument === "--live-image") options.liveImage = value;
+    else if (argument === "--live-component-name") options.liveComponentName = value;
+    else if (argument === "--live-container-port") options.liveContainerPort = Number(value);
     else throw new Error(`unknown argument: ${argument}`);
     index += 1;
   }
@@ -555,6 +741,25 @@ function parseArgs(argv) {
   if (options.sourceRoot && !fs.statSync(options.sourceRoot, { throwIfNoEntry: false })?.isDirectory()) {
     throw new Error("invalid source-root");
   }
+  if (options.fixtureOnly && options.controlledLive) throw new Error("fixture-only and controlled-live conflict");
+  if (options.controlledLive) {
+    for (const required of [
+      "liveCliPath", "liveAppName", "liveTeamName", "liveRegionName", "liveEnterpriseId",
+    ]) {
+      if (!options[required]) throw new Error(`missing ${required}`);
+    }
+    if (!fs.statSync(options.liveCliPath, { throwIfNoEntry: false })?.isFile()) {
+      throw new Error("invalid live-cli-path");
+    }
+    if (!/^[a-z][a-z0-9-]{2,62}$/.test(options.liveAppName)) throw new Error("invalid live-app-name");
+    if (!/^[a-z0-9][a-z0-9._-]{0,127}$/.test(options.liveTeamName)) throw new Error("invalid live-team-name");
+    if (!/^[a-z0-9][a-z0-9._-]{0,127}$/.test(options.liveRegionName)) throw new Error("invalid live-region-name");
+    if (!/^[a-f0-9]{32}$/.test(options.liveEnterpriseId)) throw new Error("invalid live-enterprise-id");
+    if (!Number.isSafeInteger(options.liveContainerPort)
+      || options.liveContainerPort < 1 || options.liveContainerPort > 65535) {
+      throw new Error("invalid live-container-port");
+    }
+  }
   return options;
 }
 
@@ -563,6 +768,17 @@ async function main() {
   const harnessRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const sourceRoot = options.sourceRoot || harnessRoot;
   const git = gitState(sourceRoot);
+  options.sourceSha = git.sha;
+  if (options.controlledLive) {
+    const { createSingleRuntimeStore } = require(path.join(
+      harnessRoot,
+      "rainbond-platform-installer",
+      "scripts",
+      "single-runtime.js",
+    ));
+    options.liveCredentials = createSingleRuntimeStore({ home: os.homedir() }).read();
+    if (!options.liveCredentials) throw new Error("connected Rainbond runtime is unavailable");
+  }
   const packageVersion = JSON.parse(fs.readFileSync(path.join(sourceRoot, "package.json"), "utf8")).version;
   const cases = new Map(loadEffectCases({ root: harnessRoot }).map((entry) => [entry.id, entry]));
   const allScenarios = parseScenarioConfig(harnessRoot);
@@ -592,7 +808,7 @@ async function main() {
           reason: "host execution not requested",
           runRole: options.runRole,
         }));
-      } else if (!options.fixtureOnly && WRITE_SCENARIOS.has(scenario.id)) {
+      } else if (!options.fixtureOnly && !options.controlledLive && WRITE_SCENARIOS.has(scenario.id)) {
         records.push(unavailableScenario({
           scenarioId: scenario.id,
           reason: "controlled Rainbond test environment, reset, and cleanup are unavailable",
@@ -607,7 +823,9 @@ async function main() {
     schema: HOST_SCHEMA,
     benchmark_layer: "codex_host",
     run_role: options.runRole,
-    control_status: !options.execute ? "unavailable" : options.fixtureOnly ? "uncontrolled" : "controlled",
+    control_status: !options.execute
+      ? "unavailable"
+      : options.fixtureOnly ? "uncontrolled" : options.controlledLive ? "controlled" : "controlled",
     environment: {
       base_sha: options.baseSha || (git.clean && options.runRole !== "candidate" ? git.sha : null),
       candidate_sha: options.candidateSha || (git.clean && options.runRole === "candidate" ? git.sha : null),
@@ -625,7 +843,9 @@ async function main() {
       validator_digest: sha256(fs.readFileSync(fileURLToPath(import.meta.url))),
       run_order_seed: options.runOrderSeed,
       run_started_at: runStartedAt,
-      test_environment: options.fixtureOnly ? "fixture_only" : unavailableValue(),
+      test_environment: options.fixtureOnly
+        ? "fixture_only"
+        : options.controlledLive ? "disposable_rainbond_app" : unavailableValue(),
     },
     summary: summarize(records),
     scenarios: records,

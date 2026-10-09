@@ -1,0 +1,5 @@
+{"received_ms":247.901041,"event":{"type":"thread.started","thread_id":"01a11ee5-b36a-7771-86fc-e6bbffe84029"}}
+{"received_ms":294.907041,"event":{"type":"turn.started"}}
+{"received_ms":10455.21125,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按你指定的 Skill 做纯静态分析；该 Skill 要求先读取路由与自身 Runtime Gate。受本次 fixture-only 限制，我只使用随请求提供的 Skill 内容和仓库中的哈希锁定策略文本，不调用任何工具或系统。"}}}
+{"received_ms":11692.888125,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求是部署当前项目。\n- 允许移交：若项目尚未初始化，可移交 `rainbond-project-init`；初始化后应返回主流程继续部署。\n- 安全停止：任何 Rainbond 查询、连接或变更前必须通过 Runtime Gate。本评测禁止工具和外部调用，因此在该门禁处停止。\n- 预期结果：仅完成静态路由判断；不会实际部署或修改文件。需在允许连接 Rainbond 的环境中继续。"}}}
+{"received_ms":11899.736041,"event":{"type":"turn.completed","usage":{"input_tokens":14864,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":612,"reasoning_output_tokens":422}}}

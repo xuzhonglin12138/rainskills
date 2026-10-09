@@ -1,0 +1,4 @@
+{"received_ms":75.659542,"event":{"type":"thread.started","thread_id":"01a11ef6-a179-7293-935d-c3be20db95e0"}}
+{"received_ms":78.094917,"event":{"type":"turn.started"}}
+{"received_ms":8219.196083,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求是部署“当前项目”。\n- 允许交接：若项目未关联，可交给 `rainbond-project-init`；随后可按状态进入拓扑创建、故障排查和交付验证。\n- 安全停止：本次为只读 fixture 评估，禁止连接或更改 Rainbond，因此在任何平台查询、初始化或部署前停止。\n- 预期结果：仅完成路由判定；不会实际部署项目，也不会生成访问地址。"}}}
+{"received_ms":8567.806292,"event":{"type":"turn.completed","usage":{"input_tokens":14478,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":378,"reasoning_output_tokens":254}}}

@@ -1,5 +1,7 @@
 # Phase 1–5 cumulative Codex host AB/BA report
 
+> **Superseded on 2026-10-09.** This run did not isolate user-scoped Rainskills Skills and plugins, so it is not a valid base/candidate comparison. Use `../phase-corrected-comparison-2026-10-09.md` and the isolated phase/live artifacts instead.
+
 Date: 2026-10-09  
 Base: `e7fca2f9cafe2fcad64422e3411bc03c5925c57b`  
 Candidate: `812b2999241da0833de7d475b2d85f4a73b196f8`  

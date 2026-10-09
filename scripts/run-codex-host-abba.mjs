@@ -29,20 +29,26 @@ function seededNumber(seed, value) {
   return Number.parseInt(crypto.createHash("sha256").update(`${seed}:${value}`).digest("hex").slice(0, 13), 16);
 }
 
-export function buildPairPlan({ primaryPairs = 20, exploratoryPairs = 1, seed }) {
+export function buildPairPlan({
+  primaryPairs = 20,
+  exploratoryPairs = 1,
+  seed,
+  primaryScenario = SCENARIOS[0],
+}) {
   if (primaryPairs % 2 !== 0) throw new Error("primary-pairs must be even");
+  if (!SCENARIOS.includes(primaryScenario)) throw new Error("unknown primary scenario");
   const stablePrimary = Array.from({ length: primaryPairs }, (_, index) => ({
     order: index < primaryPairs / 2 ? "AB" : "BA",
     key: seededNumber(seed, `primary:${index}`),
   })).sort((left, right) => left.key - right.key);
 
   const plan = stablePrimary.map((entry, index) => ({
-    scenario_id: SCENARIOS[0],
+    scenario_id: primaryScenario,
     pair_index: index + 1,
     order: entry.order,
     primary: true,
   }));
-  for (const [scenarioIndex, scenarioId] of SCENARIOS.slice(1).entries()) {
+  for (const [scenarioIndex, scenarioId] of SCENARIOS.filter((id) => id !== primaryScenario).entries()) {
     for (let pairIndex = 1; pairIndex <= exploratoryPairs; pairIndex += 1) {
       const order = seededNumber(seed, `exploratory:${scenarioId}:${pairIndex}`) % 2 === 0 ? "AB" : "BA";
       plan.push({
@@ -145,10 +151,25 @@ function parseArgs(argv) {
     providerRequiresOpenAIAuth: true,
     providerSupportsWebsockets: false,
     planOnly: false,
+    primaryScenario: SCENARIOS[0],
+    experimentId: "aggregate-phase1-5-host-abba",
+    treatment: "cumulative Phase 1-5 candidate versus frozen Phase 0 base",
+    primaryMetric: "input_tokens",
+    minimumEffect: "pairwise median reduction >= 40%",
+    secondaryLatencyTarget: "pairwise process-exit median reduction >= 20%",
+    controlledLive: false,
+    liveCliPath: null,
+    liveTeamName: null,
+    liveRegionName: null,
+    liveEnterpriseId: null,
+    liveImage: "nginx:alpine",
+    liveComponentName: "web",
+    liveContainerPort: 80,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === "--plan-only") { options.planOnly = true; continue; }
+    if (argument === "--controlled-live") { options.controlledLive = true; continue; }
     const value = argv[index + 1];
     if (!value || value.startsWith("--")) throw new Error(`missing value for ${argument}`);
     if (argument === "--base-root") options.baseRoot = path.resolve(value);
@@ -168,6 +189,19 @@ function parseArgs(argv) {
     else if (argument === "--provider-wire-api") options.providerWireApi = value;
     else if (argument === "--provider-requires-openai-auth") options.providerRequiresOpenAIAuth = value === "true";
     else if (argument === "--provider-supports-websockets") options.providerSupportsWebsockets = value === "true";
+    else if (argument === "--primary-scenario") options.primaryScenario = value;
+    else if (argument === "--experiment-id") options.experimentId = value;
+    else if (argument === "--treatment") options.treatment = value;
+    else if (argument === "--primary-metric") options.primaryMetric = value;
+    else if (argument === "--minimum-effect") options.minimumEffect = value;
+    else if (argument === "--secondary-latency-target") options.secondaryLatencyTarget = value;
+    else if (argument === "--live-cli-path") options.liveCliPath = path.resolve(value);
+    else if (argument === "--live-team-name") options.liveTeamName = value;
+    else if (argument === "--live-region-name") options.liveRegionName = value;
+    else if (argument === "--live-enterprise-id") options.liveEnterpriseId = value;
+    else if (argument === "--live-image") options.liveImage = value;
+    else if (argument === "--live-component-name") options.liveComponentName = value;
+    else if (argument === "--live-container-port") options.liveContainerPort = Number(value);
     else throw new Error(`unknown argument: ${argument}`);
     index += 1;
   }
@@ -179,6 +213,12 @@ function parseArgs(argv) {
   }
   if (!Number.isSafeInteger(options.exploratoryPairs) || options.exploratoryPairs < 0 || options.exploratoryPairs > 20) {
     throw new Error("exploratory-pairs must be an integer between 0 and 20");
+  }
+  if (!SCENARIOS.includes(options.primaryScenario)) throw new Error("unknown primary-scenario");
+  if (options.controlledLive) {
+    for (const required of ["liveCliPath", "liveTeamName", "liveRegionName", "liveEnterpriseId"]) {
+      if (!options[required]) throw new Error(`missing ${required}`);
+    }
   }
   return options;
 }
@@ -218,22 +258,23 @@ function outputEnvelope(options, plan, records) {
   return {
     schema: "rainskills.codex-host-abba.v1",
     experiment: {
-      experiment_id: "aggregate-phase1-5-host-abba",
-      treatment: "cumulative Phase 1-5 candidate versus frozen Phase 0 base",
+      experiment_id: options.experimentId,
+      treatment: options.treatment,
       base_sha: options.baseSha,
       candidate_sha: options.candidateSha,
-      primary_scenario: SCENARIOS[0],
-      primary_metric: "input_tokens",
-      minimum_effect: "pairwise median reduction >= 40%",
-      secondary_latency_target: "pairwise process-exit median reduction >= 20%",
+      primary_scenario: options.primaryScenario,
+      primary_metric: options.primaryMetric,
+      minimum_effect: options.minimumEffect,
+      secondary_latency_target: options.secondaryLatencyTarget,
       run_order_seed: options.seed,
-      control_status: "uncontrolled_fixture_only",
+      control_status: options.controlledLive ? "controlled_live" : "uncontrolled_fixture_only",
     },
     environment: {
       model_id: options.model,
       reasoning_effort: options.reasoningEffort,
       session_mode: "fresh_session",
-      fixture_only: true,
+      fixture_only: !options.controlledLive,
+      controlled_live: options.controlledLive,
       provider_name: options.providerName,
       provider_base_url: options.providerBaseUrl,
       provider_wire_api: options.providerWireApi,
@@ -269,13 +310,16 @@ async function main() {
     primaryPairs: options.primaryPairs,
     exploratoryPairs: options.exploratoryPairs,
     seed: options.seed,
+    primaryScenario: options.primaryScenario,
   });
   let records = [];
   if (fs.existsSync(options.output)) {
     const existing = JSON.parse(fs.readFileSync(options.output, "utf8"));
     if (existing.experiment?.base_sha !== options.baseSha
       || existing.experiment?.candidate_sha !== options.candidateSha
-      || existing.experiment?.run_order_seed !== options.seed) {
+      || existing.experiment?.run_order_seed !== options.seed
+      || existing.experiment?.experiment_id !== options.experimentId
+      || existing.experiment?.primary_scenario !== options.primaryScenario) {
       throw new Error("existing output does not match requested experiment");
     }
     records = existing.records || [];
@@ -296,7 +340,6 @@ async function main() {
       const temporaryOutput = path.join(artifactRoot, "normalized.json");
       const args = [
         runner,
-        "--fixture-only",
         "--source-root", sourceRoot,
         "--run-role", role,
         "--base-sha", options.baseSha,
@@ -311,6 +354,22 @@ async function main() {
         "--artifact-root", path.join(artifactRoot, "raw"),
         "--output", temporaryOutput,
       ];
+      if (options.controlledLive) {
+        const liveAppName = `rsb-${crypto.createHash("sha256")
+          .update(`${options.seed}:${pair.scenario_id}:${pair.pair_index}:${role}`)
+          .digest("hex").slice(0, 12)}`;
+        args.push(
+          "--controlled-live",
+          "--live-cli-path", options.liveCliPath,
+          "--live-app-name", liveAppName,
+          "--live-team-name", options.liveTeamName,
+          "--live-region-name", options.liveRegionName,
+          "--live-enterprise-id", options.liveEnterpriseId,
+          "--live-image", options.liveImage,
+          "--live-component-name", options.liveComponentName,
+          "--live-container-port", String(options.liveContainerPort),
+        );
+      } else args.push("--fixture-only");
       if (options.providerName) {
         args.push(
           "--provider-name", options.providerName,
@@ -328,6 +387,9 @@ async function main() {
       record.pair_position = position + 1;
       record.primary = pair.primary;
       record.source_sha = role === "base" ? options.baseSha : options.candidateSha;
+      if (options.controlledLive) {
+        record.live_app_name = args[args.indexOf("--live-app-name") + 1];
+      }
       records.push(record);
       safeWriteJson(options.output, outputEnvelope(options, plan, records));
       process.stdout.write(`[done] ${runKey} result=${record.result} input=${record.usage?.input_tokens ?? "unavailable"} output=${record.usage?.output_tokens ?? "unavailable"} ms=${Math.round(record.timing?.process_exit_ms || 0)}\n`);

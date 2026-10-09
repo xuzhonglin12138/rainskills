@@ -1,0 +1,98 @@
+{
+  "schema": "rainskills.codex-host-evals.v1",
+  "benchmark_layer": "codex_host",
+  "run_role": "base",
+  "control_status": "uncontrolled",
+  "environment": {
+    "base_sha": "ceea9c308050d388b1d5958ef8b2819060243de0",
+    "candidate_sha": "10a1016f901944e68927c7563a6591c61e72208c",
+    "worktree_clean": true,
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "codex_build": "codex-cli 0.147.0",
+    "host_toolset_digest": "unavailable",
+    "rainbond_catalog_digest": "unavailable",
+    "skill_manifest_digest": "eaaf66d935e11ba587ef9865cec486edc13e70dabffcdee39f4b310dc254742b",
+    "rainskills_package_version": "0.1.42",
+    "rainskills_cli_version": "0.1.42",
+    "rainskills_protocol_version": "rainskills.single-runtime-contract.v1",
+    "rainbond_platform_version": "unavailable",
+    "validator_digest": "1cbcbfffbfa1211ce1338d37e2389e23408c839f86c66b45c55d162ae150278f",
+    "run_order_seed": "rainskills-phase3-isolated-2026-10-09-v1",
+    "run_started_at": "2026-10-09T05:01:49.003Z",
+    "test_environment": "fixture_only"
+  },
+  "summary": [
+    {
+      "scenario_id": "diagnose-missing-dependency",
+      "planned_runs": 1,
+      "observed_runs": 1,
+      "process_exit_p50_ms": 19063.524791,
+      "process_exit_mad_ms": 0,
+      "process_exit_p95_ms": 19063.524791,
+      "failure_rate": 0,
+      "timeout_rate": 0,
+      "cleanup_failure_rate": 0
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "diagnose-missing-dependency",
+      "benchmark_layer": "codex_host",
+      "data_source": "codex_exec_json",
+      "run_role": "base",
+      "environment": {
+        "active_skill_bundle_digest": "d4d169c1463c18e2437444f85cb65b4a8901d5cce519901892d8666545ab0193",
+        "prompt_sha256": "9aae3df326950bdea21bbe642472ffafab0caa6f21ca19062bf36c33172259bb",
+        "fixture_sha256": "c18a48d9826bf59b20e61290136d80be29c509ace13a27d4a2c0c26148f9cb8f",
+        "session_mode": "fresh_session",
+        "test_environment": "fixture_only",
+        "reset_method": "fresh temporary workspace",
+        "cleanup_result": "success",
+        "cleanup_deleted_disposable_app": false,
+        "host_isolation": "isolated_home_codex_home_and_repo_skill_scope",
+        "isolated_auth_copy": true
+      },
+      "timing": {
+        "process_exit_ms": 19063.524791,
+        "turn_completed_ms": 17357.797625,
+        "first_event_ms": 17247.679958,
+        "first_tool_ms": "unavailable",
+        "first_user_progress_ms": "unavailable",
+        "tool_wall_time_ms": 0,
+        "orchestration_and_tool_ms": "unavailable",
+        "external_platform_wait_ms": "unavailable"
+      },
+      "model_calls": 1,
+      "retry_calls": 0,
+      "tool_calls": 0,
+      "poll_calls": 0,
+      "skills_opened": [],
+      "references_opened": [],
+      "markdown_bytes_read": 0,
+      "usage": {
+        "status": "observed",
+        "source": "codex_exec_json",
+        "input_tokens": 22964,
+        "cached_input_tokens": 9216,
+        "cache_write_input_tokens": 0,
+        "uncached_input_tokens": 13748,
+        "output_tokens": 727,
+        "reasoning_output_tokens": 516,
+        "total_tokens": 23691,
+        "cache_hit_ratio": 0.40132381118272076
+      },
+      "compaction_count": "unavailable",
+      "result": "success",
+      "final_message": "- 初始 owner：`rainbond-fullstack-troubleshooter`。\n- 最小风险修复：确认 PostgreSQL 内部端口可用后，仅补建 `api -> postgres` 依赖；不修改代码，也不臆测或改写连接变量。\n- 允许的 handoff：仅在新证据确认 PostgreSQL 就绪、API 恢复运行且域名解析错误消失后，交给 `delivery_verifier`；否则 `next_handoff = none`。\n- 安全停止：本评估禁止调用 Rainbond，因而无法取得写操作 confirmation ID、执行依赖变更或完成修复后验证。必须停止，不能伪造已修复状态或完整 `TroubleshootResult`。\n- 预期结果：当前保持 `runtime_unhealthy`，主阻塞为 `dependency missing`；实际环境中补齐依赖并验证成功后才可转为 `runtime_healthy`。",
+      "timed_out": false,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "artifact_directory": "/Users/guox/Desktop/Project/rainskills/benchmarks/skill-performance/results/phase-abba-isolated-2026-10-09/phase3-artifacts/diagnose-missing-dependency/pair-1/base/raw/diagnose-missing-dependency/1",
+      "behavior_assertions": [
+        "判定 dependency missing，添加 api 到 postgres 的依赖并重新部署 api，用新鲜日志确认原错误消失；运行恢复后交给 delivery verifier，不宣称已经交付。"
+      ]
+    }
+  ]
+}

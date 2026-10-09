@@ -1,0 +1,5 @@
+{"received_ms":73.478834,"event":{"type":"thread.started","thread_id":"01a11ee5-e6d3-7a50-bcd0-54d11d328fe2"}}
+{"received_ms":83.042084,"event":{"type":"turn.started"}}
+{"received_ms":13554.629875,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按你指定的 `rainbond-app-assistant` 做纯静态路由判断；受只读 fixture 约束，不会连接 Rainbond、调用工具或修改文件。"}}}
+{"received_ms":15693.221875,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求是部署当前项目。\n- 允许交接：若项目尚未初始化或关联，可交给 `rainbond-project-init`；完成后应回到主入口继续。无证据时不得转为开源套件或市场模板部署。\n- 安全停止：hash 固定策略要求只读、仅 fixture 分析，因此在任何 Rainbond 查询、连接、初始化或变更前停止；不得猜测工作空间或应用。\n- 预期结果：本次仅完成路由判定，不会实际部署或产生访问地址。实际执行需在允许连接 Rainbond 的环境中通过 Runtime Gate 后继续。"}}}
+{"received_ms":16162.634042,"event":{"type":"turn.completed","usage":{"input_tokens":14419,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":949,"reasoning_output_tokens":746}}}

@@ -1,0 +1,4 @@
+{"received_ms":78.245,"event":{"type":"thread.started","thread_id":"01a11ef5-2ef9-7a40-9e73-a200dc3baa0b"}}
+{"received_ms":88.235,"event":{"type":"turn.started"}}
+{"received_ms":9352.070625,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求针对当前本地项目部署。\n- 允许移交：若项目尚未关联 Rainbond，可移交 `rainbond-project-init` 完成初始化，再返回主流程；后续可按状态进入拓扑创建、故障排查和交付验证。\n- 安全停止：一旦需要修改代码或处理构建问题，必须在 `code_or_build_handoff_needed` 停止，不自动改代码、测试、提交、推送或重试。\n- 预期结果：在真实执行环境中完成部署并验证访问地址；本次为只读 fixture 评估，因此仅确认路由与安全边界，不实际部署。"}}}
+{"received_ms":9596.0105,"event":{"type":"turn.completed","usage":{"input_tokens":14500,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":460,"reasoning_output_tokens":298}}}

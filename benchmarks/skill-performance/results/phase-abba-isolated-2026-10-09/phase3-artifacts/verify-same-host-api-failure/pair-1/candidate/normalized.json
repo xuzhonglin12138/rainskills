@@ -1,0 +1,98 @@
+{
+  "schema": "rainskills.codex-host-evals.v1",
+  "benchmark_layer": "codex_host",
+  "run_role": "candidate",
+  "control_status": "uncontrolled",
+  "environment": {
+    "base_sha": "ceea9c308050d388b1d5958ef8b2819060243de0",
+    "candidate_sha": "10a1016f901944e68927c7563a6591c61e72208c",
+    "worktree_clean": true,
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "codex_build": "codex-cli 0.147.0",
+    "host_toolset_digest": "unavailable",
+    "rainbond_catalog_digest": "unavailable",
+    "skill_manifest_digest": "ccf2cfb7193bc64be8c601f7a892d1197d7d0dbe08ae38d1a4935dda7d164a1a",
+    "rainskills_package_version": "0.1.42",
+    "rainskills_cli_version": "0.1.42",
+    "rainskills_protocol_version": "rainskills.single-runtime-contract.v1",
+    "rainbond_platform_version": "unavailable",
+    "validator_digest": "1cbcbfffbfa1211ce1338d37e2389e23408c839f86c66b45c55d162ae150278f",
+    "run_order_seed": "rainskills-phase3-isolated-2026-10-09-v1",
+    "run_started_at": "2026-10-09T05:02:08.281Z",
+    "test_environment": "fixture_only"
+  },
+  "summary": [
+    {
+      "scenario_id": "verify-same-host-api-failure",
+      "planned_runs": 1,
+      "observed_runs": 1,
+      "process_exit_p50_ms": 33695.923167,
+      "process_exit_mad_ms": 0,
+      "process_exit_p95_ms": 33695.923167,
+      "failure_rate": 0,
+      "timeout_rate": 0,
+      "cleanup_failure_rate": 0
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "verify-same-host-api-failure",
+      "benchmark_layer": "codex_host",
+      "data_source": "codex_exec_json",
+      "run_role": "candidate",
+      "environment": {
+        "active_skill_bundle_digest": "ccadd74d9801e8544b92d0c29734f9ed36326f7c7d2c0b43b0ca6822879650f5",
+        "prompt_sha256": "26090ba15419801df24e03708abe10f2403533bcb2f55bba6f2568c88a67a12f",
+        "fixture_sha256": "4f89d1ea449c6b607179634b675cdd8cc1a0cff8f11002fab7cb4b87a6cc86e4",
+        "session_mode": "fresh_session",
+        "test_environment": "fixture_only",
+        "reset_method": "fresh temporary workspace",
+        "cleanup_result": "success",
+        "cleanup_deleted_disposable_app": false,
+        "host_isolation": "isolated_home_codex_home_and_repo_skill_scope",
+        "isolated_auth_copy": true
+      },
+      "timing": {
+        "process_exit_ms": 33695.923167,
+        "turn_completed_ms": 30253.984459,
+        "first_event_ms": 22436.711792,
+        "first_tool_ms": "unavailable",
+        "first_user_progress_ms": 22436.711792,
+        "tool_wall_time_ms": 0,
+        "orchestration_and_tool_ms": "unavailable",
+        "external_platform_wait_ms": "unavailable"
+      },
+      "model_calls": 1,
+      "retry_calls": 0,
+      "tool_calls": 0,
+      "poll_calls": 0,
+      "skills_opened": [],
+      "references_opened": [],
+      "markdown_bytes_read": 0,
+      "usage": {
+        "status": "observed",
+        "source": "codex_exec_json",
+        "input_tokens": 14219,
+        "cached_input_tokens": 9216,
+        "cache_write_input_tokens": 0,
+        "uncached_input_tokens": 5003,
+        "output_tokens": 1582,
+        "reasoning_output_tokens": 1034,
+        "total_tokens": 15801,
+        "cache_hit_ratio": 0.6481468457697447
+      },
+      "compaction_count": "unavailable",
+      "result": "success",
+      "final_message": "初始负责人是 `rainbond-delivery-verifier`；仅允许移交 `rainbond-fullstack-troubleshooter` 做限定范围的 `/api` 502 排障。安全停止点是发现同 host API 验证失败后立即停止，不得修复配置或宣称已交付。预期结果为未交付，且因未提供具体 host，不能编造访问地址。\n\n```yaml\nDeliveryVerificationResult:\n  initial_owner: rainbond-delivery-verifier\n  status: not-delivered\n  verified: false\n\n  app_state:\n    frontend: running\n    db: running\n    converged: false\n    reason: \"组件显示 running 不足以证明端到端交付成功\"\n\n  delivery_shape:\n    type: same-host-reverse-proxy\n    page_path: \"/\"\n    api_path: \"/api\"\n\n  access:\n    preferred_url: null\n    candidate_url: null\n    reason: \"输入未提供具体 host，无法输出真实访问地址\"\n\n  checks:\n    - target: \"/\"\n      result: passed\n      evidence: \"用户报告根页面可以打开\"\n    - target: \"/api\"\n      result: failed\n      http_status: 502\n      evidence: \"用户报告同一 host 的 /api 返回 502\"\n    - target: persistence\n      result: unknown\n      evidence: \"仅知道 db 为 running，未验证持久化行为\"\n\n  blocker:\n    code: SAME_HOST_API_502\n    message: \"反向代理交付必须同时通过页面与同 host API 验证；/api 返回 502 阻止最终交付。\"\n\n  safety_stop:\n    triggered: true\n    reason: \"不得以根页面成功代替完整交付验证，也不得由交付验证器修复运行时、代理配置或代码。\"\n\n  allowed_handoff:\n    owner: rainbond-fullstack-troubleshooter\n    scope: \"仅排查 frontend 到 API 上游的代理、服务发现、端口及后端运行状态\"\n    mutation_authorized: false\n\n  next_step: \"移交限定范围排障；修复后重新执行最终交付验证，再提供真实访问地址。\"\n```",
+      "timed_out": false,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "artifact_directory": "/Users/guox/Desktop/Project/rainskills/benchmarks/skill-performance/results/phase-abba-isolated-2026-10-09/phase3-artifacts/verify-same-host-api-failure/pair-1/candidate/raw/verify-same-host-api-failure/1",
+      "behavior_assertions": [
+        "不能仅凭根页面或组件存在判定成功；保留候选 URL，但因同域 API 失败判定 runtime_unhealthy 和 blocked，下一步指向 troubleshooter。"
+      ]
+    }
+  ]
+}

@@ -46,7 +46,9 @@ The runner records raw JSONL structure with local monotonic timestamps and redac
 
 `run-codex-host-abba.mjs` compares two clean, detached source worktrees with the same provider-aware host runner. It uses a deterministic seed, incrementally checkpoints every run, resumes only a matching experiment, and reports pairwise relative changes plus separate AB and BA medians. The default protocol runs 20 primary pairs (10 AB and 10 BA) and one exploratory pair for each remaining scenario.
 
-Fixture-only paired runs remain uncontrolled observations: they do not call Rainbond or exercise protected tool aggregation. Do not present them as a live deployment canary.
+Every session receives an isolated `HOME` and `CODEX_HOME`, only the protected Codex auth file, disabled plugins, and one repository-scoped `.codex/skills` bundle. This prevents user-scoped Skills from contaminating the base/candidate comparison.
+
+Fixture-only paired runs remain uncontrolled observations: they do not call Rainbond or exercise protected tool aggregation. Controlled live runs additionally require an explicitly disposable Rainbond team/app namespace, exact-name reset and cleanup, environment-only credentials, and successful post-run absence checks. Do not present a one-pair live pilot as a formal 20-pair performance claim.
 
 ## Legacy entrypoint snapshot
 

@@ -1,0 +1,5 @@
+{"received_ms":73.847917,"event":{"type":"thread.started","thread_id":"01a11ee9-7d85-7cd3-8e5d-746cffc46417"}}
+{"received_ms":83.471584,"event":{"type":"turn.started"}}
+{"received_ms":10303.044334,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按 `rainbond-app-assistant` 的静态路由与安全边界做只读判定；受本次 fixture-only 限制，不连接 Rainbond、不检查本地项目，也不执行部署。"}}}
+{"received_ms":12013.277,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-app-assistant`，因为请求针对“当前项目”。\n- 允许交接：若项目尚未关联 Rainbond，可交给 `rainbond-project-init` 初始化；成功后再返回主流程继续部署。\n- 安全停止：本次只读 fixture 环境禁止连接 Rainbond、读取项目或执行变更，因此必须在任何查询或部署前停止；也不能虚构上下文或部署结果。\n- 预期结果：仅完成静态归属判断，项目不会被实际部署。"}}}
+{"received_ms":12117.062042,"event":{"type":"turn.completed","usage":{"input_tokens":14441,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":749,"reasoning_output_tokens":572}}}

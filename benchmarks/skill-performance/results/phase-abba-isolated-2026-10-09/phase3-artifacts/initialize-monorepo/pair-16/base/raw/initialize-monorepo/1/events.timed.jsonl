@@ -1,0 +1,5 @@
+{"received_ms":77.524625,"event":{"type":"thread.started","thread_id":"01a11f04-d283-7240-894c-3248416d9b9e"}}
+{"received_ms":87.387458,"event":{"type":"turn.started"}}
+{"received_ms":13450.720166,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按 `rainbond-project-init` 的初始化归属与 monorepo 构建上下文规则进行只读分析；受 fixture-only 限制，不读取仓库、不调用平台，也不写文件。"}}}
+{"received_ms":15352.381041,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-project-init`。这是本地 monorepo 的首次接入，且明确“只做初始化”。\n- 允许的交接：本次不交接；不得进入组件创建或部署流程。只有用户以后明确要求继续时，非模板组件才可交给拓扑创建流程。\n- 安全停止：fixture-only 且禁止调用 Rainbond、读取仓库或写文件，因此无法确认应用、取得 `app_id`，也不能生成 `rainbond.app.json` 或 `.rainbond/local.json`；不能宣称初始化完成。\n- 预期结果：实际执行时应使用 `dev-team / cn / shop`，默认环境为 `preview`；推断 `frontend`、`backend` 为同一 Gitee 仓库的源码组件，保留仓库根目录作为构建上下文，并分别记录子目录，避免遗漏根目录共享的 `pnpm-lock.yaml`。随后定位或创建应用、写入两个项目文件，并在绑定完成后停止，不部署。"}}}
+{"received_ms":15449.488541,"event":{"type":"turn.completed","usage":{"input_tokens":21526,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":883,"reasoning_output_tokens":599}}}

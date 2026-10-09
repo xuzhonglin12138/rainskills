@@ -1,0 +1,5 @@
+{"received_ms":77.600625,"event":{"type":"thread.started","thread_id":"01a11ef3-1ee7-7fa2-91d9-d33d5ef1ec46"}}
+{"received_ms":87.591458,"event":{"type":"turn.started"}}
+{"received_ms":11811.802375,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定的 `rainbond-app-assistant` 规则做纯静态归属分析；遵守夹具限制，不连接 Rainbond、不调用工具，也不修改文件。"}}}
+{"received_ms":13173.254041,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求针对当前项目部署。\n- 允许转交：若项目尚未关联 Rainbond，可转交 `rainbond-project-init` 完成初始化，再返回主流程继续部署。\n- 安全停止：初始化未完成或进入代码/构建修复阶段时必须停止，不得自动改代码、测试、提交或重试。\n- 预期结果：正常流程应完成部署并验证访问地址；本次只读夹具评估仅确认路由，不会实际部署。"}}}
+{"received_ms":13591.537791,"event":{"type":"turn.completed","usage":{"input_tokens":14463,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":716,"reasoning_output_tokens":545}}}

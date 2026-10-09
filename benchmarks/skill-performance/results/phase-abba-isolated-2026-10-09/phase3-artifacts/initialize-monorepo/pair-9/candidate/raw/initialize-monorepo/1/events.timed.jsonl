@@ -1,0 +1,5 @@
+{"received_ms":79.581208,"event":{"type":"thread.started","thread_id":"01a11f00-3cc5-7443-a248-7d9dbc5aeaea"}}
+{"received_ms":81.939291,"event":{"type":"turn.started"}}
+{"received_ms":14838.678833,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按 `rainbond-project-init` 的所有权与硬停止规则判断；由于这是只读 fixture 且禁止平台访问，流程会停在需要验证目标应用身份的位置。"}}}
+{"received_ms":17182.10175,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始 owner：`rainbond-project-init`。\n- 允许的后续动作：仅 `next_action: stop`；不得交给 bootstrap 或部署流程。\n- 安全停止：禁止 Rainbond 访问，无法验证 `dev-team / cn / shop` 并取得正整数 `app_id`，因此不得声称已绑定或初始化完成。\n- 预期结果：状态为待平台验证；不修改 `rainbond.app.json` 或 `.rainbond/local.json`，不部署。后续若获准执行，应保留 frontend/backend monorepo 及根 `pnpm-lock.yaml`、Gitee 来源，完成绑定后立即停止。"}}}
+{"received_ms":17285.776375,"event":{"type":"turn.completed","usage":{"input_tokens":14221,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":943,"reasoning_output_tokens":748}}}

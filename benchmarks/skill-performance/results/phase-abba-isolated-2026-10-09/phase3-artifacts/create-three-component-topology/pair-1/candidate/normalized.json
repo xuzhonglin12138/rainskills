@@ -1,0 +1,98 @@
+{
+  "schema": "rainskills.codex-host-evals.v1",
+  "benchmark_layer": "codex_host",
+  "run_role": "candidate",
+  "control_status": "uncontrolled",
+  "environment": {
+    "base_sha": "ceea9c308050d388b1d5958ef8b2819060243de0",
+    "candidate_sha": "10a1016f901944e68927c7563a6591c61e72208c",
+    "worktree_clean": true,
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "codex_build": "codex-cli 0.147.0",
+    "host_toolset_digest": "unavailable",
+    "rainbond_catalog_digest": "unavailable",
+    "skill_manifest_digest": "ccf2cfb7193bc64be8c601f7a892d1197d7d0dbe08ae38d1a4935dda7d164a1a",
+    "rainskills_package_version": "0.1.42",
+    "rainskills_cli_version": "0.1.42",
+    "rainskills_protocol_version": "rainskills.single-runtime-contract.v1",
+    "rainbond_platform_version": "unavailable",
+    "validator_digest": "1cbcbfffbfa1211ce1338d37e2389e23408c839f86c66b45c55d162ae150278f",
+    "run_order_seed": "rainskills-phase3-isolated-2026-10-09-v1",
+    "run_started_at": "2026-10-09T05:00:31.696Z",
+    "test_environment": "fixture_only"
+  },
+  "summary": [
+    {
+      "scenario_id": "create-three-component-topology",
+      "planned_runs": 1,
+      "observed_runs": 1,
+      "process_exit_p50_ms": 20721.22575,
+      "process_exit_mad_ms": 0,
+      "process_exit_p95_ms": 20721.22575,
+      "failure_rate": 0,
+      "timeout_rate": 0,
+      "cleanup_failure_rate": 0
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "create-three-component-topology",
+      "benchmark_layer": "codex_host",
+      "data_source": "codex_exec_json",
+      "run_role": "candidate",
+      "environment": {
+        "active_skill_bundle_digest": "ccadd74d9801e8544b92d0c29734f9ed36326f7c7d2c0b43b0ca6822879650f5",
+        "prompt_sha256": "91ca4c71239839a69d78916bde87b38c52eb4ad821a8d326c0c640811d5913c8",
+        "fixture_sha256": "8c64c922672d508e0129b650bd0db87aab0005e47fafec8bc267c0a40920a245",
+        "session_mode": "fresh_session",
+        "test_environment": "fixture_only",
+        "reset_method": "fresh temporary workspace",
+        "cleanup_result": "success",
+        "cleanup_deleted_disposable_app": false,
+        "host_isolation": "isolated_home_codex_home_and_repo_skill_scope",
+        "isolated_auth_copy": true
+      },
+      "timing": {
+        "process_exit_ms": 20721.22575,
+        "turn_completed_ms": 19159.652875,
+        "first_event_ms": 15485.02425,
+        "first_tool_ms": "unavailable",
+        "first_user_progress_ms": 15485.02425,
+        "tool_wall_time_ms": 0,
+        "orchestration_and_tool_ms": "unavailable",
+        "external_platform_wait_ms": "unavailable"
+      },
+      "model_calls": 1,
+      "retry_calls": 0,
+      "tool_calls": 0,
+      "poll_calls": 0,
+      "skills_opened": [],
+      "references_opened": [],
+      "markdown_bytes_read": 0,
+      "usage": {
+        "status": "observed",
+        "source": "codex_exec_json",
+        "input_tokens": 14496,
+        "cached_input_tokens": 9216,
+        "cache_write_input_tokens": 0,
+        "uncached_input_tokens": 5280,
+        "output_tokens": 1081,
+        "reasoning_output_tokens": 751,
+        "total_tokens": 15577,
+        "cache_hit_ratio": 0.6357615894039735
+      },
+      "compaction_count": "unavailable",
+      "result": "success",
+      "final_message": "- **初始 owner**：`rainbond-fullstack-bootstrap`，因为请求明确限定为 topology/bootstrap only。\n- **允许的 handoff**：成功时为 `none`；若发现构建或运行问题，只记录 `troubleshooter` 或 `code_build_handoff`，不实际继续排障。不得进入交付验收。\n- **安全停止点**：创建或复用应用及 `mysql → api → web` 拓扑并完成验证后立即停止；若 manifest 身份、项目绑定、环境、组件范围、依赖契约或必需密钥不明确，则在任何 mutation 前停止。\n- **预期结果**：输出完整结构化 `BootstrapResult`，包含应用及三个组件的创建/复用状态、MySQL 持久化、`api` 对 `mysql` 的依赖、`web` 到 `api` 的 reverse-proxy 配置、最新验证状态、延期项与 `handoff: none`。不公开暴露 `api`，不继续排障。\n\n消息未提供 hash-pinned policy fixture 正文，因此无法可靠复述其精确 schema 字段或 fixture-specific 判定。",
+      "timed_out": false,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "artifact_directory": "/Users/guox/Desktop/Project/rainskills/benchmarks/skill-performance/results/phase-abba-isolated-2026-10-09/phase3-artifacts/create-three-component-topology/pair-1/candidate/raw/create-three-component-topology/1",
+      "behavior_assertions": [
+        "创建三个组件并按提供方连接契约配置显式依赖；不在消费者重复写连接变量；全部运行时返回 runtime_healthy 并交给 delivery verifier。"
+      ]
+    }
+  ]
+}

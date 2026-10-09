@@ -1,0 +1,4 @@
+{"received_ms":77.918583,"event":{"type":"thread.started","thread_id":"01a11f06-ed9e-7e72-b0a2-c6d5b86c9cd1"}}
+{"received_ms":87.807,"event":{"type":"turn.started"}}
+{"received_ms":13436.189458,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"- 初始负责人：`rainbond-project-init`。\n- 允许交接：无。用户明确要求仅初始化，禁止交给部署或拓扑创建流程。\n- 安全停止：只读环境且禁止调用 Rainbond、网络及修改文件，无法在线确认/创建应用、取得 `app_id`，也不能写入 `rainbond.app.json` 和 `.rainbond/local.json`；不得宣称初始化完成。\n- 预期结果：本次仅形成初始化方案。目标为 `dev-team / cn / shop`，环境默认 `preview`；frontend、backend 均应保持仓库根目录为源码/构建上下文，并分别记录子目录，以保留根级 `pnpm-lock.yaml`。Gitee remote 使用 `code_from=git`，无需 GitHub 代理确认。实际文件不变、未部署，状态应为待在线验证。"}}}
+{"received_ms":13578.484875,"event":{"type":"turn.completed","usage":{"input_tokens":21504,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":712,"reasoning_output_tokens":516}}}
