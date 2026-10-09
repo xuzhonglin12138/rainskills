@@ -1,8 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const test = require("node:test");
 const poll = require("../bin/protected-poll.js");
 const { parseCommand } = require("../bin/rainskills-tools.js");
@@ -96,52 +94,4 @@ test("CLI parser exposes one stdin-only poll invocation", () => {
     input: "-",
     skillId: "rainbond-ai-assistant",
   });
-});
-
-test("evidence trace rejects reads already covered by a valid snapshot", async () => {
-  const { validateEvidenceTrace } = await import("../scripts/validate-evidence-trace.mjs");
-  const evidenceKey = "rainbond_get_component_summary:{app_id:1,service_id:web}:web";
-  assert.deepEqual(validateEvidenceTrace([
-    { kind: "snapshot", evidence_keys: [evidenceKey], valid: true },
-    { kind: "read", evidence_key: evidenceKey },
-  ]), ["duplicate_read_after_snapshot"]);
-});
-
-test("evidence trace rejects a second poll in the same run stage and event", async () => {
-  const { validateEvidenceTrace } = await import("../scripts/validate-evidence-trace.mjs");
-  assert.deepEqual(validateEvidenceTrace([
-    { kind: "poll", poll_scope: "run-1/bootstrap/event-1", evidence_key: "component:web" },
-    { kind: "poll", poll_scope: "run-1/bootstrap/event-1", evidence_key: "component:web" },
-  ]), ["duplicate_poll_scope"]);
-});
-
-test("evidence trace stops querying the same state after poll budget exhaustion", async () => {
-  const { validateEvidenceTrace } = await import("../scripts/validate-evidence-trace.mjs");
-  assert.deepEqual(validateEvidenceTrace([
-    {
-      kind: "poll",
-      poll_scope: "run-1/delivery/event-1",
-      evidence_key: "component:web",
-      outcome: "budget_exhausted",
-    },
-    { kind: "read", evidence_key: "component:web" },
-  ]), ["query_after_poll_budget_exhausted"]);
-});
-
-test("snapshot and poll contracts state the exclusive fast-path rules", () => {
-  const root = path.resolve(__dirname, "..");
-  for (const relativePath of [
-    "rainbond-app-assistant/references/workflow-rules.md",
-    "rainbond-fullstack-bootstrap/SKILL.md",
-    "rainbond-fullstack-bootstrap/modules/55-convergence-rules.md",
-    "rainbond-fullstack-troubleshooter/SKILL.md",
-    "rainbond-fullstack-troubleshooter/references/diagnosis-workflow.md",
-    "rainbond-delivery-verifier/SKILL.md",
-    "rainbond-delivery-verifier/references/delivery-workflow.md",
-  ]) {
-    const content = fs.readFileSync(path.join(root, relativePath), "utf8");
-    assert.match(content, /evidence_key/, relativePath);
-    assert.match(content, /run\/stage\/event/, relativePath);
-    assert.match(content, /预算耗尽[^。\n]*立即停止/, relativePath);
-  }
 });

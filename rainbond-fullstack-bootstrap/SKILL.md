@@ -18,8 +18,6 @@ If the user gives a generic current-project deployment request, route that to `r
 3. Create providers before consumers, configure components before first deploy, and record every deferred edge.
 4. Deploy only affected components, wait with bounded convergence rules, verify fresh state, then choose one handoff.
 
-Snapshot and poll are exclusive fast paths: `evidence_key = tool + canonical arguments + resource identity`, with revision/freshness used only for validity. A valid snapshot forbids a separate read of the same evidence until a relevant write, missing field, abnormal result, or expiry permits one refresh. The same `run/stage/event` gets at most one bounded poll. Poll success or 预算耗尽立即停止; do not re-query the same state.
-
 ## Local artifact precondition
 
 Local source and package artifacts require an existing or just-completed `rainbond-project-init` result with canonical `rainbond.app.json`, `.rainbond/local.json`, and verified `app_id`. An address-only Git or image request does not require local files and stays outside this precondition. Never pass `source.local_path` to a Rainbond Tool.

@@ -8,8 +8,6 @@ Follow this order.
 
 Call `rainbond_get_app_detail`, then `rainbond_get_app_health_overview` before per-component inspection. Use `rainbond_query_components` and component/storage summaries only for abnormal or unknown components. Do not run `list` or `describe` to discover these known Tool names.
 
-Use `evidence_key = tool + canonical arguments + resource identity`; revision, `observed_at`, and freshness decide validity but do not change the key. A valid snapshot replaces separate reads for covered fields until a relevant write, missing field, abnormal result, or expiry permits one refresh. The same `run/stage/event` permits at most one bounded poll. Poll success or 预算耗尽立即停止; component list, summary, direct read, and manual polling must not re-query the same state.
-
 1. Resolve app context
 - determine `team_name`, `region_name`, `app_name`, and `app_id`
 - prefer user input, then `.rainbond/local.json`

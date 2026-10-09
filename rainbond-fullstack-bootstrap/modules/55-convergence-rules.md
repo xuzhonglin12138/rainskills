@@ -6,9 +6,6 @@ Builds and deploys are slow and asynchronous. Java / CNB builds can take 2–5 m
 
 Apply this discipline whenever you are waiting on a build or deploy:
 
-- Use `evidence_key = tool + canonical arguments + resource identity`; revision, `observed_at`, and freshness validate evidence but do not change the key. A valid snapshot replaces separate reads for the fields it covers until a relevant write, missing field, abnormal result, or expiry permits one refresh.
-- The same `run/stage/event` permits at most one bounded poll. A later explicit user request to continue checking starts a new stage.
-- Poll success or 预算耗尽立即停止; never follow it with component list, summary, a direct read, or a hand-written loop for the same state.
 - Treat the same `event_id` as one polling target. Invoke protected `poll` once with the exact read Tool, status path, terminal values, attempt budget, and timeout; the CLI omits unchanged states and returns only transitions, terminal state, blocker, and retryability.
 - Cap polling inside the CLI. When attempt or timeout budget is exhausted, return a graceful intermediate reply with the latest `event_id`, phase, blocker, and what should become true next; never emit repeated same-status results to model context.
 - Do not bundle redundant reads in one iteration. Pulling `component_summary` + `pods` + `events` + `build_logs` together for the same component on the same iteration is almost always wasted; pick the single source that is most likely to have new information.

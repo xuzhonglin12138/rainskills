@@ -4,8 +4,6 @@ Load this reference for evidence collection, operation anchoring, bounded repair
 
 For a build, restart, or redeploy that needs repeated status reads, invoke protected `poll` once. The CLI owns the bounded loop and returns only state transitions, final state, blocker, retryability, attempts, and elapsed time; unchanged states never enter model context.
 
-Use `evidence_key = tool + canonical arguments + resource identity`; revision, `observed_at`, and freshness decide validity but do not change the key. A valid snapshot replaces separate reads for covered fields until a relevant write, missing field, abnormal result, or expiry permits one refresh. The same `run/stage/event` permits at most one bounded poll. Poll success or 预算耗尽立即停止; component list, summary, direct read, and manual polling must not re-query the same state.
-
 ## Workflow
 
 Follow this order unless there is strong evidence to do otherwise.
