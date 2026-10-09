@@ -17,6 +17,8 @@ Diagnose an existing linked Rainbond app, apply at most the smallest evidence-ba
 4. Anchor every mutation to fresh state, execute once after confirmation, and re-read the affected resource.
 5. Return a verified handoff or one blocker.
 
+Snapshot and poll are exclusive fast paths: `evidence_key = tool + canonical arguments + resource identity`, while revision/freshness only decides validity. Do not repeat a read already covered by a valid snapshot unless a relevant write, missing field, abnormal result, or expiry permits one refresh. The same `run/stage/event` gets at most one bounded poll. Poll success or 预算耗尽立即停止; do not query the same state again.
+
 ## Conditional reading table
 
 | Condition | Read now | Do not preload |

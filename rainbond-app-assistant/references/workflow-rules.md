@@ -62,6 +62,13 @@
 
   ## Decision Rules
 
+  ### Snapshot / poll 排他快速路径
+
+  - `evidence_key = tool + canonical arguments + resource identity`；revision、`observed_at` 和 freshness 只判断有效性，不进入 key。
+  - snapshot 已覆盖当前步骤所需字段且证据仍有效时，禁止再对相同 `evidence_key` 执行独立 read。相关写操作、缺字段、异常结果或证据过期后，才允许重新 snapshot 一次。
+  - 同一 `run/stage/event` 最多一次 bounded poll；用户之后明确要求继续检查才开始新 stage。
+  - poll 成功或预算耗尽立即停止；不得再用 read、component list、summary 或手工轮询重查同一状态。
+
   ### 1. Local artifact initialization gate
 
   先按输入形态区分是否存在可持久化的本地项目上下文，不按 `source` / `package` / `image` 类型一刀切：
