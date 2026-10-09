@@ -36,3 +36,25 @@ test("unavailable host scenarios are explicit instead of using proxy metrics", a
   assert.equal(result.usage.input_tokens, null);
   assert.equal(result.timing.process_exit_ms, "unavailable");
 });
+
+test("Codex host runner can preserve a non-sensitive custom provider while isolating user config", async () => {
+  const { buildCodexArgs } = await import("../scripts/run-codex-host-evals.mjs");
+  const args = buildCodexArgs({
+    workspace: "/tmp/workspace",
+    prompt: "fixture prompt",
+    options: {
+      model: "gpt-5.6-sol",
+      reasoningEffort: "high",
+      providerName: "OpenAI",
+      providerBaseUrl: "https://code.agent-app.ai",
+      providerWireApi: "responses",
+      providerRequiresOpenAIAuth: true,
+      providerSupportsWebsockets: false,
+    },
+  });
+  assert(args.includes("--ignore-user-config"));
+  assert(args.includes('model_provider="OpenAI"'));
+  assert(args.includes('model_providers.OpenAI.base_url="https://code.agent-app.ai"'));
+  assert(args.includes("model_providers.OpenAI.supports_websockets=false"));
+  assert.doesNotMatch(JSON.stringify(args), /api[_-]?key|token|secret/i);
+});

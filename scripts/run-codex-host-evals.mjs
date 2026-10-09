@@ -293,6 +293,28 @@ function redactArtifactText(value) {
     .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "<redacted-jwt>");
 }
 
+export function buildCodexArgs({ workspace, prompt, options }) {
+  const args = [
+    "exec", "--json", "--ephemeral", "--ignore-user-config", "--ignore-rules",
+    "--skip-git-repo-check", "-s", "read-only", "-C", workspace,
+    "-m", options.model,
+    "-c", `model_reasoning_effort=${JSON.stringify(options.reasoningEffort)}`,
+  ];
+  if (options.providerName) {
+    const prefix = `model_providers.${options.providerName}`;
+    args.push(
+      "-c", `model_provider=${JSON.stringify(options.providerName)}`,
+      "-c", `${prefix}.name=${JSON.stringify(options.providerName)}`,
+      "-c", `${prefix}.base_url=${JSON.stringify(options.providerBaseUrl)}`,
+      "-c", `${prefix}.wire_api=${JSON.stringify(options.providerWireApi)}`,
+      "-c", `${prefix}.requires_openai_auth=${options.providerRequiresOpenAIAuth}`,
+      "-c", `${prefix}.supports_websockets=${options.providerSupportsWebsockets}`,
+    );
+  }
+  args.push(prompt);
+  return args;
+}
+
 async function executeCodex({ root, scenario, effectCase, options, repetition }) {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), `rainskills-host-${scenario.id}-`));
   fs.chmodSync(workspace, 0o700);
@@ -310,13 +332,7 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
   let buffered = "";
   let artifactBytes = 0;
   let timedOut = false;
-  const args = [
-    "exec", "--json", "--ephemeral", "--ignore-user-config", "--ignore-rules",
-    "--skip-git-repo-check", "-s", "read-only", "-C", workspace,
-    "-m", options.model,
-    "-c", `model_reasoning_effort=${JSON.stringify(options.reasoningEffort)}`,
-    prompt,
-  ];
+  const args = buildCodexArgs({ workspace, prompt, options });
   const childEnvironment = {
     ...process.env,
     RAINSKILLS_TELEMETRY_DISABLED: "1",
@@ -471,6 +487,11 @@ function parseArgs(argv) {
     output: null,
     artifactRoot: null,
     scenario: null,
+    providerName: null,
+    providerBaseUrl: null,
+    providerWireApi: "responses",
+    providerRequiresOpenAIAuth: true,
+    providerSupportsWebsockets: false,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
@@ -487,6 +508,11 @@ function parseArgs(argv) {
     else if (argument === "--output") options.output = path.resolve(value);
     else if (argument === "--artifact-root") options.artifactRoot = path.resolve(value);
     else if (argument === "--scenario") options.scenario = value;
+    else if (argument === "--provider-name") options.providerName = value;
+    else if (argument === "--provider-base-url") options.providerBaseUrl = value;
+    else if (argument === "--provider-wire-api") options.providerWireApi = value;
+    else if (argument === "--provider-requires-openai-auth") options.providerRequiresOpenAIAuth = value === "true";
+    else if (argument === "--provider-supports-websockets") options.providerSupportsWebsockets = value === "true";
     else throw new Error(`unknown argument: ${argument}`);
     index += 1;
   }
@@ -495,6 +521,21 @@ function parseArgs(argv) {
     ["primary-repetitions", options.primaryRepetitions, 1, 20],
     ["timeout-ms", options.timeoutMs, 1_000, 900_000],
   ]) if (!Number.isSafeInteger(value) || value < min || value > max) throw new Error(`invalid ${name}`);
+  if (Boolean(options.providerName) !== Boolean(options.providerBaseUrl)) {
+    throw new Error("provider-name and provider-base-url must be provided together");
+  }
+  if (options.providerName && !/^[A-Za-z0-9_-]+$/.test(options.providerName)) {
+    throw new Error("invalid provider-name");
+  }
+  if (options.providerBaseUrl) {
+    const url = new URL(options.providerBaseUrl);
+    if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash) {
+      throw new Error("invalid provider-base-url");
+    }
+  }
+  if (!new Set(["responses", "chat"]).has(options.providerWireApi)) {
+    throw new Error("invalid provider-wire-api");
+  }
   return options;
 }
 
