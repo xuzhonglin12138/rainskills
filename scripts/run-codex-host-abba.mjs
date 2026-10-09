@@ -35,7 +35,7 @@ export function buildPairPlan({
   seed,
   primaryScenario = SCENARIOS[0],
 }) {
-  if (primaryPairs % 2 !== 0) throw new Error("primary-pairs must be even");
+  if (!Number.isSafeInteger(primaryPairs) || primaryPairs < 1) throw new Error("primary-pairs must be positive");
   if (!SCENARIOS.includes(primaryScenario)) throw new Error("unknown primary scenario");
   const stablePrimary = Array.from({ length: primaryPairs }, (_, index) => ({
     order: index < primaryPairs / 2 ? "AB" : "BA",
@@ -88,6 +88,28 @@ export function summarizePairs(records, plan) {
     ["process_exit_ms", ["timing", "process_exit_ms"]],
     ["turn_completed_ms", ["timing", "turn_completed_ms"]],
   ];
+  const eligibility = (pair) => {
+    if (!pair.base || !pair.candidate) return { eligible: false, reason: "incomplete_pair" };
+    if (pair.base.result !== "success" || pair.candidate.result !== "success") {
+      return { eligible: false, reason: "non_success_outcome" };
+    }
+    if (pair.base.timed_out === true || pair.candidate.timed_out === true) {
+      return { eligible: false, reason: "timeout" };
+    }
+    if (pair.base.environment?.cleanup_result !== "success"
+      || pair.candidate.environment?.cleanup_result !== "success") {
+      return { eligible: false, reason: "cleanup_failure" };
+    }
+    if (typeof pair.base.outcome_signature !== "string"
+      || typeof pair.candidate.outcome_signature !== "string") {
+      return { eligible: false, reason: "missing_outcome_signature" };
+    }
+    if (pair.base.outcome_signature !== pair.candidate.outcome_signature) {
+      return { eligible: false, reason: "invalid_outcome_pair" };
+    }
+    return { eligible: true, reason: "matching_success_outcome" };
+  };
+  for (const pair of pairs) pair.outcome_eligibility = eligibility(pair);
   const summarizeMetric = (selectedPairs, pathParts) => {
     const observed = selectedPairs.flatMap((pair) => {
       const base = numericAt(pair.base, pathParts);
@@ -111,22 +133,29 @@ export function summarizePairs(records, plan) {
       ba_relative_change_median: median(byOrder("BA")),
     };
   };
-  const primaryPairs = pairs.filter((pair) => pair.primary);
+  const primaryPairs = pairs.filter((pair) => pair.primary && pair.outcome_eligibility.eligible);
+  const eligiblePairs = pairs.filter((pair) => pair.outcome_eligibility.eligible);
   return {
+    scheduled_pairs: pairs.length,
     planned_pairs: pairs.length,
     complete_pairs: pairs.filter((pair) => pair.base && pair.candidate).length,
+    eligible_pairs: eligiblePairs.length,
+    eligible_ratio: pairs.length ? eligiblePairs.length / pairs.length : 0,
+    invalid_outcome_pairs: pairs.filter((pair) => pair.outcome_eligibility.reason === "invalid_outcome_pair").length,
     planned_runs: pairs.length * 2,
     observed_runs: records.length,
+    successes: records.filter((record) => record.result === "success").length,
     failures: records.filter((record) => record.result === "failed").length,
     blocked: records.filter((record) => record.result === "blocked").length,
     timeouts: records.filter((record) => record.timed_out === true).length,
+    cleanup_failures: records.filter((record) => record.environment?.cleanup_result === "failed").length,
     primary: Object.fromEntries(metricDefinitions.map(([name, pathParts]) => [
       name,
       summarizeMetric(primaryPairs, pathParts),
     ])),
     all_pairs: Object.fromEntries(metricDefinitions.map(([name, pathParts]) => [
       name,
-      summarizeMetric(pairs, pathParts),
+      summarizeMetric(eligiblePairs, pathParts),
     ])),
   };
 }
@@ -208,8 +237,8 @@ function parseArgs(argv) {
   for (const required of ["baseRoot", "candidateRoot", "baseSha", "candidateSha", "output", "artifactRoot"]) {
     if (!options[required]) throw new Error(`missing --${required.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`);
   }
-  if (options.primaryPairs < 2 || options.primaryPairs > 100 || options.primaryPairs % 2 !== 0) {
-    throw new Error("primary-pairs must be an even integer between 2 and 100");
+  if (!Number.isSafeInteger(options.primaryPairs) || options.primaryPairs < 1 || options.primaryPairs > 100) {
+    throw new Error("primary-pairs must be an integer between 1 and 100");
   }
   if (!Number.isSafeInteger(options.exploratoryPairs) || options.exploratoryPairs < 0 || options.exploratoryPairs > 20) {
     throw new Error("exploratory-pairs must be an integer between 0 and 20");

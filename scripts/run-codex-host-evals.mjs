@@ -12,7 +12,7 @@ import YAML from "yaml";
 import { EXPECTED_SKILLS, canonicalJson, loadEffectCases, sha256 } from "./validate-effect-evals.mjs";
 import { buildSkillManifest } from "./build-skill-manifest.mjs";
 
-const HOST_SCHEMA = "rainskills.codex-host-evals.v1";
+const HOST_SCHEMA = "rainskills.codex-host-evals.v2";
 const ARTIFACT_MAX_BYTES = 10 * 1024 * 1024;
 const WRITE_SCENARIOS = new Set([
   "deploy-current-project",
@@ -61,19 +61,99 @@ export function unavailableScenario({ scenarioId, reason, runRole = "baseline" }
       orchestration_and_tool_ms: unavailableValue(),
       external_platform_wait_ms: unavailableValue(),
     },
-    model_calls: 0,
+    host_turns: 0,
+    model_roundtrips: unavailableValue(),
     retry_calls: 0,
     tool_calls: 0,
     poll_calls: 0,
     skills_opened: [],
     references_opened: [],
-    markdown_bytes_read: 0,
+    reference_reads: {
+      status: "unavailable",
+      measurement_basis: "completed direct sed/cat reads of references or modules",
+      total: null,
+      repeated: null,
+      bytes: null,
+      unique_paths: [],
+      unresolved: null,
+    },
+    messages: {
+      final_answer_chars: null,
+      visible_progress_chars: null,
+      visible_progress_messages: null,
+      per_message_tokens: unavailableValue(),
+    },
     usage: unavailableUsage(),
     compaction_count: unavailableValue(),
     result: "unavailable",
+    outcome_signature: null,
     unavailable_reason: reason,
     behavior_assertions: [],
   };
+}
+
+function characterCount(value) {
+  return [...String(value)].length;
+}
+
+function normalizedObservedPath(value) {
+  return value.replace(/^\.\//, "");
+}
+
+function referenceReadOperations(command) {
+  const operations = [];
+  const documentPath = String.raw`([^\s;&|"']+\/(?:references|modules)\/[^\s;&|"']+\.md)`;
+  const sed = new RegExp(String.raw`sed\s+-n\s+['"](\d+),(\d+)p['"]\s+${documentPath}`, "g");
+  for (const match of String(command).matchAll(sed)) {
+    operations.push({ path: normalizedObservedPath(match[3]), start: Number(match[1]), end: Number(match[2]) });
+  }
+  const cat = new RegExp(String.raw`(?:^|[;&|]\s*)cat\s+${documentPath}`, "g");
+  for (const match of String(command).matchAll(cat)) {
+    operations.push({ path: normalizedObservedPath(match[1]), start: null, end: null });
+  }
+  return operations;
+}
+
+function selectedFileBytes(workspace, operation) {
+  if (!workspace) return null;
+  const absolute = path.resolve(workspace, operation.path);
+  const relative = path.relative(workspace, absolute);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) return null;
+  const stat = fs.statSync(absolute, { throwIfNoEntry: false });
+  if (!stat?.isFile()) return null;
+  const content = fs.readFileSync(absolute);
+  if (operation.start === null) return content.length;
+  const lines = content.toString("utf8").match(/[^\n]*\n|[^\n]+$/g) || [];
+  return Buffer.byteLength(lines.slice(operation.start - 1, operation.end).join(""));
+}
+
+function observedReferenceReads(timedEvents, workspace) {
+  const operations = timedEvents.flatMap(({ event }) => {
+    if (event.type !== "item.completed" || event.item?.type !== "command_execution") return [];
+    return referenceReadOperations(event.item.command || "");
+  });
+  let unresolved = 0;
+  let bytes = 0;
+  for (const operation of operations) {
+    const selectedBytes = selectedFileBytes(workspace, operation);
+    if (selectedBytes === null) unresolved += 1;
+    else bytes += selectedBytes;
+  }
+  const uniquePaths = [...new Set(operations.map((operation) => operation.path))].sort();
+  return {
+    status: unresolved === 0 ? "observed" : "partially_observed",
+    measurement_basis: "completed direct sed/cat reads of references or modules",
+    total: operations.length,
+    repeated: operations.length - uniquePaths.length,
+    bytes,
+    unique_paths: uniquePaths,
+    unresolved,
+  };
+}
+
+function commandOperation(command) {
+  const match = String(command).match(/rainskills-tools\.js\s+(read|snapshot|poll|call|handoff|context|status)\b/);
+  return match ? `rainskills_${match[1]}` : "command_other";
 }
 
 function isToolItem(event) {
@@ -113,7 +193,7 @@ function observedPaths(timedEvents) {
   };
 }
 
-export function normalizeCodexRun({ timedEvents, processExitMs, exitCode, timedOut = false }) {
+export function normalizeCodexRun({ timedEvents, processExitMs, exitCode, timedOut = false, workspace = null }) {
   const toolStarts = new Map();
   const toolIntervals = [];
   let firstItem = null;
@@ -126,6 +206,8 @@ export function normalizeCodexRun({ timedEvents, processExitMs, exitCode, timedO
   let retryCalls = 0;
   let turnStarts = 0;
   let compactionCount = 0;
+  const toolCallsByCategory = {};
+  const toolCallsByOperation = {};
 
   for (const { received_ms: receivedMs, event } of timedEvents) {
     if (event.type === "turn.started") turnStarts += 1;
@@ -135,6 +217,11 @@ export function normalizeCodexRun({ timedEvents, processExitMs, exitCode, timedO
     }
     if (event.type === "item.started" && isToolItem(event)) {
       toolCalls += 1;
+      toolCallsByCategory[event.item.type] = (toolCallsByCategory[event.item.type] || 0) + 1;
+      const operation = event.item.type === "command_execution"
+        ? commandOperation(event.item.command)
+        : event.item.type;
+      toolCallsByOperation[operation] = (toolCallsByOperation[operation] || 0) + 1;
       if (firstTool === null) firstTool = receivedMs;
       toolStarts.set(event.item.id, receivedMs);
       if (/poll|write_stdin/i.test(JSON.stringify(event.item))) pollCalls += 1;
@@ -177,7 +264,10 @@ export function normalizeCodexRun({ timedEvents, processExitMs, exitCode, timedO
     }
   }
   const paths = observedPaths(timedEvents);
+  const referenceReads = observedReferenceReads(timedEvents, workspace);
+  paths.references = referenceReads.unique_paths;
   const finalMessage = agentMessages.at(-1)?.text || "";
+  const progressMessages = agentMessages.slice(0, -1);
   const result = timedOut
     ? "failed"
     : exitCode !== 0
@@ -198,13 +288,22 @@ export function normalizeCodexRun({ timedEvents, processExitMs, exitCode, timedO
       orchestration_and_tool_ms: unavailableValue(),
       external_platform_wait_ms: unavailableValue(),
     },
-    model_calls: Math.max(turnStarts, usageEvent ? 1 : 0) + retryCalls,
+    host_turns: Math.max(turnStarts, usageEvent ? 1 : 0),
+    model_roundtrips: unavailableValue(),
     retry_calls: retryCalls,
     tool_calls: toolCalls,
+    tool_calls_by_category: toolCallsByCategory,
+    tool_calls_by_operation: toolCallsByOperation,
     poll_calls: pollCalls,
     skills_opened: paths.skills,
     references_opened: paths.references,
-    markdown_bytes_read: 0,
+    reference_reads: referenceReads,
+    messages: {
+      final_answer_chars: characterCount(finalMessage),
+      visible_progress_chars: progressMessages.reduce((sum, message) => sum + characterCount(message.text), 0),
+      visible_progress_messages: progressMessages.length,
+      per_message_tokens: unavailableValue(),
+    },
     usage,
     compaction_count: compactionCount || unavailableValue(),
     result,
@@ -556,6 +655,7 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
     processExitMs,
     exitCode: completion.exitCode,
     timedOut,
+    workspace,
   });
   let cleanup = { result: "success", deleted: false };
   if (options.controlledLive) {
@@ -565,12 +665,13 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
       cleanup = { result: "failed", deleted: false };
     }
   }
-  const markdownPaths = [...normalized.skills_opened, ...normalized.references_opened];
-  normalized.markdown_bytes_read = markdownPaths.reduce((sum, observed) => {
-    const suffix = observed.replace(/^.*?(?=(?:rainskills|rainbond-[^/]+)\/)/, "");
-    const candidate = path.join(workspace, ".codex", "skills", suffix);
-    return sum + (fs.existsSync(candidate) ? fs.statSync(candidate).size : 0);
-  }, 0);
+  const outcomeSignature = options.fixtureOnly
+    ? sha256(canonicalJson({
+        scenario_id: scenario.id,
+        expected_behaviors: effectCase.expected_behaviors,
+        result: normalized.result,
+      }))
+    : null;
   fs.rmSync(workspace, { recursive: true, force: true });
   return {
     scenario_id: scenario.id,
@@ -590,6 +691,10 @@ async function executeCodex({ root, scenario, effectCase, options, repetition })
       isolated_auth_copy: isolatedRuntime.authCopied,
     },
     ...normalized,
+    outcome_signature: outcomeSignature,
+    outcome_eligibility_basis: options.fixtureOnly
+      ? "matching fixture scenario, expected behavior contract, and successful host result"
+      : unavailableValue(),
     timed_out: timedOut,
     exit_code: completion.exitCode,
     signal: completion.signal,
