@@ -7,7 +7,7 @@ Final Phase 5 candidate: `812b2999241da0833de7d475b2d85f4a73b196f8`
 
 ## Decision
 
-Phase 3, Phase 4, and Phase 5 are complete under the user's preapproval. All deterministic tests and safety guardrails passed. Host Token/timing and paired-judge evidence remain unavailable, so every treatment is retained as `neutral_refactor`; this report does not claim that the overall performance Definition of Done has been met.
+Phase 3, Phase 4, and Phase 5 are complete under the user's preapproval. All deterministic tests and safety guardrails passed. A provider-aware Codex host rerun captured real candidate-only Token and timing data for all 10 planned runs with zero failures. Because this is still fixture-only, uncontrolled, and lacks a matched before/after plus paired judges, every treatment remains `neutral_refactor`; this report does not claim that the overall performance Definition of Done has been met.
 
 ## Phase 3 — Minimal entrypoint routers
 
@@ -81,19 +81,26 @@ The scenario trace counters predate the two focused Phase 5 fixtures and are ret
 
 ## Host timing, Token, and paired results
 
-A final fixture-only `codex exec --json --ephemeral` attempt was started with the frozen model and reasoning effort. It produced no events and did not exit within 120 seconds, so it was interrupted. Earlier Phase 0 attempts recorded HTTP 401 for the stored API credential.
+The rerun used `codex exec --json --ephemeral`, `gpt-5.6-sol`, high reasoning, fresh temporary workspaces, the isolated candidate bundle, and the configured non-sensitive custom provider settings while still ignoring unrelated user configuration and rules. The prior 401 was caused by dropping the custom provider/base URL and sending its gateway credential to the wrong endpoint; `fix: preserve custom provider in host evals` (`2e70559`) closes that harness defect.
 
-Therefore all required host statistics are unavailable:
+Observed candidate-only result:
 
-- paired-result p50: unavailable
-- observational p95: unavailable
-- raw JSONL: unavailable; no events were produced
-- normalized usage and input/output/cached Token counts: unavailable
-- `turn_completed_ms`, `process_exit_ms`, first event/tool/progress: unavailable
-- tool span union and external-wait attribution: unavailable
-- cache write/read and miss reason: unavailable
+- planned/observed runs: 10/10
+- success/failure/timeout/cleanup failure: 10/0/0/0
+- primary `deploy-current-project` repetitions: 3
+- primary process-exit p50: 30,357 ms
+- primary process-exit MAD: 6,040 ms
+- primary observational p95: 45,116 ms
+- primary median usage: 16,909 input, 1,247 output, 18,156 total tokens
+- all-run usage: 169,616 input, 27,648 cached input, 141,968 uncached input, 14,679 output, 12,291 reasoning output, 184,295 total tokens
+- aggregate cache-hit ratio: 16.30%
+- raw JSONL and monotonic event timing: captured under `host-artifacts/<scenario>/<repetition>/`
+- normalized usage source: `turn.completed.usage`
+- per-run `turn_completed_ms`, `process_exit_ms`, first event/progress, retry count, tool spans, and cleanup result: captured in `codex-host.json`
 
-No byte count or deterministic call count is presented as a Token or latency substitute.
+No external tools were permitted in fixture-only runs, so first-tool time and external platform wait remain unavailable and tool span union is zero. Cache miss reasons are not exported by Codex and remain unavailable.
+
+These measurements prove that candidate host execution and Token accounting work. They do not prove a performance delta: there is no controlled frozen-base AB/BA run, and no paired judge was run because the user required no subagent delegation. No byte count or deterministic call count is presented as a Token or latency substitute.
 
 ## Safety gates
 
