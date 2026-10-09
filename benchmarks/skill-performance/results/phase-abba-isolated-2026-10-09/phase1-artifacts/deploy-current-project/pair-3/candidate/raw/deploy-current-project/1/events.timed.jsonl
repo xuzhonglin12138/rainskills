@@ -1,6 +1,0 @@
-{"received_ms":75.452792,"event":{"type":"thread.started","thread_id":"01a11ee6-a909-7242-8b18-40c717932722"}}
-{"received_ms":85.176833,"event":{"type":"turn.started"}}
-{"received_ms":11021.707417,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定的 `rainbond-app-assistant` Skill 做纯静态判定；由于这是只读 fixture 评估，不会连接 Rainbond、探测项目、执行部署或修改文件。"}}}
-{"received_ms":15534.959083,"event":{"type":"error","message":"Reconnecting... 1/5 (stream disconnected before completion: Upstream request failed)"}}
-{"received_ms":20614.41825,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-app-assistant`，因为请求是部署当前项目。\n- 允许移交：若项目尚未关联 Rainbond，可交给 `rainbond-project-init` 初始化，完成后返回主流程；后续可按需交给拓扑创建、故障排查或交付验证专项。\n- 安全停止：一旦需要修改代码或处理构建问题，必须硬停止；不得自动改代码、测试、提交、推送或继续重试。\n- 预期结果：真实执行时应完成部署并验证访问地址；若受阻，只报告一个明确原因和唯一下一步。本次为只读 fixture 评估，因此不会产生实际部署或文件变更。"}}}
-{"received_ms":20649.444292,"event":{"type":"turn.completed","usage":{"input_tokens":14995,"cached_input_tokens":14208,"cache_write_input_tokens":0,"output_tokens":159,"reasoning_output_tokens":0}}}

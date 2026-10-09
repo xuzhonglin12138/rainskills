@@ -1,4 +1,0 @@
-{"received_ms":76.107875,"event":{"type":"thread.started","thread_id":"01a11f0b-328b-76c3-8a36-d622d3dfc1e7"}}
-{"received_ms":85.861708,"event":{"type":"turn.started"}}
-{"received_ms":15243.650208,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"- 初始 owner：`rainbond-ai-assistant`，因为根目标是部署 Qwen。\n- 允许的交接：确认 AI Engine 插件确实缺失后，交给 `rainbond-platform-plugin-manager` 安装；仅当 `installed=true && status=RUNNING` 时，再交回 `rainbond-ai-assistant` 继续原模型部署。用户已明确要求“装好后继续”，等同选择持续监测。\n- 安全停止：状态 `unavailable`、写操作审批被拒、安装失败或结果未知时停止；安装请求仅被受理不算就绪，未知结果不得重复提交写请求。\n- 预期结果：插件已就绪则直接部署 Qwen；插件缺失则安装并确认运行后自动恢复 Qwen 部署。若触发安全停止，保留原始模型意图，等待后续恢复。"}}}
-{"received_ms":15840.268417,"event":{"type":"turn.completed","usage":{"input_tokens":13859,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":587,"reasoning_output_tokens":390}}}

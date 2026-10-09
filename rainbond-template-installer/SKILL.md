@@ -23,7 +23,6 @@ Resolve one confirmed Rainbond marketplace template and version, install it into
 | Need source, template, version, or target-app resolution | [template resolution](references/template-resolution.md), [template workflow](references/template-workflow.md) | output examples |
 | Need install, collision, deployment, or error handling | [template workflow](references/template-workflow.md), [template resolution](references/template-resolution.md) | structured examples |
 | Need customer or structured result | [output contract](references/output-contract.md), [generated user-result policy](references/generated/user-result.md) | catalog internals |
-| Top-level terminal result needs the QR card | [generated Community Card](references/generated/community-card.md) | install references |
 
 Load only the active row. Do not load output examples while the template or target app remains unresolved.
 
@@ -56,7 +55,7 @@ Load only the active row. Do not load output examples while the template or targ
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with template source/name/version, target app, installed services, actual install/deploy state, blocker, and one next step. Structured mode follows the [output contract](references/output-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only under its terminal-result conditions.
+Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with template source/name/version, target app, installed services, actions performed, actual install/deploy state, blocker, key evidence, and one next step. Structured mode follows the [output contract](references/output-contract.md).
 
 ## Anti-patterns
 

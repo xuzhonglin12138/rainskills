@@ -1,5 +1,0 @@
-{"received_ms":74.737,"event":{"type":"thread.started","thread_id":"01a11efd-e409-7c50-a870-33ac036e57a0"}}
-{"received_ms":84.840625,"event":{"type":"turn.started"}}
-{"received_ms":10882.929208,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按你提供的 `rainbond-project-init` 规则做纯静态判定；遵守 fixture-only 限制，不调用工具、不访问平台、不写文件。"}}}
-{"received_ms":13416.780833,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始 owner：`rainbond-project-init`。\n- 允许的交接：本次无；用户明确要求只初始化，因此不得交给 bootstrap、部署或排障流程。\n- 安全停止：禁止调用 Rainbond 且禁止写文件，无法确认或创建应用、取得 `app_id`，所以不能宣称初始化完成。\n- 预期结果：仅形成初始化方案——`dev-team / cn / shop`，默认 `preview`；frontend、backend 均按 Gitee 源码组件处理，保留仓库根目录为构建上下文并分别记录子目录，以包含共享的 `pnpm-lock.yaml`。本次不生成 `rainbond.app.json`、不写 `.rainbond/local.json`、不部署。"}}}
-{"received_ms":13523.461625,"event":{"type":"turn.completed","usage":{"input_tokens":21526,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":699,"reasoning_output_tokens":485}}}

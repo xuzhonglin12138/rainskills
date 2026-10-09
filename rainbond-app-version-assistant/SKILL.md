@@ -24,7 +24,6 @@ Operate the version center of one existing Rainbond app: inspect state, create s
 | Need tool ownership, identifiers, input resolution, or current state | [version operations](references/version-operations.md), [version workflow](references/version-workflow.md) | output examples |
 | Create snapshot, direct reuse, publish, continue, abandon, or rollback | [version workflow](references/version-workflow.md), [version operations](references/version-operations.md) | unrelated operation branches |
 | Need customer or structured result | [output contract](references/output-contract.md), [generated user-result policy](references/generated/user-result.md) | version-center history |
-| Top-level terminal result needs the QR card | [generated Community Card](references/generated/community-card.md) | operation references |
 
 Load only the active row. Do not preload publish and rollback rules for a snapshot-inspection request.
 
@@ -57,7 +56,7 @@ Route reality: `/publish` redirects to `/version`; snapshot and publish begin in
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with app, operation, selected version/snapshot, actual state, important risk, blocker, and one next step. Structured mode follows the [output contract](references/output-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only under its terminal-result conditions.
+Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with app, operation, selected version/snapshot, actual state, important risk, blocker, and one next step. Structured mode follows the [output contract](references/output-contract.md).
 
 ## Anti-patterns
 

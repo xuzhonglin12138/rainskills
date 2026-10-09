@@ -1,5 +1,0 @@
-{"received_ms":118.052458,"event":{"type":"thread.started","thread_id":"01a11ead-8b5e-74a2-9c87-0c763bc44d4f"}}
-{"received_ms":120.872833,"event":{"type":"turn.started"}}
-{"received_ms":11226.869542,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会严格按只读评测约束，只读取候选包中的 `rainbond-app-assistant` 技能及其明确指向的哈希固定策略文件，不调用任何外部服务或修改文件。"}}}
-{"received_ms":16324.413958,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始所有者：`rainbond-app-assistant`\n- 允许的移交：若当前项目尚未初始化，可移交给 `rainbond-project-init`；初始化后应回到原部署流程。\n- 安全停止：在任何文件写入、Rainbond API 调用、应用或组件创建之前停止。\n- 预期结果：仅完成路由与策略判断；不执行部署、不修改项目，也不声称已交付或提供访问地址。"}}}
-{"received_ms":16470.886375,"event":{"type":"turn.completed","usage":{"input_tokens":16352,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":942,"reasoning_output_tokens":783}}}

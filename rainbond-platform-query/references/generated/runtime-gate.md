@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: 647f2eb17dfd81ca2058e2099784d641298dfe22420bdb54bd16ecb1d97ce878 -->
+<!-- source-sha256: fa44f9b41b47b8f400eaf9ff9962cc3ddb43b6165eacc0e8c832fc1afbde7e7c -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-gate:start -->
 # 单运行环境 CLI 门禁（生成文件）
@@ -17,6 +17,8 @@ Codex 中取得 `session_id` 后，对该会话反复调用 `write_stdin`（空�
 Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对原会话调用 `process(action="poll")` 和 `process(action="wait")`。带 `--input -` 的短业务命令使用前台 `terminal` 和单引号 heredoc 写入完整 JSON；不得用 `echo`、把 JSON 放入 argv、合并 stderr 或后台化短命令。
 
 固定 `<target>`：Codex=`codex`、Claude Code=`claude`、Pi Agent=`pi`、DeepSeek Harness=`dsh`、WorkBuddy=`workbuddy`、Hermes Agent=`hermes`。DeepSeek Harness 和 WorkBuddy 返回持久终端或后台句柄时，只轮询原句柄直到退出。
+
+构建、镜像拉取或部署收敛在一个用户回合内最多等待 60 秒：同一 event 只调用一次 `rainbond_wait_for_build_completion(timeout=60)`。返回 `status=running` 时立即结束当前回复，报告已完成动作、当前状态和 event；不得在同一回合再次等待、手工轮询或继续推理。用户之后明确说“继续”时，才对同一 event 开始新的 60 秒检查回合。
 
 受限沙箱执行本地状态命令时必须申请用户级受保护目录访问权限；不得修改 `~/.rainbond` 权限或复制受保护状态。固定 launcher 与 argv 已在本文件声明，禁止搜索或探测 `rainskills.js`，也禁止执行 `npm root -g`。
 

@@ -1,5 +1,0 @@
-{"received_ms":75.813,"event":{"type":"thread.started","thread_id":"01a11ef1-9255-7fd2-b9ab-10075bd562b7"}}
-{"received_ms":85.5725,"event":{"type":"turn.started"}}
-{"received_ms":9158.206292,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会严格按该 Skill 的渐进加载规则，只读取静态路由、它自己的 Runtime Gate，以及二者明确要求的固定哈希策略；不会调用任何外部能力或改动文件。"}}}
-{"received_ms":17167.287209,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`。\n- 允许转交：项目未链接时转给 `rainbond-project-init`；初始化完成后返回主入口继续部署，必要时再编排拓扑创建、故障排查和交付验证。\n- 安全停止：初始化未完成、身份或目标有歧义，或进入代码/构建交接阶段时必须停止，不得自动改代码或重试。\n- 预期结果：本次只完成静态路由判断；受只读 fixture 限制，不会实际部署，也不宣称部署成功。"}}}
-{"received_ms":17208.737459,"event":{"type":"turn.completed","usage":{"input_tokens":14441,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":1203,"reasoning_output_tokens":1016}}}

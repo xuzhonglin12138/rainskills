@@ -26,7 +26,6 @@ Initialize only the current local project: create or repair `rainbond.app.json`,
 | Existing app adoption or binding repair | [manifest inference](references/manifest-inference.md), [workflow and verification](references/workflow-and-verification.md) | unrelated component workflows |
 | Need customer or structured result | [output contract](references/output-contract.md), [generated user-result policy](references/generated/user-result.md) | manifest inference |
 | Need operator mistakes or quick lookup | [operational reference](references/operational-reference.md) | all other references |
-| Top-level terminal result needs the QR card | [generated Community Card](references/generated/community-card.md) | business references |
 
 Each row is a decision branch, not a reading checklist. Load at most the two references named by the active row.
 
@@ -62,7 +61,7 @@ The exact field rules and v1/v2 generation decisions live in the active manifest
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md) before replying. Default replies are concise Chinese and name only verified files, application/environment facts, completion state, open question, and one next step. Structured mode uses the canonical schema and [output contract](references/output-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only when its terminal-result conditions match.
+Read the [generated user-result policy](references/generated/user-result.md) before replying. Default replies are concise Chinese and name verified files, actions performed, application/environment facts, completion state, key evidence or open question, and one next step. Structured mode uses the canonical schema and [output contract](references/output-contract.md).
 
 ## Anti-patterns
 

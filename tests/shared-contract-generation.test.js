@@ -32,14 +32,9 @@ function markdownFiles(root) {
   return files;
 }
 
-test("Community Card has one canonical source and current generated references", () => {
+test("open-source Skills ship no community advertising contract", () => {
   const canonical = path.join(repoRoot, "contracts", "shared", "community-card.md");
-  assert(fs.existsSync(canonical));
-  const result = spawnSync(process.execPath, [syncScript, "--check"], {
-    cwd: repoRoot,
-    encoding: "utf8",
-  });
-  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(fs.existsSync(canonical), false);
 
   for (const skillId of communitySkills) {
     const generatedPath = path.join(
@@ -49,35 +44,12 @@ test("Community Card has one canonical source and current generated references",
       "generated",
       "community-card.md",
     );
-    const generated = fs.readFileSync(generatedPath, "utf8");
-    assert.match(generated, /generated-by: scripts\/sync-shared-contracts\.mjs/);
-    assert.match(generated, /source-sha256: [a-f0-9]{64}/);
-    assert.match(generated, /<!-- rainskills-community-card:start -->/);
-    assert.match(generated, /纯查询、过程检查和无人值守执行不展示/);
-    assert.match(generated, /结构化、自动化或评测模式不追加/);
-    assert.match(generated, /https:\/\/www\.rainbond\.com\/wechat\/rainbond-xzs\.png/);
-
-    const discoverable = [
-      path.join(repoRoot, skillId, "SKILL.md"),
-      path.join(repoRoot, skillId, "references", "output-contract.md"),
-    ].filter(fs.existsSync).some((file) => {
-      const source = fs.readFileSync(file, "utf8");
-      return source.includes("references/generated/community-card.md")
-        || source.includes("generated/community-card.md");
-    });
-    assert(discoverable, `${skillId} must discover its generated Community Card`);
-  }
-});
-
-test("editable Skill sources contain no duplicated Community Card block", () => {
-  for (const skillId of communitySkills) {
+    assert.equal(fs.existsSync(generatedPath), false, generatedPath);
     for (const file of markdownFiles(path.join(repoRoot, skillId))) {
-      const relative = path.relative(path.join(repoRoot, skillId), file).split(path.sep).join("/");
-      if (relative === "references/generated/community-card.md") continue;
       assert.doesNotMatch(
         fs.readFileSync(file, "utf8"),
-        /<!-- rainskills-community-card:start -->/,
-        `${skillId}/${relative}`,
+        /community-card|交流群|二维码|rainbond-xzs/i,
+        path.relative(repoRoot, file),
       );
     }
   }
@@ -103,7 +75,7 @@ test("default user-result policy has one canonical source and current generated 
     const generated = fs.readFileSync(generatedPath, "utf8");
     assert.match(generated, /source-sha256: [a-f0-9]{64}/);
     assert.match(generated, /<!-- rainskills-user-result:start -->/);
-    assert.match(generated, /默认使用简洁中文/);
+    assert.match(generated, /默认使用清晰、适度详细的中文/);
     assert.match(generated, /明确要求结构化/);
     assert.match(generated, /不得展示.*YAML.*JSON/);
     assert.match(generated, /不得猜测/);

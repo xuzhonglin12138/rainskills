@@ -1,5 +1,0 @@
-{"received_ms":202.516542,"event":{"type":"thread.started","thread_id":"01a11eab-24dc-74e3-865b-6ecf69b4bd00"}}
-{"received_ms":221.581833,"event":{"type":"turn.started"}}
-{"received_ms":19279.860917,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按隔离候选包中的 `rainbond-app-assistant` 路由规则做静态分析；遵守评测限制，不调用任何工具、不访问 Rainbond，也不修改文件。"}}}
-{"received_ms":20783.860083,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-app-assistant`，因为这是“部署当前项目”的通用请求。\n- 允许交接：若项目尚未初始化，仅可交给 `rainbond-project-init` 完成初始化/关联，随后应回到 `rainbond-app-assistant`。\n- 安全停止点：在首次需要读取项目、连接 Rainbond 或执行任何写入/部署操作之前停止。\n- 预期结果：仅完成路由与策略判定；不会初始化、部署或生成访问地址。"}}}
-{"received_ms":20859.06275,"event":{"type":"turn.completed","usage":{"input_tokens":16358,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":853,"reasoning_output_tokens":684}}}

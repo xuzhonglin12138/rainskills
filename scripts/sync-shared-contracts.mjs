@@ -30,13 +30,6 @@ const handoffSkills = Object.freeze([
 ]);
 const sharedContracts = Object.freeze([
   {
-    id: "Community Card",
-    source: "community-card.md",
-    generated: "community-card.md",
-    start: "<!-- rainskills-community-card:start -->",
-    end: "<!-- rainskills-community-card:end -->",
-  },
-  {
     id: "user-result policy",
     source: "user-result.md",
     generated: "user-result.md",

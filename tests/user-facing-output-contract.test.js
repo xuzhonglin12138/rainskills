@@ -6,10 +6,6 @@ const { spawnSync } = require("node:child_process");
 const test = require("node:test");
 
 const root = path.resolve(__dirname, "..");
-const communityCard = `欢迎扫码加入交流群，一起交流使用经验。
-
-![交流群二维码](https://www.rainbond.com/wechat/rainbond-xzs.png)`;
-
 const customerFacingSkills = [
   "rainbond-ai-assistant",
   "rainbond-app-assistant",
@@ -21,20 +17,6 @@ const customerFacingSkills = [
   "rainbond-project-init",
   "rainbond-platform-plugin-manager",
   "rainbond-template-installer",
-];
-
-const communityContractFiles = [
-  "rainbond-ai-assistant/references/output-contract.md",
-  "rainbond-app-assistant/references/output-contract.md",
-  "rainbond-app-version-assistant/SKILL.md",
-  "rainbond-delivery-verifier/SKILL.md",
-  "rainbond-env-sync/SKILL.md",
-  "rainbond-fullstack-bootstrap/SKILL.md",
-  "rainbond-fullstack-troubleshooter/SKILL.md",
-  "rainbond-opensource-app-deploy/SKILL.md",
-  "rainbond-platform-plugin-manager/references/output-contract.md",
-  "rainbond-project-init/SKILL.md",
-  "rainbond-template-installer/SKILL.md",
 ];
 
 const outputContractFiles = [
@@ -69,28 +51,16 @@ function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
 }
 
-test("every top-level customer workflow uses the shared terminal community card policy", () => {
-  let canonicalSection = null;
-  for (const relativePath of communityContractFiles) {
-    const source = read(relativePath);
-    const skillId = relativePath.split("/")[0];
-    const content = read(`${skillId}/references/generated/community-card.md`);
-    const section = content.match(
-      /<!-- rainskills-community-card:start -->([\s\S]*?)<!-- rainskills-community-card:end -->/,
-    )?.[1] || "";
-    assert.match(source, /generated\/community-card\.md/, relativePath);
-    assert.match(content, /<!-- rainskills-community-card:start -->/, relativePath);
-    assert.match(content, /<!-- rainskills-community-card:end -->/, relativePath);
-    assert.match(content, /顶层任务的最终回复/, relativePath);
-    assert.match(content, /执行过程、中间错误、重试、等待或下层 Skill/, relativePath);
-    assert.match(content, /最终失败或未完成[^。\n]*必须/, relativePath);
-    assert.match(content, /成功[^。\n]*当前对话[^。\n]*最多展示一次/, relativePath);
-    assert.match(content, /结构化、自动化或评测/, relativePath);
-    assert.equal(content.split(communityCard).length - 1, 1, relativePath);
-    assert.doesNotMatch(section, /小助手|反馈|获取帮助/, relativePath);
-    assert.equal(section.match(/https?:\/\//g)?.length, 1, relativePath);
-    if (canonicalSection === null) canonicalSection = section;
-    else assert.equal(section, canonicalSection, relativePath);
+test("customer output contains no community advertising", () => {
+  for (const skill of customerFacingSkills) {
+    for (const relativePath of [
+      `${skill}/SKILL.md`,
+      `${skill}/references/output-contract.md`,
+      `${skill}/references/generated/user-result.md`,
+    ]) {
+      if (!fs.existsSync(path.join(root, relativePath))) continue;
+      assert.doesNotMatch(read(relativePath), /community-card|交流群|二维码|rainbond-xzs/i, relativePath);
+    }
   }
 });
 
@@ -210,7 +180,7 @@ test("reply validators accept customer text by default and reject internal contr
   }
 });
 
-test("default deployment replies use one bounded success or blocker shape", () => {
+test("default deployment replies preserve useful verified detail without generic promotion", () => {
   const entrypoint = read("rainbond-app-assistant/SKILL.md");
   assert.doesNotMatch(entrypoint, /部署成功后的固定动作块/);
   assert.match(entrypoint, /references\/output-contract\.md/);
@@ -229,8 +199,11 @@ test("default deployment replies use one bounded success or blocker shape", () =
   }
 
   const canonical = read("contracts/shared/user-result.md");
-  assert.match(canonical, /成功正文[^\n]*结果[^\n]*应用[^\n]*状态[^\n]*地址/);
-  assert.match(canonical, /未完成正文[^\n]*状态[^\n]*单一阻塞[^\n]*唯一下一步/);
+  assert.match(canonical, /已执行动作/);
+  assert.match(canonical, /当前状态/);
+  assert.match(canonical, /关键证据/);
+  assert.match(canonical, /访问地址|端口说明/);
+  assert.match(canonical, /唯一下一步/);
   assert.match(canonical, /同一字段[^\n]*只出现一次/);
 });
 
@@ -263,4 +236,27 @@ test("customer validators accept bounded success and reject duplicate fields", (
     });
     assert.notEqual(rejected.status, 0, validator);
   }
+});
+
+test("customer validators accept a useful detailed incomplete deployment result", () => {
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "rainskills-detailed-output-"));
+  const response = path.join(temporary, "incomplete.md");
+  fs.writeFileSync(response, [
+    "部署未完成",
+    "",
+    "已执行动作：已创建应用和组件，并开放 8080 端口。",
+    "状态：组件尚未运行。",
+    "阻塞：镜像推送至集群内部仓库失败。",
+    "关键证据：连续两次出现相同推送错误。",
+    "端口说明：官方 nginx 镜像默认监听 80，使用 8080 时需要同步调整容器监听端口。",
+    "下一步：修复集群镜像仓库后重新部署。",
+    "",
+  ].join("\n"), "utf8");
+
+  const result = spawnSync(
+    "python3",
+    [path.join(root, "rainbond-app-assistant/scripts/validate_app_assistant_output.py"), response],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
 });

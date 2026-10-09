@@ -1,5 +1,0 @@
-{"received_ms":75.947292,"event":{"type":"thread.started","thread_id":"01a11f03-6db5-76c2-8084-44879db39e53"}}
-{"received_ms":78.175875,"event":{"type":"turn.started"}}
-{"received_ms":14988.939834,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我将按 `rainbond-project-init` 的规则做静态判定；遵守夹具限制，不调用平台、不读取网络、不执行命令，也不写文件。"}}}
-{"received_ms":16711.846375,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-project-init`。\n- 允许的交接：源码组件本可在初始化完成后交给 `rainbond-fullstack-bootstrap`，但用户明确“只做初始化”，因此本次不得交接或部署。\n- 安全停止：当前夹具禁止平台调用和文件写入，无法确认/创建 `dev-team / cn / shop`、取得 `app_id`，也不能生成 `rainbond.app.json` 和 `.rainbond/local.json`；不得宣称初始化完成。\n- 预期结果：默认 `preview` 环境；`frontend`、`backend` 均推断为 Gitee 源码组件，保持仓库根目录为构建上下文并分别记录子目录，以保留共享 `pnpm-lock.yaml`。最终状态只能是“待在线验证”，文件保持未修改。"}}}
-{"received_ms":18389.244917,"event":{"type":"turn.completed","usage":{"input_tokens":21504,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":947,"reasoning_output_tokens":713}}}

@@ -70,7 +70,7 @@ For a known single dependency edge, do not call `describe`; query `operation=sum
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with only verified app/component creation or reuse, important dependency/storage changes, current state, and one handoff. Structured mode follows the canonical [BootstrapResult schema](schemas/bootstrap-result.schema.yaml) and [output module](modules/70-output-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only under its terminal-result conditions.
+Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with verified app/component creation or reuse, important actions, dependency/storage changes, current state, key evidence, relevant port/access caveat, and one handoff. Structured mode follows the canonical [BootstrapResult schema](schemas/bootstrap-result.schema.yaml) and [output module](modules/70-output-contract.md).
 
 ## Anti-patterns
 

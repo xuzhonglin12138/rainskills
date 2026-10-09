@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"01a11eed-02c4-7f22-bd45-b84375563eb9"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定 Skill 的渐进加载规则，仅阅读路由、该入口自身的 Runtime Gate，以及其中明确要求的哈希固定策略夹具；不会调用任何外部能力或改动文件。"}}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求是部署当前项目。\n- 允许转交：若项目尚未初始化，可转交 `rainbond-project-init`；完成后回到主入口继续编排。\n- 安全停止：任何 Rainbond 查询或变更前必须通过 Runtime Gate。本评估禁止外部调用和文件修改，因此在此处停止；也不得改代码或切换交付方式。\n- 预期结果：仅完成静态路由判定，不实际部署，不修改任何文件。"}}
-{"type":"turn.completed","usage":{"input_tokens":14842,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":1060,"reasoning_output_tokens":887}}

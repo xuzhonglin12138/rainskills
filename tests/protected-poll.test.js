@@ -1,9 +1,13 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const test = require("node:test");
 const poll = require("../bin/protected-poll.js");
 const { parseCommand } = require("../bin/rainskills-tools.js");
+
+const root = path.resolve(__dirname, "..");
 
 function input(overrides = {}) {
   return {
@@ -21,10 +25,27 @@ function input(overrides = {}) {
 
 test("poll input is bounded and read-only", () => {
   assert.throws(() => poll.validatePollInput("rainbond_create_instance", input()), /read-only/i);
-  assert.throws(() => poll.validatePollInput("rainbond_get_instance", input({ max_attempts: 61 })), /max_attempts/i);
-  assert.throws(() => poll.validatePollInput("rainbond_get_instance", input({ timeout_ms: 900_001 })), /timeout/i);
+  assert.throws(() => poll.validatePollInput("rainbond_get_instance", input({ max_attempts: 13 })), /max_attempts/i);
+  assert.throws(() => poll.validatePollInput("rainbond_get_instance", input({ interval_ms: 10_001 })), /interval/i);
+  assert.throws(() => poll.validatePollInput("rainbond_get_instance", input({ timeout_ms: 60_001 })), /timeout/i);
   assert.throws(() => poll.validatePollInput("rainbond_get_instance", input({ status_path: "__proto__.x" })), /status_path/i);
   assert.doesNotThrow(() => poll.validatePollInput("rainbond_get_instance", input()));
+});
+
+test("component convergence policies return after one sixty-second wait", () => {
+  for (const relativePath of [
+    "contracts/runtime/cli-base.md",
+    "rainbond-app-assistant/references/workflow-rules.md",
+    "rainbond-fullstack-bootstrap/modules/44-source-build-rules.md",
+    "rainbond-fullstack-bootstrap/modules/45-package-rules.md",
+    "rainbond-opensource-app-deploy/references/deployment-workflow.md",
+  ]) {
+    const content = fs.readFileSync(path.join(root, relativePath), "utf8");
+    assert.match(content, /rainbond_wait_for_build_completion\(timeout=60\)/, relativePath);
+    assert.match(content, /status=running/, relativePath);
+    assert.match(content, /结束当前回复|end the current turn/i, relativePath);
+    assert.match(content, /不得[^\n]*(?:再次等待|手工轮询|继续轮询)/, relativePath);
+  }
 });
 
 test("poll keeps unchanged states inside CLI and emits only transitions", async () => {

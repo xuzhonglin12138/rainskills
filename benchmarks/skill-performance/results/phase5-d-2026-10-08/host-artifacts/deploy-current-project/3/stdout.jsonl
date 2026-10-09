@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"01a11e8d-a673-7943-be60-364191ada49f"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会严格按要求，只读取隔离候选包中的 `rainbond-app-assistant` 技能说明及其固定策略夹具；不会调用 Rainbond、网络、浏览器、Shell，也不会修改文件。"}}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-app-assistant`\n- 允许移交：若当前项目尚未初始化或关联 Rainbond，可移交 `rainbond-project-init`；完成后回到 `rainbond-app-assistant`\n- 安全停止点：在首次文件修改、Rainbond 调用或任何外部操作之前停止\n- 预期结果：仅完成路由与策略判定；不实际部署、不修改文件、不创建 Rainbond 资源。"}}
-{"type":"turn.completed","usage":{"input_tokens":16909,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":809,"reasoning_output_tokens":652}}

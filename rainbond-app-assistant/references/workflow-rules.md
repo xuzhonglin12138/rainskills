@@ -473,7 +473,7 @@
     再执行客户端上传事务。初始化上传时传 `component_id=service_id`，上传状态非空后调用
     `rainbond_replace_component_package(service_id=原值, event_id=新上传事件)`；禁止再次调用
     `rainbond_create_component_from_package`，禁止通过 `v2` / `v3` 后缀绕过英文名冲突。替换返回构建
-    `event_id` 后使用 `rainbond_wait_for_build_completion` 有界等待并验证健康状态。
+    `event_id` 后在当前回复中只调用一次 `rainbond_wait_for_build_completion(timeout=60)`。返回 `status=running` 时立即结束当前回复，报告已完成动作、当前状态和 event；不得再次等待、手工轮询或继续轮询。用户之后明确说“继续”时才开始新的检查回合。
 30b. **镜像组件的后续发布也必须复用组件**：期望镜像与当前镜像相同但需要重新拉取时，直接调用
     `rainbond_build_component(service_id=原值)`；镜像地址或标签变化时，调用
     `rainbond_change_component_image(service_id=原值, image=新值)`，再调用 `rainbond_build_component`。

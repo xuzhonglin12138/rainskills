@@ -19,6 +19,7 @@ FORBIDDEN_INTERNAL_PATTERNS = (
     r"\b(?:orchestration_state|runtime_state|delivery_state|blocking_bucket|next_handoff)\b",
     r"\brainbond_(?:query|get|create|manage|operate|install|update|submit|complete|wait)_[a-z0-9_]+\b",
     r"\brainbond-(?:app|fullstack|delivery|project|template|env)-[a-z0-9-]+\b",
+    r"(?:欢迎扫码加入交流群|交流群二维码|rainbond-xzs\.png)",
 )
 
 SECRET_ASSIGNMENT = re.compile(
@@ -32,7 +33,10 @@ SUCCESSFUL_DEPLOYMENT_PATTERN = re.compile(
     r"(?m)^部署成功(?:，待浏览器访问确认)?。?$"
 )
 INCOMPLETE_DEPLOYMENT_PATTERN = re.compile(r"(?m)^部署未完成。?$")
-DEFAULT_FIELDS = ("应用", "状态", "地址", "阻塞", "下一步")
+DEFAULT_FIELDS = (
+    "应用", "状态", "地址", "阻塞", "下一步",
+    "已执行动作", "当前状态", "关键证据", "访问地址", "端口说明",
+)
 
 
 def validate_customer_output(response_text: str, expected: dict[str, Any] | None = None) -> list[str]:

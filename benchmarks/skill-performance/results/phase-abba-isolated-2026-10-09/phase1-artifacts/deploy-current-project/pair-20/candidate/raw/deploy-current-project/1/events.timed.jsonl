@@ -1,5 +1,0 @@
-{"received_ms":72.855291,"event":{"type":"thread.started","thread_id":"01a11eef-669c-7691-975e-7ba9a5429a87"}}
-{"received_ms":82.414708,"event":{"type":"turn.started"}}
-{"received_ms":13100.6895,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按 `rainbond-app-assistant` 的静态路由与安全约束判断；本次仅分析给定 Skill/策略夹具，不连接 Rainbond、不调用工具、不改文件。"}}}
-{"received_ms":14324.279166,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为目标是部署当前项目。\n- 允许移交：若项目尚未关联 Rainbond，可移交 `rainbond-project-init` 完成初始化，再返回主流程继续部署。\n- 安全停止：进入 `code_or_build_handoff_needed` 时必须硬停止，不得自动改代码、测试、提交、推送或重试。\n- 预期结果：完成部署并验证交付，返回可访问地址；本次只做静态判断，不代表已实际部署。"}}}
-{"received_ms":14665.6415,"event":{"type":"turn.completed","usage":{"input_tokens":14441,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":821,"reasoning_output_tokens":647}}}

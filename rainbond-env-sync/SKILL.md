@@ -23,7 +23,6 @@ Synchronize only durable, non-sensitive environment differences from one linked 
 | Need keep/skip, sensitivity, ownership, DB_NAME, or file rules | [sync policy](references/sync-policy.md), [sync workflow](references/sync-workflow.md) | output examples |
 | Conflict-free run needs drift reconciliation and verification | [sync workflow](references/sync-workflow.md), [sync policy](references/sync-policy.md) | structured examples |
 | Need customer or structured result | [output contract](references/output-contract.md), [generated user-result policy](references/generated/user-result.md) | raw env values |
-| Top-level terminal result needs the QR card | [generated Community Card](references/generated/community-card.md) | sync references |
 
 Load only the active row. Never load output examples while classifying secret or ownership boundaries.
 
@@ -55,7 +54,7 @@ Load only the active row. Never load output examples while classifying secret or
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with the selected environment, files updated, categories kept/skipped/ambiguous, conflict status, and one next step. Structured mode follows the [output contract](references/output-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only under its terminal-result conditions.
+Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with the selected environment, files updated, categories kept/skipped/ambiguous, conflict status, and one next step. Structured mode follows the [output contract](references/output-contract.md).
 
 ## Anti-patterns
 

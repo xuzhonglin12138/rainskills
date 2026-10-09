@@ -24,7 +24,6 @@ Decide whether an existing Rainbond app is converged, usable, and backed by a ve
 | Need convergence, reverse-proxy, persistence, static frontend, or probe rules | [verification rules](references/verification-rules.md), [delivery workflow](references/delivery-workflow.md) | output examples |
 | Need final state mapping or structured result | [delivery workflow](references/delivery-workflow.md), [output contract](references/output-contract.md) | unrelated verification branches |
 | Need customer wording | [generated user-result policy](references/generated/user-result.md), [output contract](references/output-contract.md) | raw evidence detail |
-| Top-level terminal result needs the QR card | [generated Community Card](references/generated/community-card.md) | verification branches |
 
 Load only the active row. A delivery branch may add a second reference only when its evidence shape actually requires it.
 
@@ -59,7 +58,7 @@ Canonical schemas: [probe policy](schemas/delivery-probe-policy.schema.yaml) wit
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with verified app state, the real access URL, checks performed, caveats/blocker, and one next step. Structured mode follows the [output contract](references/output-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only under its terminal-result conditions.
+Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with verified app state, the real access URL, checks performed, caveats/blocker, and one next step. Structured mode follows the [output contract](references/output-contract.md).
 
 ## Anti-patterns
 

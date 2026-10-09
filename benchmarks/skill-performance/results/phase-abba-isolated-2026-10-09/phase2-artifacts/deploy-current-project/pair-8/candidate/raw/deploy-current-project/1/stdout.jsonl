@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"01a11ef3-9ae2-7e93-a004-456e2d812186"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按 `rainbond-app-assistant` 的静态路由与安全边界判断；本次仅分析，不连接 Rainbond、不读取外部状态，也不执行任何变更。"}}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求针对当前本地项目。\n- 允许交接：若项目尚未关联 Rainbond，可交给 `rainbond-project-init` 完成初始化；完成后回到主流程继续部署。\n- 安全停止：进入 `code_or_build_handoff_needed` 时必须停止，不得自动改代码、测试、提交、推送或继续重试。\n- 预期结果：本次为只读夹具评估，只能确认路由策略；不会实际部署。真实执行前还必须通过 Runtime Gate、解析工作空间，并在任何可变操作前完成确认。"}}
-{"type":"turn.completed","usage":{"input_tokens":14522,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":519,"reasoning_output_tokens":326}}

@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"01a11eea-b29f-7921-ae8c-515c5708ee2f"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定的 `rainbond-app-assistant` 路由与安全约束做静态判定；此次只读评估不会连接 Rainbond、执行命令或修改文件。"}}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`。\n- 允许交接：若项目未初始化，可交给 `rainbond-project-init`；完成后回到主流程。\n- 安全停止：只读 fixture 禁止连接 Rainbond、执行命令或写入初始化文件，因此在任何平台调用或变更前停止。\n- 预期结果：仅完成静态路由判定，不实际部署；不会改用 Sites、镜像或模板等替代路径。"}}
-{"type":"turn.completed","usage":{"input_tokens":14864,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":940,"reasoning_output_tokens":779}}

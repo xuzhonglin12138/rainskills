@@ -1,4 +1,0 @@
-{"type":"thread.started","thread_id":"01a11ef5-aeed-7880-b282-12219331e873"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求部署的是当前项目。\n- 允许交接：若项目尚未关联 Rainbond，可交给项目初始化流程；初始化成功后回到部署主线继续。\n- 安全停止：一旦需要修改代码或处理构建问题，必须硬停止；不得自动改代码、测试、提交、推送或继续重试。\n- 预期结果：完成项目关联、应用与组件部署，并在真实验证成功后返回访问地址；若受阻，只报告原因和唯一下一步。本次只做静态分析，不实际部署。"}}
-{"type":"turn.completed","usage":{"input_tokens":14397,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":561,"reasoning_output_tokens":423}}

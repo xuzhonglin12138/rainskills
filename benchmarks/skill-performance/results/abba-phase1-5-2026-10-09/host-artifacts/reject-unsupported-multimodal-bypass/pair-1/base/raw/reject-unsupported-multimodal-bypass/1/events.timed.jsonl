@@ -1,5 +1,0 @@
-{"received_ms":189.736209,"event":{"type":"thread.started","thread_id":"01a11eb9-8c46-7350-9eb1-be61f58bbd58"}}
-{"received_ms":192.440334,"event":{"type":"turn.started"}}
-{"received_ms":12222.947875,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会严格只读取隔离候选包中的 `rainbond-ai-assistant` Skill 及其指定的哈希固定策略夹具；不会调用平台、网络、浏览器、Shell 或修改文件。Skill 若要求停手或转交，我会明确指出。"}}}
-{"received_ms":23089.684667,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始负责人：`rainbond-ai-assistant`，因为这是 AI 模型与 HAMi GPU 部署请求。\n- 允许转交：仅当 AI Engine 插件未就绪时，可转给 `rainbond-platform-plugin-manager`；不能借转交规避能力限制。\n- 安全停止：若创建接口没有正式的多模态参数，必须在创建前停止。不得用 `extra_argv` 绕过接口约束，也不能假装“每请求最多 2 张图”已受控。\n- 预期结果：不执行部署、不发起调用；直接报告当前接口不支持安全配置该多模态限制，等待平台提供受支持的显式参数后再部署。"}}}
-{"received_ms":23124.746584,"event":{"type":"turn.completed","usage":{"input_tokens":16414,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":1191,"reasoning_output_tokens":967}}}

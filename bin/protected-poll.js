@@ -30,9 +30,9 @@ function validatePollInput(toolName, input) {
   stringArray(input.terminal_values, "terminal_values");
   stringArray(input.failure_values, "failure_values");
   if (input.retryable_values !== undefined) stringArray(input.retryable_values, "retryable_values");
-  if (!Number.isInteger(input.max_attempts) || input.max_attempts < 1 || input.max_attempts > 60) throw new Error("max_attempts must be between 1 and 60");
-  if (!Number.isInteger(input.interval_ms) || input.interval_ms < 0 || input.interval_ms > 60_000) throw new Error("interval_ms is invalid");
-  if (!Number.isInteger(input.timeout_ms) || input.timeout_ms < 1 || input.timeout_ms > 900_000) throw new Error("timeout_ms is invalid");
+  if (!Number.isInteger(input.max_attempts) || input.max_attempts < 1 || input.max_attempts > 12) throw new Error("max_attempts must be between 1 and 12");
+  if (!Number.isInteger(input.interval_ms) || input.interval_ms < 0 || input.interval_ms > 10_000) throw new Error("interval_ms is invalid");
+  if (!Number.isInteger(input.timeout_ms) || input.timeout_ms < 1 || input.timeout_ms > 60_000) throw new Error("timeout_ms is invalid");
   return input;
 }
 

@@ -1,5 +1,0 @@
-{"received_ms":79.178834,"event":{"type":"thread.started","thread_id":"01a11f08-4697-70b1-8b7f-5d3e249db117"}}
-{"received_ms":81.549834,"event":{"type":"turn.started"}}
-{"received_ms":13222.645417,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定的 `rainbond-app-assistant` 路由规则做静态判定；本次仅分析，不连接平台或执行部署。"}}}
-{"received_ms":15249.210417,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`。请求明确提供的是源码 Git URL，不能仅凭仓库名中的 `harbor-fork` 推断为 Harbor 套件。\n- 允许转交：只有仓库内容确认是 Harbor 等第三方套件，或用户明确要求按 Harbor 套件部署时，才转交 `rainbond-opensource-app-deploy`。\n- 安全停止：当前为只读 fixture 评估，禁止检查仓库、连接 Rainbond 或执行任何变更，因此在实际部署前停止。\n- 预期结果：仅完成静态路由判定，不会产生应用、组件或访问地址。"}}}
-{"received_ms":15561.318375,"event":{"type":"turn.completed","usage":{"input_tokens":14557,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":845,"reasoning_output_tokens":653}}}

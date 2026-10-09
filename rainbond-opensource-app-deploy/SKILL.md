@@ -7,10 +7,6 @@ description: "Deploy supplied third-party Compose, Helm, or image-set descriptor
 
 处理用户实际提供的第三方 Compose、Helm、镜像集合描述符，以及 **explicit named third-party open-source suite**。先从官方来源取得可审计的部署清单，再进入 Rainbond Runtime Gate；联网取材不等于已经授权连接或修改 Rainbond。
 
-## 交流群结束卡片
-
-顶层终端用户结果需要收尾时，读取 [generated Community Card](references/generated/community-card.md) 并严格按其适用条件和固定内容执行；本会话只读取一次，不得复制、改写或在中间结果中展示。
-
 ## 用户可见结果协议
 
 最终回复前读取 [generated user-result policy](references/generated/user-result.md)，再报告本 Skill 实际创建的拓扑、组件健康、依赖/存储验证、真实地址、smoke 结果和唯一 blocker。

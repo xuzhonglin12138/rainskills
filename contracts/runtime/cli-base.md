@@ -15,6 +15,8 @@ Hermes Agent 使用 `terminal` 且 `background=true` 启动授权，随后只对
 
 固定 `<target>`：Codex=`codex`、Claude Code=`claude`、Pi Agent=`pi`、DeepSeek Harness=`dsh`、WorkBuddy=`workbuddy`、Hermes Agent=`hermes`。DeepSeek Harness 和 WorkBuddy 返回持久终端或后台句柄时，只轮询原句柄直到退出。
 
+构建、镜像拉取或部署收敛在一个用户回合内最多等待 60 秒：同一 event 只调用一次 `rainbond_wait_for_build_completion(timeout=60)`。返回 `status=running` 时立即结束当前回复，报告已完成动作、当前状态和 event；不得在同一回合再次等待、手工轮询或继续推理。用户之后明确说“继续”时，才对同一 event 开始新的 60 秒检查回合。
+
 受限沙箱执行本地状态命令时必须申请用户级受保护目录访问权限；不得修改 `~/.rainbond` 权限或复制受保护状态。固定 launcher 与 argv 已在本文件声明，禁止搜索或探测 `rainskills.js`，也禁止执行 `npm root -g`。
 
 {{CONTEXT_GUIDANCE}}

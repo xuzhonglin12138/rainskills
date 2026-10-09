@@ -1,5 +1,0 @@
-{"received_ms":77.256916,"event":{"type":"thread.started","thread_id":"01a11f04-4276-7ed2-bd54-19c68019dba3"}}
-{"received_ms":79.781458,"event":{"type":"turn.started"}}
-{"received_ms":10749.645125,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按你指定的 `rainbond-project-init` 规则做纯静态判定；遵守只读限制，不调用任何工具，也不写文件。"}}}
-{"received_ms":13383.258625,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-project-init`，因为是本地 monorepo 首次接入。\n- 允许的交接：本可交给拓扑创建流程，但用户明确“只初始化、不部署”，因此本次不得交接。\n- 安全停止：当前禁止连接 Rainbond，无法核验或创建 `dev-team / cn / shop`、取得 `app_id`；初始化只能标记为待在线验证，不能宣称完成。\n- 预期结果：默认 `preview` 环境；规划生成 v1 manifest，将 `frontend`、`backend` 作为同一 Gitee 仓库的源码组件，并因共享根目录 `pnpm-lock.yaml` 保留仓库根构建上下文、分别记录子目录；规划生成本地绑定。受只读限制，本次实际不创建 `rainbond.app.json` 或 `.rainbond/local.json`。"}}}
-{"received_ms":13387.418041,"event":{"type":"turn.completed","usage":{"input_tokens":21504,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":763,"reasoning_output_tokens":521}}}

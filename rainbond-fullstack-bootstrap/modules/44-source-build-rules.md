@@ -30,7 +30,7 @@ Guardrails:
 
 ### Bounded build wait
 
-After a build/deploy trigger, prefer `rainbond_wait_for_build_completion` with an explicit maximum call count. If it reaches its bound, query final platform facts once and stop; never replay the build merely because the wait timed out.
+After a build/deploy trigger, call `rainbond_wait_for_build_completion(timeout=60)` once for the event in the current turn. If it returns `status=running`, end the current turn immediately with completed actions, current state, event ID, and one resume instruction; 不得再次等待、手工轮询或继续轮询. A later explicit user “继续” starts a new bounded check. Never replay the build merely because the wait timed out.
   - **.NET version trap:** dotnet/.NET Core is treated as CNB-capable, but the CNB version policy only allows .NET 8/9/10. A repo on a CNB-rejected version (e.g. .NET 7 → `dotnet version 7.0 is not allowed by cnb version policy`) that ships a usable Dockerfile MUST be created with `prefer_dockerfile_when_detected = true`, or its CNB build dead-ends with no in-place recovery.
 - if build logs fail while downloading third-party build artifacts such as GitHub Release assets, native binary packages, image layers, or package-manager tarballs, classify the blocker as `external artifact unreachable` when the dominant evidence is network reachability rather than app source code
 - examples include sharp/libvips release downloads, registry layer pulls, Docker Hub timeouts, package tarball download timeouts, or language installer binary downloads

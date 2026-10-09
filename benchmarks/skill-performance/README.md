@@ -25,7 +25,7 @@ This layer records UTF-8 Markdown bytes and fixture-backed mock trace counts for
 
 ## Codex host layer
 
-The host runner uses async `codex exec --json --ephemeral`, a fresh temporary workspace, an isolated `.agents/skills` candidate bundle, stdin disabled, a fixed model/reasoning pair, monotonic event-arrival timestamps, and restricted 0600 artifacts.
+The host runner uses async `codex exec --json --ephemeral`, a fresh temporary workspace, an isolated `.codex/skills` candidate bundle, stdin disabled, a fixed model/reasoning pair, monotonic event-arrival timestamps, and restricted 0600 artifacts.
 
 Without an explicitly controlled Rainbond environment, reset, and cleanup mechanism, write scenarios remain `unavailable`. A safe fixture-only smoke run is available for validating the measurement pipeline, but is marked `control_status=uncontrolled`:
 
@@ -50,9 +50,9 @@ Every session receives an isolated `HOME` and `CODEX_HOME`, only the protected C
 
 Fixture-only paired runs remain uncontrolled observations: they do not call Rainbond or exercise protected tool aggregation. Controlled live runs additionally require an explicitly disposable Rainbond team/app namespace, exact-name reset and cleanup, environment-only credentials, and successful post-run absence checks. Do not present a one-pair live pilot as a formal 20-pair performance claim.
 
-## Legacy entrypoint snapshot
+## Result storage
 
-`measure-skill-tokens.mjs` and `results/before-2026-10-08/` are exploratory entrypoint snapshots created before the Correctness Track. That result used one repetition and a dirty pre-correctness worktree, so it is not the formal Phase 0 baseline and cannot support performance claims.
+Write benchmark output and raw host artifacts outside the repository, for example under `/tmp/rainskills-benchmarks/`. Commit only a concise release-candidate report when a result must be reviewed or published; do not commit per-run JSONL, stderr, normalized records, or historical score artifacts.
 
 ## Interpretation boundary
 

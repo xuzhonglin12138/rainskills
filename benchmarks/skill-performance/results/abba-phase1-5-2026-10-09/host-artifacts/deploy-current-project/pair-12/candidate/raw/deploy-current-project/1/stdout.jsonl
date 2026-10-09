@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"01a11eac-6dba-7d43-a5a3-f9d8ce161fcf"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按要求仅阅读隔离候选包中的 `rainbond-app-assistant` 技能说明及其明确引用的哈希固定策略夹具，不调用 Rainbond、网络、Shell，也不修改文件。技能的路由和安全边界将直接决定结论。"}}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始 owner：`rainbond-app-assistant`，因为这是当前本地项目的通用部署请求。\n- 允许的交接：若项目尚未关联 Rainbond，可交给 `rainbond-project-init` 完成初始化，再回到原部署流程。\n- 安全停止点：本次是只读夹具评估，必须在任何初始化、Rainbond API 调用或部署变更之前停止；不得声称部署成功。\n- 预期结果：仅确认上述路由。真实执行时才会完成项目关联、部署与状态验证。"}}
-{"type":"turn.completed","usage":{"input_tokens":16909,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":1352,"reasoning_output_tokens":1158}}

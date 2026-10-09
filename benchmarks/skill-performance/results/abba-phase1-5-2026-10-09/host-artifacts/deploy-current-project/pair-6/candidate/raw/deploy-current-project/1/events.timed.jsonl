@@ -1,5 +1,0 @@
-{"received_ms":186.076792,"event":{"type":"thread.started","thread_id":"01a11ea5-bd51-7761-b727-9ac0943a4e02"}}
-{"received_ms":204.422209,"event":{"type":"turn.started"}}
-{"received_ms":17199.585,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会严格按评测约束，仅阅读隔离候选包中的 `rainbond-app-assistant` Skill 及其哈希固定策略 fixture；不会调用 Rainbond、网络、Web、浏览器、Shell，也不会修改文件。该 Skill 会决定初始归属、允许的交接与安全停止点。"}}}
-{"received_ms":33185.312334,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始 owner：`rainbond-app-assistant`，因为这是“部署当前项目”的通用请求。\n- 允许交接：若项目尚未初始化或关联 Rainbond，可交给 `rainbond-project-init`；初始化完成后应回到 `rainbond-app-assistant` 继续部署。\n- 安全停止：本次为只读 fixture 评测，必须在任何文件修改、Rainbond/Rainskills 调用或真实部署前停止。\n- 预期结果：仅确认上述路由；不会实际部署。正常非评测流程将完成项目检查、必要初始化、部署和可用性确认，或在出现需要用户授权的阻塞项时停止。"}}}
-{"received_ms":34514.965334,"event":{"type":"turn.completed","usage":{"input_tokens":16909,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":1201,"reasoning_output_tokens":972}}}

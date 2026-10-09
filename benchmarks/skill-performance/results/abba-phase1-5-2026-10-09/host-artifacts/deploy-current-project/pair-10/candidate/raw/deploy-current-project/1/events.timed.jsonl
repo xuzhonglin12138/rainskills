@@ -1,6 +1,0 @@
-{"received_ms":191.941916,"event":{"type":"thread.started","thread_id":"01a11ea9-9cef-73d3-8d92-7706073b0ba5"}}
-{"received_ms":210.485833,"event":{"type":"turn.started"}}
-{"received_ms":7601.163708,"event":{"type":"error","message":"Reconnecting... 1/5 (stream disconnected before completion: Transport error: network error: error decoding response body)"}}
-{"received_ms":75147.672791,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会严格只读取隔离候选包中的 `rainbond-app-assistant` Skill 及其指定的哈希固定策略 fixture，不调用任何外部系统，也不修改文件。该 Skill 会决定请求归属、允许的交接与安全停止点。"}}}
-{"received_ms":99310.770916,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`\n- 允许交接：若当前项目尚未初始化或关联 Rainbond，交给 `rainbond-project-init`；完成后返回 `rainbond-app-assistant`\n- 安全停止：本次为只读 fixture 评估，必须在任何文件修改、Rainbond API 调用或实际部署前停止\n- 预期结果：仅确认路由与部署流程，不创建应用、组件或访问地址，项目不会被实际部署"}}}
-{"received_ms":99408.650125,"event":{"type":"turn.completed","usage":{"input_tokens":16909,"cached_input_tokens":16768,"cache_write_input_tokens":0,"output_tokens":1730,"reasoning_output_tokens":1554}}}

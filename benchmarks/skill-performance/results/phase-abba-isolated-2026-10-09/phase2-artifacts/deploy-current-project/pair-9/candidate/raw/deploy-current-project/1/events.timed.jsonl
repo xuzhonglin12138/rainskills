@@ -1,5 +1,0 @@
-{"received_ms":80.567084,"event":{"type":"thread.started","thread_id":"01a11ef4-1105-78d2-8003-4086741ac455"}}
-{"received_ms":90.740667,"event":{"type":"turn.started"}}
-{"received_ms":9916.803667,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定的 `rainbond-app-assistant` 规则做静态路由分析；受只读 fixture 约束，不连接平台、不执行部署，也不修改项目。"}}}
-{"received_ms":11752.712667,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`，因为请求是部署当前项目。\n- 允许转交：若项目尚未关联 Rainbond，可转交 `rainbond-project-init` 完成初始化/关联，随后回到主流程。\n- 安全停止：进入代码或构建问题交接阶段时必须停止，不得自动改代码、测试、提交、推送或重试。\n- 预期结果：本次仅完成静态路由判断；受只读 fixture 限制，不会实际部署或调用 Rainbond。"}}}
-{"received_ms":11893.175334,"event":{"type":"turn.completed","usage":{"input_tokens":14500,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":602,"reasoning_output_tokens":430}}}

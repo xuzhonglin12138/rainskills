@@ -1,5 +1,0 @@
-{"received_ms":192.577292,"event":{"type":"thread.started","thread_id":"01a11eb8-3c57-75b0-a45a-ed97ca3634ae"}}
-{"received_ms":211.741917,"event":{"type":"turn.started"}}
-{"received_ms":22193.90025,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按指定的 `rainbond-platform-plugin-manager` Skill 做静态路由分析；遵守本次 fixture 限制，不调用任何工具或平台，也不执行安装或部署。"}}}
-{"received_ms":24554.777209,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始 owner：`rainbond-platform-plugin-manager`，负责检查并安装、启用 AI Engine 插件。\n- 允许的 handoff：仅在插件确认可用后，移交给 `rainbond-ai-assistant`，继续 Qwen 模型部署。\n- 安全停止：插件安装、启用或就绪验证失败时立即停止，不得提前部署模型或绕过检查。\n- 预期结果：本次只做静态分析，不实际操作；真实流程应为“确保插件就绪 → 自动恢复原始 Qwen 部署”。"}}}
-{"received_ms":24603.744084,"event":{"type":"turn.completed","usage":{"input_tokens":16956,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":1094,"reasoning_output_tokens":918}}}

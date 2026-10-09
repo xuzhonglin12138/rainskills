@@ -36,15 +36,11 @@
 
   First read the [generated user-result policy](generated/user-result.md), then apply the App Assistant-specific fields and terminal wording below.
 
-## 交流群结束卡片
-
-顶层终端用户结果需要收尾时，读取 [generated Community Card](generated/community-card.md) 并严格按其适用条件和固定内容执行；本会话只读取一次，不得复制、改写或在中间结果中展示。
-
   In customer report mode:
   - do not append `### Structured Output`
   - do not expose the fenced YAML block
-  - successful body contains only one result line plus one `应用`, `状态`, and verified `地址` field
-  - incomplete body contains only one `状态`, one `阻塞`, and at most one `下一步` field
+  - successful body gives the result, verified actions, current app/component state, verified address, relevant port or caveat, and at most one useful next step
+  - incomplete body gives the verified actions already completed, current state, one blocker, concise key evidence, relevant address/port caveat, and at most one next step
   - omit unavailable fields instead of guessing or duplicating them in prose
   - do not append a fixed next-actions list unless the user explicitly asks for options
   - emit progress only on a state change or after 30 seconds without a visible message
@@ -54,18 +50,23 @@
 
   ```markdown
   部署成功
-  应用：demo-2048
-  状态：running
-  地址：http://example.invalid/2048
+
+  已执行动作：创建应用和组件，配置端口并完成交付验证。
+  当前状态：demo-2048 / web 均为 running。
+  访问地址：http://example.invalid/2048
+  端口说明：容器监听端口与对外端口已核验一致。
   ```
 
   Default incomplete shape:
 
   ```markdown
   部署未完成
-  状态：building
-  阻塞：镜像拉取失败
-  下一步：修复镜像地址后重新部署
+
+  已执行动作：已创建应用和组件，并触发部署。
+  当前状态：组件仍在 building。
+  阻塞：镜像拉取失败。
+  关键证据：有界等待后仍返回相同镜像错误。
+  下一步：修复镜像地址后重新部署。
   ```
 
   ### Structured contract mode

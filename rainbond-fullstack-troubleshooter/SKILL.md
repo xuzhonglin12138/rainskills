@@ -25,7 +25,6 @@ Diagnose an existing linked Rainbond app, apply at most the smallest evidence-ba
 | Evidence matches database, dependency, env, access, build, capacity, or ConfigMap failure | [root-cause rules](references/root-cause-rules.md), [diagnosis workflow](references/diagnosis-workflow.md) | unrelated causes |
 | Need fresh verification or structured result | [verification and output](references/output-contract.md), [generated user-result policy](references/generated/user-result.md) | root-cause catalog |
 | Need common mistakes or quick lookup | [operational reference](references/operational-reference.md) | all other references |
-| Top-level terminal result needs the QR card | [generated Community Card](references/generated/community-card.md) | diagnostic references |
 
 Load only the active row. If evidence changes the classification, discard the old branch and load the newly matching row; do not accumulate every playbook.
 
@@ -61,7 +60,7 @@ The canonical structured result is [troubleshoot-result.schema.yaml](schemas/tro
 
 ### 用户可见结果协议
 
-Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with the direct judgment, actual action, fresh verification, remaining blocker, and one next step. Structured mode uses `TroubleshootResult` via [verification and output](references/output-contract.md) and the schema-derived [generated contract](references/generated/troubleshoot-contract.md). Apply the [generated Community Card](references/generated/community-card.md) only under its terminal-result conditions.
+Read the [generated user-result policy](references/generated/user-result.md). Default output is concise Chinese with the direct judgment, actions performed, current state, key evidence, fresh verification, remaining blocker, and one next step. Structured mode uses `TroubleshootResult` via [verification and output](references/output-contract.md) and the schema-derived [generated contract](references/generated/troubleshoot-contract.md).
 
 ## Anti-patterns
 

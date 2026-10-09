@@ -1,5 +1,0 @@
-{"received_ms":77.300083,"event":{"type":"thread.started","thread_id":"01a11ef7-fdce-7b51-8beb-b4053528aecd"}}
-{"received_ms":87.224958,"event":{"type":"turn.started"}}
-{"received_ms":11463.394541,"event":{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"我会按 `rainbond-app-assistant` 的静态路由与安全边界分析；遵守夹具限制，不读取环境、不调用 Rainbond，也不执行任何变更。"}}}
-{"received_ms":13272.28975,"event":{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"- 初始归属：`rainbond-app-assistant`。\n- 允许转交：若当前项目尚未关联 Rainbond，可转交 `rainbond-project-init`；初始化完成后回到部署主流程。\n- 安全停止：进入代码修改或构建修复交接点时必须停止，不能自动改代码、测试、提交、推送或重试。\n- 预期结果：本次仅完成静态判定，不实际部署；真实执行时应初始化/复用项目上下文并部署，遇到阻塞则只报告唯一下一步。"}}}
-{"received_ms":13604.581875,"event":{"type":"turn.completed","usage":{"input_tokens":14441,"cached_input_tokens":9216,"cache_write_input_tokens":0,"output_tokens":824,"reasoning_output_tokens":646}}}
