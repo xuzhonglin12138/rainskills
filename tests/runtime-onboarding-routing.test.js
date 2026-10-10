@@ -233,7 +233,7 @@ test("new-application Skills expose the four runtime choices without a private-e
     const source = runtimeRoutingSource(skillId);
     assert.match(
       source,
-      /1\) 云端环境（免费体验）\s+2\) 本机环境\s+3\) 独立服务器\s+4\) 已有 Rainbond/,
+      /1\) 独立服务器（推荐）——适合长期运行，在你的 Linux 服务器上安装开源 Rainbond\s+2\) 云端环境——最快体验，不需要准备服务器\s+3\) 本机环境——适合本地验证，在当前电脑上准备运行环境\s+4\) 已有 Rainbond——连接现有 Rainbond 环境并继续部署/,
       `${skillId} must show the flattened environment menu`,
     );
     assert.doesNotMatch(source, /私有环境（去对接）/);

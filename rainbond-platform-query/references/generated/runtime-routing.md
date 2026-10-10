@@ -1,5 +1,5 @@
 <!-- generated-by: scripts/sync-runtime-contracts.mjs -->
-<!-- source-sha256: 10d72364f69234598d5b0fb55a96eb3bad9de9ceab52adc879da988f08107e30 -->
+<!-- source-sha256: 1e4086d783758fea5911c6878bc0cd38b57f89d4181a50eb6071b18230a665d6 -->
 <!-- profile: cli -->
 <!-- rainskills-runtime-routing:start -->
 # 缺少运行环境时（生成文件）

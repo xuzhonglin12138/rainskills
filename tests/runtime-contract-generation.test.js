@@ -192,7 +192,10 @@ test("source entrypoints use generated Runtime Routing with no editable routing 
 test("generated Runtime Routing preserves flattened new-app and bounded existing-app choices", () => {
   const newApp = fs.readFileSync(generatedRoutingPath(repoRoot, "rainbond-app-assistant"), "utf8");
   assert.match(newApp, /new-application-environment/);
-  assert.match(newApp, /1\) 云端环境（免费体验）\s+2\) 本机环境\s+3\) 独立服务器\s+4\) 已有 Rainbond/);
+  assert.match(
+    newApp,
+    /1\) 独立服务器（推荐）——适合长期运行，在你的 Linux 服务器上安装开源 Rainbond\s+2\) 云端环境——最快体验，不需要准备服务器\s+3\) 本机环境——适合本地验证，在当前电脑上准备运行环境\s+4\) 已有 Rainbond——连接现有 Rainbond 环境并继续部署/,
+  );
   assert.doesNotMatch(newApp, /私有环境（去对接）/);
 
   for (const skillId of [

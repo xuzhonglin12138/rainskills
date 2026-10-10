@@ -232,7 +232,7 @@ export function renderRuntimeRouting({ sourceRoot, overlay, profile }) {
       "",
       ...mode.choices.map((choice, index) => `${index + 1}) ${choice}`),
       "",
-      "选择云端环境时连接 Rainbond Cloud；选择本机环境时使用 `--install-private --location local`；选择独立服务器时使用 `--install-private --location server`；选择已有 Rainbond 时先执行 `runtime message --id private-console-origin`，再连接用户给出的 Console origin。不得增加私有环境子菜单。",
+      "选择独立服务器时使用 `--install-private --location server`；选择云端环境时连接 Rainbond Cloud；选择本机环境时使用 `--install-private --location local`；选择已有 Rainbond 时先执行 `runtime message --id private-console-origin`，再连接用户给出的 Console origin。不得增加私有环境子菜单。",
     );
   } else {
     body.push(
