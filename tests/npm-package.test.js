@@ -70,6 +70,11 @@ test("package metadata defines a public npx command with pinned runtime dependen
   assert.equal(manifest.bin.rainskills, "bin/rainskills.js");
   assert.equal(manifest.engines.node, ">=18");
   assert.equal(manifest.license, "Apache-2.0");
+  assert.equal(manifest.homepage, "https://www.rainbond.com/rainskills");
+  assert.match(manifest.description, /deploying, troubleshooting, and verifying applications/);
+  for (const keyword of ["ai-agent", "agent-skills", "application-delivery", "self-hosted", "kubernetes"]) {
+    assert(manifest.keywords.includes(keyword), `missing package keyword: ${keyword}`);
+  }
   assert.equal(
     manifest.repository.url,
     "git+https://github.com/goodrain/rainskills.git"
